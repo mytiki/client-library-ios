@@ -1,42 +1,27 @@
-#
-# Be sure to run `pod lib lint TikiClient.podspec' to ensure this is a
-# valid spec before submitting.
-#
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see https://guides.cocoapods.org/syntax/podspec.html
-#
-
 Pod::Spec.new do |s|
   s.name             = 'TikiClient'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of TikiClient.'
-
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
+  s.summary          = 'Lean Cocoapods lib for seamless integration with TIKI Rest APIs'
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+  The TIKI APIs comprise a set of HTTP REST APIs designed for seamless integration with any
+  standard HTTP client. The Client Libraries serve as a user-friendly layer around the TIKI APIs,
+  introducing methods for common operations such as authorization, licensing, capture, card-linked
+  offers, and rewards. It is a collection of pre-existing code with minimal dependencies, offering
+  a streamlined integration process with TIKI Rest APIs, which reduces the amount of code necessary
+  for integration.
+  
+  TikiClient is the top-level entry point for the TIKI Client Library. It offers simple methods
+  that call the underlying libraries to perform common operations. Programmers can use it to
+  simplify the integration process or opt for individual libraries based on their specific needs.
                        DESC
 
-  s.homepage         = 'https://github.com/ricardobrg/TikiClient'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
+  s.homepage         = 'https://mytiki.com'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'ricardobrg' => 'ricardobrg@users.noreply.github.com' }
-  s.source           = { :git => 'https://github.com/ricardobrg/TikiClient.git', :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.source           = { :git => 'https://github.com/tiki/publish-client-ios.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '10.0'
 
   s.source_files = 'TikiClient/Classes/**/*'
-  
-  # s.resource_bundles = {
-  #   'TikiClient' => ['TikiClient/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end
