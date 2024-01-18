@@ -1,0 +1,6 @@
+framework module Pods_TikiClient_Tests {
+  umbrella header "Pods-TikiClient_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}
