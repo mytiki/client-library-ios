@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4DE41D64B3F9DE99CFFE9166 /* Pods_TikiClient_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE73717FFC517597C650E04A /* Pods_TikiClient_Example.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
-		66D940B550243442841045E7 /* Pods_TikiClient_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4EB17603AB933C7562A1D65 /* Pods_TikiClient_Tests.framework */; };
-		6FA26266F29E59C03F14C29A /* Pods_TikiClient_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A02AB3104207CF08F84C819 /* Pods_TikiClient_Example.framework */; };
+		AE7CEFE6F79385EC40DC8944 /* Pods_TikiClient_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B0DE9BB01BE8C7651A77C18 /* Pods_TikiClient_Tests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,9 +28,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		023544ABE5CC1BB75F12A8C0 /* Pods-TikiClient_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TikiClient_Example.release.xcconfig"; path = "Target Support Files/Pods-TikiClient_Example/Pods-TikiClient_Example.release.xcconfig"; sourceTree = "<group>"; };
-		1FB50506E67C538C31F28BCB /* Pods-TikiClient_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TikiClient_Tests.release.xcconfig"; path = "Target Support Files/Pods-TikiClient_Tests/Pods-TikiClient_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		35BA2D0DA887AB7AC37BD1F4 /* Pods-TikiClient_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TikiClient_Tests.debug.xcconfig"; path = "Target Support Files/Pods-TikiClient_Tests/Pods-TikiClient_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* TikiClient_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TikiClient_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -41,12 +38,15 @@
 		607FACE51AFB9204008FA782 /* TikiClient_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TikiClient_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
-		6A02AB3104207CF08F84C819 /* Pods_TikiClient_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TikiClient_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7E57A12C03C6615AFB2BF7E0 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		A312AB41962D3733F97980EA /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
-		D6EC16A11174575D655EF046 /* Pods-TikiClient_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TikiClient_Example.debug.xcconfig"; path = "Target Support Files/Pods-TikiClient_Example/Pods-TikiClient_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		E3D3746125E016CC08382E85 /* TikiClient.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = TikiClient.podspec; path = ../TikiClient.podspec; sourceTree = "<group>"; };
-		F4EB17603AB933C7562A1D65 /* Pods_TikiClient_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TikiClient_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6B0DE9BB01BE8C7651A77C18 /* Pods_TikiClient_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TikiClient_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7E57A12C03C6615AFB2BF7E0 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		8C8F5E2FAF2A1E36BA6A64FF /* Pods-TikiClient_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TikiClient_Example.debug.xcconfig"; path = "Target Support Files/Pods-TikiClient_Example/Pods-TikiClient_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		A312AB41962D3733F97980EA /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		BA9C36A08C919DDB028CABE9 /* Pods-TikiClient_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TikiClient_Tests.release.xcconfig"; path = "Target Support Files/Pods-TikiClient_Tests/Pods-TikiClient_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		DABED258FB93B31A41C55CEB /* Pods-TikiClient_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TikiClient_Example.release.xcconfig"; path = "Target Support Files/Pods-TikiClient_Example/Pods-TikiClient_Example.release.xcconfig"; sourceTree = "<group>"; };
+		DFF34D6C9BA254DDD3946D69 /* Pods-TikiClient_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TikiClient_Tests.debug.xcconfig"; path = "Target Support Files/Pods-TikiClient_Tests/Pods-TikiClient_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		E3D3746125E016CC08382E85 /* TikiClient.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = TikiClient.podspec; path = ../TikiClient.podspec; sourceTree = "<group>"; };
+		FE73717FFC517597C650E04A /* Pods_TikiClient_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TikiClient_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,7 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6FA26266F29E59C03F14C29A /* Pods_TikiClient_Example.framework in Frameworks */,
+				4DE41D64B3F9DE99CFFE9166 /* Pods_TikiClient_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,7 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				66D940B550243442841045E7 /* Pods_TikiClient_Tests.framework in Frameworks */,
+				AE7CEFE6F79385EC40DC8944 /* Pods_TikiClient_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,7 +77,7 @@
 				607FACE81AFB9204008FA782 /* Tests */,
 				607FACD11AFB9204008FA782 /* Products */,
 				B5408F1A29BE29310354D039 /* Pods */,
-				C1E26CFC5146DCF79C1B1924 /* Frameworks */,
+				F14D1E576C29C1F52310D1D8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -142,20 +142,19 @@
 		B5408F1A29BE29310354D039 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				D6EC16A11174575D655EF046 /* Pods-TikiClient_Example.debug.xcconfig */,
-				023544ABE5CC1BB75F12A8C0 /* Pods-TikiClient_Example.release.xcconfig */,
-				35BA2D0DA887AB7AC37BD1F4 /* Pods-TikiClient_Tests.debug.xcconfig */,
-				1FB50506E67C538C31F28BCB /* Pods-TikiClient_Tests.release.xcconfig */,
+				8C8F5E2FAF2A1E36BA6A64FF /* Pods-TikiClient_Example.debug.xcconfig */,
+				DABED258FB93B31A41C55CEB /* Pods-TikiClient_Example.release.xcconfig */,
+				DFF34D6C9BA254DDD3946D69 /* Pods-TikiClient_Tests.debug.xcconfig */,
+				BA9C36A08C919DDB028CABE9 /* Pods-TikiClient_Tests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		C1E26CFC5146DCF79C1B1924 /* Frameworks */ = {
+		F14D1E576C29C1F52310D1D8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				6A02AB3104207CF08F84C819 /* Pods_TikiClient_Example.framework */,
-				F4EB17603AB933C7562A1D65 /* Pods_TikiClient_Tests.framework */,
+				FE73717FFC517597C650E04A /* Pods_TikiClient_Example.framework */,
+				6B0DE9BB01BE8C7651A77C18 /* Pods_TikiClient_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -167,11 +166,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "TikiClient_Example" */;
 			buildPhases = (
-				77863010C7B722D1A229CEBE /* [CP] Check Pods Manifest.lock */,
+				4DF70FB2A4E524ECECF53EFD /* [CP] Check Pods Manifest.lock */,
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
-				A6C814DA2B73FE1395E9A318 /* [CP] Embed Pods Frameworks */,
+				E260B057B02F572775ED6743 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -186,7 +185,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACF21AFB9204008FA782 /* Build configuration list for PBXNativeTarget "TikiClient_Tests" */;
 			buildPhases = (
-				10D3397BB8EE465DD28449AE /* [CP] Check Pods Manifest.lock */,
+				71DDE22B7E03ED602A3F1D1A /* [CP] Check Pods Manifest.lock */,
 				607FACE11AFB9204008FA782 /* Sources */,
 				607FACE21AFB9204008FA782 /* Frameworks */,
 				607FACE31AFB9204008FA782 /* Resources */,
@@ -213,10 +212,12 @@
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = 8B528SGCJW;
 						LastSwiftMigration = 0900;
 					};
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = 8B528SGCJW;
 						LastSwiftMigration = 0900;
 						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
@@ -227,6 +228,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -262,29 +264,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		10D3397BB8EE465DD28449AE /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-TikiClient_Tests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		77863010C7B722D1A229CEBE /* [CP] Check Pods Manifest.lock */ = {
+		4DF70FB2A4E524ECECF53EFD /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -306,7 +286,29 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A6C814DA2B73FE1395E9A318 /* [CP] Embed Pods Frameworks */ = {
+		71DDE22B7E03ED602A3F1D1A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TikiClient_Tests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E260B057B02F572775ED6743 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -314,10 +316,28 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-TikiClient_Example/Pods-TikiClient_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/TikiClient/TikiClient.framework",
+				"${BUILT_PRODUCTS_DIR}/TikiSdkDebug/TikiSdk.framework",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkDebug/App.framework/App",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkDebug/Flutter.framework/Flutter",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkDebug/flutter_secure_storage.framework/flutter_secure_storage",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkDebug/sqlite3_flutter_libs.framework/sqlite3_flutter_libs",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkDebug/sqlite3.framework/sqlite3",
+				"${BUILT_PRODUCTS_DIR}/TikiSdkRelease/TikiSdk.framework",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkRelease/App.framework/App",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkRelease/Flutter.framework/Flutter",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkRelease/flutter_secure_storage.framework/flutter_secure_storage",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkRelease/sqlite3_flutter_libs.framework/sqlite3_flutter_libs",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkRelease/sqlite3.framework/sqlite3",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TikiClient.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TikiSdk.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/App.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Flutter.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_secure_storage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/sqlite3_flutter_libs.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/sqlite3.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -475,10 +495,12 @@
 		};
 		607FACF01AFB9204008FA782 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D6EC16A11174575D655EF046 /* Pods-TikiClient_Example.debug.xcconfig */;
+			baseConfigurationReference = 8C8F5E2FAF2A1E36BA6A64FF /* Pods-TikiClient_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 8B528SGCJW;
 				INFOPLIST_FILE = TikiClient/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -490,10 +512,12 @@
 		};
 		607FACF11AFB9204008FA782 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 023544ABE5CC1BB75F12A8C0 /* Pods-TikiClient_Example.release.xcconfig */;
+			baseConfigurationReference = DABED258FB93B31A41C55CEB /* Pods-TikiClient_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 8B528SGCJW;
 				INFOPLIST_FILE = TikiClient/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -505,8 +529,9 @@
 		};
 		607FACF31AFB9204008FA782 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 35BA2D0DA887AB7AC37BD1F4 /* Pods-TikiClient_Tests.debug.xcconfig */;
+			baseConfigurationReference = DFF34D6C9BA254DDD3946D69 /* Pods-TikiClient_Tests.debug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 8B528SGCJW;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -516,6 +541,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -527,13 +553,15 @@
 		};
 		607FACF41AFB9204008FA782 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1FB50506E67C538C31F28BCB /* Pods-TikiClient_Tests.release.xcconfig */;
+			baseConfigurationReference = BA9C36A08C919DDB028CABE9 /* Pods-TikiClient_Tests.release.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 8B528SGCJW;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";

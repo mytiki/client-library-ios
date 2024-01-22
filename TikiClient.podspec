@@ -21,7 +21,10 @@ Pod::Spec.new do |s|
   s.author           = { 'ricardobrg' => 'ricardobrg@users.noreply.github.com' }
   s.source           = { :git => 'https://github.com/tiki/publish-client-ios.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '15.0'
 
   s.source_files = 'TikiClient/Classes/**/*'
+
+  s.dependency 'TikiSdkDebug', '3.0.0', :configurations => 'Debug'
+  s.dependency 'TikiSdkRelease', '3.0.0', :configurations => 'Release'
 end

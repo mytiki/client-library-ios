@@ -18,7 +18,7 @@ echo "mkdir -p ${CONFIGURATION_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
 mkdir -p "${CONFIGURATION_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
 
 COCOAPODS_PARALLEL_CODE_SIGN="${COCOAPODS_PARALLEL_CODE_SIGN:-false}"
-SWIFT_STDLIB_PATH="${DT_TOOLCHAIN_DIR}/usr/lib/swift/${PLATFORM_NAME}"
+SWIFT_STDLIB_PATH="${TOOLCHAIN_DIR}/usr/lib/swift/${PLATFORM_NAME}"
 BCSYMBOLMAP_DIR="BCSymbolMaps"
 
 
@@ -177,9 +177,21 @@ code_sign_if_enabled() {
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/TikiClient/TikiClient.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/TikiSdkDebug/TikiSdk.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkDebug/App.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkDebug/Flutter.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkDebug/flutter_secure_storage.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkDebug/sqlite3_flutter_libs.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkDebug/sqlite3.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/TikiClient/TikiClient.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/TikiSdkRelease/TikiSdk.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkRelease/App.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkRelease/Flutter.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkRelease/flutter_secure_storage.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkRelease/sqlite3_flutter_libs.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkRelease/sqlite3.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait
