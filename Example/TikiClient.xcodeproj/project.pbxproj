@@ -14,6 +14,7 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
+		888188F12B603B1C006DE4CE /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 888188F02B603B1C006DE4CE /* Security.framework */; };
 		AE7CEFE6F79385EC40DC8944 /* Pods_TikiClient_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B0DE9BB01BE8C7651A77C18 /* Pods_TikiClient_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +41,7 @@
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		6B0DE9BB01BE8C7651A77C18 /* Pods_TikiClient_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TikiClient_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E57A12C03C6615AFB2BF7E0 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		888188F02B603B1C006DE4CE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		8C8F5E2FAF2A1E36BA6A64FF /* Pods-TikiClient_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TikiClient_Example.debug.xcconfig"; path = "Target Support Files/Pods-TikiClient_Example/Pods-TikiClient_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		A312AB41962D3733F97980EA /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		BA9C36A08C919DDB028CABE9 /* Pods-TikiClient_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TikiClient_Tests.release.xcconfig"; path = "Target Support Files/Pods-TikiClient_Tests/Pods-TikiClient_Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -54,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				888188F12B603B1C006DE4CE /* Security.framework in Frameworks */,
 				4DE41D64B3F9DE99CFFE9166 /* Pods_TikiClient_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -153,6 +156,7 @@
 		F14D1E576C29C1F52310D1D8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				888188F02B603B1C006DE4CE /* Security.framework */,
 				FE73717FFC517597C650E04A /* Pods_TikiClient_Example.framework */,
 				6B0DE9BB01BE8C7651A77C18 /* Pods_TikiClient_Tests.framework */,
 			);
