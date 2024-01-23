@@ -1,6 +1,0 @@
-framework module TikiSdk {
-  umbrella header "TikiSdkRelease-umbrella.h"
-
-  export *
-  module * { export * }
-}

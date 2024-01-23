@@ -1,6 +1,0 @@
-framework module TikiClient {
-  umbrella header "TikiClient-umbrella.h"
-
-  export *
-  module * { export * }
-}
