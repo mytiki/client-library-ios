@@ -1,16 +1,29 @@
 PODS:
-  - TikiClient (0.1.0)
+  - TikiClient (0.1.0):
+    - TikiSdkDebug (= 3.0.0)
+    - TikiSdkRelease (= 3.0.0)
+  - TikiSdkDebug (3.0.0)
+  - TikiSdkRelease (3.0.0)
 
 DEPENDENCIES:
   - TikiClient (from `../`)
+  - TikiSdkDebug (= 3.0.0)
+  - TikiSdkRelease (= 3.0.0)
+
+SPEC REPOS:
+  trunk:
+    - TikiSdkDebug
+    - TikiSdkRelease
 
 EXTERNAL SOURCES:
   TikiClient:
     :path: "../"
 
 SPEC CHECKSUMS:
-  TikiClient: d7a070ecbf75c2195f76072caab5babb01f9ebdb
+  TikiClient: c9b723aef10b9dc2af7ddb496c4deb7b93a5cef4
+  TikiSdkDebug: 85a41ce306804d45014345fb12ed4f34b83defe0
+  TikiSdkRelease: 5979b718bf1776d1d9e66fbd503aed531f9e4d0d
 
-PODFILE CHECKSUM: c9a2c703dd6b278f7e5791ab5fde9da643527878
+PODFILE CHECKSUM: e0191a41f646ed0f4e8eb4be378ce9c0129c0068
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.14.3

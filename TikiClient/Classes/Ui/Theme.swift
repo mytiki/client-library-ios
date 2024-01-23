@@ -1,48 +1,90 @@
 import SwiftUI
 
 /// Custom theme definition.
-public struct Theme {
+public class Theme {
+    var _primaryTextColor = Color.tikiBlack
+    var _secondaryTextColor = Color.tikiDarkGray
+    var _primaryBackgroundColor = Color.tikiWhite
+    var _secondaryBackgroundColor = Color.tikiLightGray
+    var _accentColor = Color.tikiGreen
+    var _fontFamily = "SpaceGrotesk-Light"
     
-    /// Default primary text color.
-    public let primaryTextColor: Color
+    init(primaryTextColor: Color = Color.tikiBlack, secondaryTextColor: Color = Color.tikiDarkGray, primaryBackgroundColor: Color = Color.tikiWhite, secondaryBackgroundColor: Color = Color.tikiLightGray, accentColor: Color = Color.tikiGreen, fontFamily: String = "SpaceGrotesk-Light") {
+        self._primaryTextColor = primaryTextColor
+        self._secondaryTextColor = secondaryTextColor
+        self._primaryBackgroundColor = primaryBackgroundColor
+        self._secondaryBackgroundColor = secondaryBackgroundColor
+        self._accentColor = accentColor
+        self._fontFamily = fontFamily
+        if(self._fontFamily == "SpaceGrotesk-Light"){
+            Font.registerSpaceGrotesk()
+        }
+    }
     
-    /// Default secondary text color.
-    public let secondaryTextColor: Color
+    /// Theme font light
+    public func fontLight(size: CGFloat) -> Font {
+        return Font.custom("\(_fontFamily)", size: size)
+    }
     
-    /// Default primary background color.
-    public let primaryBackgroundColor: Color
+    /// Theme font regular
+    public func fontRegular(size: CGFloat) -> Font {
+        return Font.custom("\(_fontFamily)_Regular", size: size)
+    }
     
-    /// Default secondary background color.
-    public let secondaryBackgroundColor: Color
+    /// Theme font medium
+    public func fontMedium(size: CGFloat) -> Font {
+        return Font.custom("\(_fontFamily)_Medium", size: size)
+    }
     
-    /// Default accent color.
-    public let accentColor: Color
+    /// Theme font bold
+    public func fontBold(size: CGFloat) -> Font {
+        return Font.custom("\(_fontFamily)_Bold", size: size)
+    }
     
-    /// Default font family.
-    public let fontFamily: Font
+    /// Primary text color. Used in the default text items.
+    public var primaryTextColor: Color { _primaryTextColor }
     
-    /// Initializes a new instance of `Theme`.
+    /// Secondary text color. Used in specific text items.
     ///
-    /// - Parameters:
-    ///   - primaryTextColor: Default primary text color.
-    ///   - secondaryTextColor: Default secondary text color.
-    ///   - primaryBackgroundColor: Default primary background color.
-    ///   - secondaryBackgroundColor: Default secondary background color.
-    ///   - accentColor: Default accent color.
-    ///   - fontFamily: Default font family.
-    public init(
-        primaryTextColor: Color = Color(hex: 0xFF000000),
-        secondaryTextColor: Color = Color(hex: 0x99000000),
-        primaryBackgroundColor: Color = Color(hex: 0xFFFFFFFF),
-        secondaryBackgroundColor: Color = Color(hex: 0x15000000),
-        accentColor: Color = Color(hex: 0xFF00B272),
-        fontFamily: Font = .custom("Space Grotesk", size: 17)
-    ) {
-        self.primaryTextColor = primaryTextColor
-        self.secondaryTextColor = secondaryTextColor
-        self.primaryBackgroundColor = primaryBackgroundColor
-        self.secondaryBackgroundColor = secondaryBackgroundColor
-        self.accentColor = accentColor
-        self.fontFamily = fontFamily
+    /// Defaults to [primaryTextColor] with 60% alpha transparency.
+    public var secondaryTextColor: Color { _secondaryTextColor }
+    
+    /// Primary background color. The default color for backgrounds.
+    public var primaryBackgroundColor: Color { _primaryBackgroundColor }
+    
+    /// Secondary background color.
+    public var secondaryBackgroundColor: Color { _secondaryBackgroundColor }
+    
+    /// Accent color. Used to decorate or highlight items.
+    public var accentColor: Color { _accentColor }
+    
+    public func primaryTextColor(_ primaryTextColor: Color) -> Self {
+        self._primaryTextColor = primaryTextColor
+        return self
+    }
+    
+    public func secondaryTextColor(_ secondaryTextColor: Color) -> Self {
+        self._secondaryTextColor = secondaryTextColor
+        return self
+    }
+    
+    public func primaryBackgroundColor(_ primaryBackgroundColor: Color) -> Self {
+        self._primaryBackgroundColor = primaryBackgroundColor
+        return self
+    }
+    
+    public func secondaryBackgroundColor(_ secondaryBackgroundColor: Color) -> Self {
+        self._secondaryBackgroundColor = secondaryBackgroundColor
+        return self
+    }
+    
+    public func accentColor(_ accentColor: Color) -> Self {
+        self._accentColor = accentColor
+        return self
+    }
+    
+    public func fontFamily(_ fontFamily: String) -> Self {
+        self._fontFamily = fontFamily
+        return self
     }
 }

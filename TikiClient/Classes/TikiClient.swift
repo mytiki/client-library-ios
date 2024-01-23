@@ -1,5 +1,6 @@
 
 import Foundation
+import SwiftUI
 
 /// Tiki Client Library
 ///
@@ -28,7 +29,7 @@ public class TikiClient {
     ///   - providerId: The TIKI Publishing ID of the data provider.
     ///   - userId: The user identification from the provider.
     ///   - company: The legal information of the company.
-    public func initialize(context: Context, providerId: String, userId: String, company: Company) {
+    public func initialize(providerId: String, userId: String, company: Company) {
         // Implementation
     }
 
@@ -95,6 +96,6 @@ public class TikiClient {
         // Implementation
     }
 }
-```
-
-Please note that the `@available(iOS 15.0, *)` attribute is used to indicate the minimum iOS version where the code is available. Adjust this according to your project's deployment target.
+//```
+//
+//Please note that the `@available(iOS 15.0, *)` attribute is used to indicate the minimum iOS version where the code is available. Adjust this according to your project's deployment target.

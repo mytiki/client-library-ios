@@ -1,4 +1,5 @@
 import Foundation
+import TikiSdk
 
 /// Service for managing user licenses.
 public class LicenseService {
