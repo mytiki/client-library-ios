@@ -28,7 +28,7 @@ final class KeychainHelper {
         if status == errSecDuplicateItem {
             // Item already exist, thus update it.
             let query = [
-                kSecAttrService: service,
+                kSecAttrService: bundle + service,
                 kSecAttrAccount: key,
                 kSecClass: kSecClassGenericPassword,
             ] as CFDictionary
@@ -75,7 +75,7 @@ final class KeychainHelper {
 
         // Item already exist, thus update it.
         let query = [
-            kSecAttrService: service,
+            kSecAttrService: bundle + service,
             kSecAttrAccount: key,
             kSecClass: kSecClassGenericPassword,
         ] as CFDictionary
@@ -83,7 +83,7 @@ final class KeychainHelper {
         let attributesToUpdate = [kSecValueData: data] as CFDictionary
 
         // Update existing item
-        SecItemUpdate(query, attributesToUpdate)
+        let error = SecItemUpdate(query, attributesToUpdate)
     }
     
 }
