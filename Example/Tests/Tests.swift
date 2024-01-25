@@ -12,4 +12,10 @@ class Tests: XCTestCase {
         EmailRepository.UpdateEmailToken(authToken: AuthToken(auth: "Second token", refresh: "", expiration: nil), email: "test@test.com")
         XCTAssertEqual(EmailRepository.ReadEmailToken(email: "test@test.com").auth, "Second token")
     }
+//    func testLoginOauth(){
+//        let emailService = EmailService()
+//        emailService.login(.google, "teste")
+//        XCTAssertEqual("Second token", "Second token")
+//
+//    }
 }

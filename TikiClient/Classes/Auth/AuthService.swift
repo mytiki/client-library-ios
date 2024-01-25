@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in the root directory.
+ */
+
 import Foundation
 
 /// Authentication Service for TIKI
@@ -13,6 +18,9 @@ public class AuthService {
         return ""
     }
 
+    public static func saveAuthToken(token: String, service: String){
+        //TODO
+    }
     /// Retrieves the authentication token, refreshing if necessary.
     ///
     /// - Returns: The authentication token.

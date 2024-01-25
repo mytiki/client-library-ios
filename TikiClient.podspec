@@ -27,4 +27,6 @@ Pod::Spec.new do |s|
 
   s.dependency 'TikiSdkDebug', '3.0.0', :configurations => 'Debug'
   s.dependency 'TikiSdkRelease', '3.0.0', :configurations => 'Release'
+  s.dependency 'AppAuth'
+
 end
