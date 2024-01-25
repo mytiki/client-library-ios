@@ -20,7 +20,7 @@ struct RewardsExampleApp: App {
         WindowGroup {
             if( !isInitialized ) {
                 Button(action: {
-                    emailService.login(.google, "252743744388-u57lenibhl7nr8q50d4e1dfjd36am22q.apps.googleusercontent.com")
+                    emailService.login(.google, "")
                 }) {
                     HStack (spacing: 5) {
                         Image(systemName: "hand.tap.fill")
