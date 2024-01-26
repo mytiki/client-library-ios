@@ -37,7 +37,16 @@ public enum EmailProviderEnum: String {
             case .google :
                 return "https://openidconnect.googleapis.com/v1/userinfo"
             case .outlook :
-                return "https://login.microsoftonline.com/common/oauth2/v2.0/token"
+                return "https://graph.microsoft.com/oidc/userinfo"
+            
+        }
+    }
+    public func deeplinkReturn() -> URL{
+        switch(self) {
+            case .google :
+                return URL(string: "com.mytiki.TikiClient-Example:app-auth")!
+            case .outlook :
+                return URL(string:"msauth.com.mytiki.TikiClient-Example://auth")!
             
         }
     }

@@ -13,6 +13,7 @@ extension UIApplicationDelegate {
     func application(_ app: UIApplication, open url: URL,
                      options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
         if let scheme = url.scheme,
+           scheme.localizedCaseInsensitiveCompare("msauth.com.mytiki") == .orderedSame,
            scheme.localizedCaseInsensitiveCompare("com.mytiki") == .orderedSame,
            let view = url.host {
             
@@ -24,7 +25,7 @@ extension UIApplicationDelegate {
             case "email":
                 EmailService.continueOauthlogin(url: url)
             default:
-                print("null")
+                print("Deeplink error")
             }
         }
         return true

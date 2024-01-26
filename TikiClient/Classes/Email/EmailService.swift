@@ -31,13 +31,12 @@ public class EmailService {
         let configuration = OIDServiceConfiguration(
             authorizationEndpoint: provider.authorizationEndpoint(),
             tokenEndpoint: provider.tokenEndpoint())
-        let redirectURI = URL(string: "com.mytiki.TikiClient-Example:app-auth")!
         let viewController = UIApplication.shared.windows.first!.rootViewController!
         let request = OIDAuthorizationRequest(configuration: configuration,
                                               clientId: clientID,
                                               clientSecret: clientSecret,
                                               scopes: [OIDScopeOpenID, OIDScopeProfile, OIDScopeEmail],
-                                              redirectURL: redirectURI,
+                                              redirectURL: provider.deeplinkReturn(),
                                               responseType: OIDResponseTypeCode,
                                               additionalParameters: nil)
 
@@ -48,7 +47,9 @@ public class EmailService {
             
           if let authState = authState {
             self.setAuthState(authState)
-              let authToken = AuthToken(auth: (authState.lastTokenResponse?.accessToken) ?? "", refresh: authState.lastTokenResponse?.refreshToken, expiration: authState.lastTokenResponse?.accessTokenExpirationDate)
+              let authToken = AuthToken(auth: (authState.lastTokenResponse?.accessToken) ?? "",
+                                            refresh: authState.lastTokenResponse?.refreshToken,
+                                            expiration: authState.lastTokenResponse?.accessTokenExpirationDate)
             
             
             // Get User Email Information
@@ -70,8 +71,6 @@ public class EmailService {
                   }catch{
                       print("error")
                   }
-                  
-                  
                   let dataReceived = String(data: data!, encoding: .utf8)
                   let decoder = JSONDecoder()
                   let body = dataReceived?.data(using: .utf8)
