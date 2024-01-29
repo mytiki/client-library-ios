@@ -7,12 +7,12 @@ import Foundation
 
 final class KeychainHelper {
     
-    private let bundle: String = "com.mytiki.publish.client"
+    private static let bundle: String = "com.mytiki.publish.client"
     
     static let standard = KeychainHelper()
     private init() {}
     
-    func save(_ data: Data, service: String, key: String) {
+    static func save(_ data: Data, service: String, key: String) {
         
         // Create query
         let query = [
@@ -45,7 +45,7 @@ final class KeychainHelper {
         }
     }
     
-    func read(service: String, key: String) -> Data? {
+    static func read(service: String, key: String) -> Data? {
         
         let query = [
             kSecAttrService: bundle + service,
@@ -60,7 +60,7 @@ final class KeychainHelper {
         return (result as? Data)
     }
         
-    func delete(service: String, key: String) {
+    static func delete(service: String, key: String) {
         
         let query = [
             kSecAttrService: bundle + service,
@@ -71,7 +71,7 @@ final class KeychainHelper {
         // Delete item from keychain
         SecItemDelete(query)
     }
-    func update(_ data: Data, service: String, key: String) {
+    static func update(_ data: Data, service: String, key: String) {
 
         // Item already exist, thus update it.
         let query = [

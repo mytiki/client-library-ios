@@ -1,17 +1,26 @@
 PODS:
+  - AppAuth (1.6.2):
+    - AppAuth/Core (= 1.6.2)
+    - AppAuth/ExternalUserAgent (= 1.6.2)
+  - AppAuth/Core (1.6.2)
+  - AppAuth/ExternalUserAgent (1.6.2):
+    - AppAuth/Core
   - TikiClient (0.1.0):
+    - AppAuth
     - TikiSdkDebug (= 3.0.0)
     - TikiSdkRelease (= 3.0.0)
   - TikiSdkDebug (3.0.0)
   - TikiSdkRelease (3.0.0)
 
 DEPENDENCIES:
+  - AppAuth
   - TikiClient (from `../`)
   - TikiSdkDebug (= 3.0.0)
   - TikiSdkRelease (= 3.0.0)
 
 SPEC REPOS:
   trunk:
+    - AppAuth
     - TikiSdkDebug
     - TikiSdkRelease
 
@@ -20,10 +29,11 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  TikiClient: c9b723aef10b9dc2af7ddb496c4deb7b93a5cef4
+  AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
+  TikiClient: 59537eaa0863edbaf45ad96bb4daeefc700306d5
   TikiSdkDebug: 85a41ce306804d45014345fb12ed4f34b83defe0
   TikiSdkRelease: 5979b718bf1776d1d9e66fbd503aed531f9e4d0d
 
-PODFILE CHECKSUM: e0191a41f646ed0f4e8eb4be378ce9c0129c0068
+PODFILE CHECKSUM: fd1619aa28ac7a08860f5cb3a8b9a81d3b0ed35a
 
 COCOAPODS: 1.14.3
