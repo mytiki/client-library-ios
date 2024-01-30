@@ -48,7 +48,7 @@ public class EmailService {
           if let authState = authState {
             self.setAuthState(authState)
               let authToken = AuthToken(auth: (authState.lastTokenResponse?.accessToken) ?? "",
-                                            refresh: authState.lastTokenResponse?.refreshToken,
+                                        refresh: (authState.lastTokenResponse?.refreshToken) ?? "",
                                             expiration: authState.lastTokenResponse?.accessTokenExpirationDate)
             
             
@@ -80,12 +80,7 @@ public class EmailService {
                   EmailRepository.SaveEmailToken(authToken: authToken, email: emailOauthResponse.email)
                   
               }.resume()
-              
-              
-            
-              
-            print("Got authorization tokens. Access token: " +
-                  "\(authState.lastTokenResponse?.accessToken ?? "nil")")
+
           } else {
             print("Authorization error: \(error?.localizedDescription ?? "Unknown error")")
             self.setAuthState(nil)
@@ -100,6 +95,47 @@ public class EmailService {
     public static func continueOauthlogin(url: URL) {
         currentAuthorizationFlow?.resumeExternalUserAgentFlow(with: url)
         currentAuthorizationFlow = nil
+    }
+    
+    public func refresh(_ provider:EmailProviderEnum,_ email: String,_ clientID: String, _ clientSecret: String = ""){
+        
+        let user = EmailRepository.ReadEmailToken(email: email)
+        
+        print("Initiating refresh authorization token request")
+        
+        // Get User Email Information
+        let kRefreshTokenEndpoint = "https://www.googleapis.com/oauth2/v4/token?grant_type=refresh_token&refresh_token=\(user.refresh)&client_id=\(clientID)"
+        
+        let refreshTokenEndpoint = URL(string: kRefreshTokenEndpoint)!
+
+          // Add Bearer token to request
+        var urlRequest = URLRequest(url: refreshTokenEndpoint)
+        urlRequest.httpMethod = "POST"
+        
+        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200...299).contains(httpResponse.statusCode) else {
+                print(response)
+                return
+            }
+            do{
+                let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
+            }catch{
+                print("error")
+            }
+            let dataReceived = String(data: data!, encoding: .utf8)
+            let decoder = JSONDecoder()
+            let body = dataReceived?.data(using: .utf8)
+            let tokenRefreshed = try! decoder.decode(EmailOauthRefeshTokenResponse.self, from: body!)
+            var date = Date.now
+            date = date.addingTimeInterval(3600)
+            let userAuthToken = AuthToken(auth: tokenRefreshed.access_token, refresh: user.refresh, expiration: date)
+            
+            EmailRepository.UpdateEmailToken(authToken: AuthToken(auth: tokenRefreshed.access_token, refresh: user.refresh, expiration: date), email: email)
+            
+        }.resume()
+
+        
     }
 
     /// Retrieves the list of connected email accounts.
