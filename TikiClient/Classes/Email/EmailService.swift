@@ -142,7 +142,7 @@ public class EmailService {
     ///
     /// - Returns: List of connected email accounts.
     public func accounts() -> [String] {
-        return []
+        return EmailRepository.ReadAllEmail()
     }
 
     /// Removes a previously added email account.

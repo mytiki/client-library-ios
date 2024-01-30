@@ -26,6 +26,9 @@ public class EmailRepository {
         let auth = try! decoder.decode(AuthToken.self, from: jsonData!)
         return auth
     }
+    public static func ReadAllEmail() -> [String] {
+        return KeychainHelper.readAll(service: ".email") ?? [""]
+    }
     
     public static func DeleteEmailToken(email: String){
         KeychainHelper.delete(service: ".email", key: email)
