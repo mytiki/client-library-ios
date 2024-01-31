@@ -59,6 +59,29 @@ final class KeychainHelper {
         
         return (result as? Data)
     }
+    
+    static func readAll(service: String) -> [String]? {
+        var accounts: [String] = []
+        
+        let query: [String: Any] = [
+          kSecClass as String: kSecClassGenericPassword,
+          kSecAttrService as String: bundle + service, // change this line to match your service account value
+          kSecReturnAttributes as String: true,
+          kSecReturnData as String: true,
+          kSecMatchLimit as String: kSecMatchLimitAll
+        ]
+                
+        var result: CFTypeRef?
+        let operationStatus = SecItemCopyMatching(query as CFDictionary, &result)
+        
+        let resultArray = result as! [NSDictionary]
+        resultArray.forEach { item in
+            let accountData = item["acct"] as? String
+            accounts.append(accountData ?? "")
+            
+        }
+        return accounts
+    }
         
     static func delete(service: String, key: String) {
         
