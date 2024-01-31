@@ -149,6 +149,6 @@ public class EmailService {
     ///
     /// - Parameter email: The email account to be removed.
     public func logout(email: String) {
-        // Implementation
+        EmailRepository.DeleteEmailToken(email: email)
     }
 }
