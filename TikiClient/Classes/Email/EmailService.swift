@@ -137,6 +137,10 @@ public class EmailService {
 
         
     }
+    
+    public static func verifyStatus(email: String) -> AccountStatus {
+        return AccountStatus.verified
+    }
 
     /// Retrieves the list of connected email accounts.
     ///
