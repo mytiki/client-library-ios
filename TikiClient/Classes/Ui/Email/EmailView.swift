@@ -27,8 +27,8 @@ public struct EmailView: View{
                 accounts.removeAll(where: {acc in removed == acc})
             }
             Text("Add Account").font(Rewards.theme.fontBold(size: 28)).padding(.top, 30)
-            if(provider == .email(.google)){
-                EmailLoginOAuth(accounts: $accounts).padding(.top, 24)
+            if(provider == .email(.google) || provider == .email(.outlook)){
+                EmailLoginOAuth(accounts: $accounts, provider: provider).padding(.top, 24)
             }
         }.asScreen(title: provider.name(), action: {showAccountSheet = false})
     }
