@@ -16,7 +16,7 @@ struct HomeScreen: View {
             HomeView(onDismiss: onDismiss, onLicenseDeclined: {
                 Rewards.license.decline()
                 isLicensed = Rewards.license.isLicensed()
-            }, providers: [.google])
+            })
         }
         if(!isLicensed){
             LicenseView(onDismiss: onDismiss, onLicenseAccepted: {

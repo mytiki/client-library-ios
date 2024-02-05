@@ -6,6 +6,8 @@
 import SwiftUI
 
 struct EmailCard: View {
+    let provider: AccountProvider
+
     var body: some View {
         VStack(spacing: 0){
             ZStack(){
@@ -16,7 +18,7 @@ struct EmailCard: View {
                     .shadow(color: Rewards.theme.secondaryBackgroundColor, radius: 0, x: 4, y: 4)
                 TikiImages.gmail.resizable().frame(width: 100, height: 100)
             }.frame(width: 100, height: 100).background(.white).padding(.top, 24)
-            Text("Gmail")
+            Text(provider.name())
                 .font(Rewards.theme.fontBold(size: 32))
                 .padding(.top, 16)
             Text("When you connect your Gmail account, we auto-identify receipts and process available cashback rewards")

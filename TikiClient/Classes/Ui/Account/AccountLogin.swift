@@ -12,7 +12,7 @@ struct AccountLogin: View {
     @State var password: String = ""
     @State var errorMessage: String = ""
     
-    var provider: EmailProviderEnum
+    var provider: AccountProvider
     let onLogin: (Account) -> Void
     
     @FocusState private var usernameIsFocused: Bool

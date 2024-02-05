@@ -14,11 +14,11 @@ public struct HomeView: View {
     @State var showMoreSheet: Bool = false
     @State var showAccountSheet: Bool = false
     @State var offset: CGFloat = 0
-    @State var providers: [EmailProviderEnum]
-    @State var provider: EmailProviderEnum? = nil
+    @State var providers: [AccountProvider] = Rewards.account.providers()
+    @State var provider: AccountProvider? = nil
     @State var isOpen: Bool = false
     
-    func onProvider(provider: EmailProviderEnum) -> Void{
+    func onProvider(provider: AccountProvider) -> Void{
         self.provider = provider
         self.showAccountSheet = true
     }
@@ -56,9 +56,9 @@ public struct HomeView: View {
                           .padding(.bottom, 24)
                     }
                     if(isOpen){
-                        HomeGrid(isOpen: $isOpen, providers: providers)
+                        HomeGrid(isOpen: $isOpen, providers: providers, onProvider: onProvider)
                     }else{
-                        HomeCarousel(providers: providers)
+                        HomeCarousel(providers: providers, onProvider: onProvider)
                     }
                 }
                 .padding(.bottom, isOpen ? 0 : 40)
@@ -101,8 +101,14 @@ public struct HomeView: View {
             }
             
             if(showAccountSheet){
-                EmailView(provider: provider!, showAccountSheet: $showAccountSheet, onAccount: removeProvider)
-
+                switch(provider){
+                    case .email(let _):
+                        EmailView(provider: provider!, showAccountSheet: $showAccountSheet, onAccount: removeProvider)
+                    case .retailer(let _):
+                            RetailerView(provider: provider!, showAccountSheet: $showAccountSheet, onAccount: removeProvider)
+                    case .none:
+                        EmptyView()
+                }
             }
         }
     }

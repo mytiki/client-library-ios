@@ -6,7 +6,7 @@
 import Foundation
 
 /// Enum representing email providers.
-public enum EmailProviderEnum: String {
+public enum EmailProviderEnum: String, CaseIterable {
     /// Google email provider.
     case google = "GOOGLE"
     

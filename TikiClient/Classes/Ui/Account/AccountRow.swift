@@ -15,7 +15,7 @@ struct AccountRow: View {
             AccountIcon(provider: acc.provider, status: acc.status, width: 56, height: 56)
                 .padding(.trailing, 24)
             VStack(alignment: .leading, spacing: 0){
-                Text(acc.provider.rawValue)
+                Text(acc.provider.name())
                     .font(Rewards.theme.fontBold(size: 24))
                     .foregroundStyle(acc.status == .unverified ? Color.tikiRed : Rewards.theme.secondaryTextColor)
                 Text(acc.username)
@@ -27,6 +27,10 @@ struct AccountRow: View {
             Spacer()
             Button(action: {
                 do{
+                    Task(){
+                        let account = try await Rewards.account.logout(username: acc.username, provider: acc.provider)
+                        onRemove(account)
+                    }
    
                 }catch{
                     print("logout error")

@@ -45,7 +45,9 @@ public class Rewards{
     public static var theme: Theme = Theme()
     
     /// An instance of `AccountService` for managing 3rd party accounts.
-    public static let account = Account(username: "test", provider: .google)
+    public static let account = AccountService()
+    
+    var _accounts: [Account] = []
     
     /// An instance of `CaptureService` for handling data capture functionalities.
     public static var capture = CaptureService.init()
@@ -65,6 +67,18 @@ public class Rewards{
     /// An instance of UIViewController.
     public static var rootViewController: UIViewController? = nil
     
+    
+    /// Retrieves user accounts associated with a specific `AccountProvider`.
+    ///
+    /// - Parameter provider: The account provider for which accounts should be retrieved.
+    /// - Returns: An array of user accounts for the specified provider.
+    func accounts(for provider: AccountProvider) -> [Account] {
+        var accounts: [Account] = []
+        _accounts.forEach { acc in
+            if acc.provider == provider { accounts.append(acc) }
+        }
+        return accounts
+    }
     
     /// Initializes the rewards system and presents the home screen.
     ///
@@ -167,4 +181,19 @@ public class Rewards{
         ]
     }
     
+    /// Retrieves available `AccountProvider`, excluding those already associated with existing accounts.
+    ///
+    /// - Returns: An array of available account providers.
+    func providers() -> [AccountProvider] {
+        var providers = AccountProvider.all()
+        _accounts.forEach { acc in
+            let index = providers.firstIndex(where: {
+                acc.provider.name() == $0.name()
+            })
+            if index != nil {
+                providers.remove(at: index!)
+            }
+        }
+        return providers
+    }
 }

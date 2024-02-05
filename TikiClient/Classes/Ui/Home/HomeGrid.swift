@@ -8,7 +8,9 @@ import SwiftUI
 public struct HomeGrid: View{
     
     @Binding var isOpen: Bool
-    var providers: [EmailProviderEnum]
+    var providers: [AccountProvider]
+    let onProvider: (AccountProvider) ->  Void
+
 
     var gridItemLayout = Array(repeating: GridItem(.flexible(), spacing: 0), count: 3)
     
@@ -19,7 +21,7 @@ public struct HomeGrid: View{
                     ForEach(providers, id: \.hashValue){ provider in
                         HomeProvider(provider: provider, status: .unverified)
                             .onTapGesture {
-                                print(provider)
+                                onProvider(provider)
                         }
                     }
                 }

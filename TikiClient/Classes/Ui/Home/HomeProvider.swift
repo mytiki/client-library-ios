@@ -6,7 +6,7 @@
 import SwiftUI
 
 struct HomeProvider: View {
-    let provider: EmailProviderEnum
+    let provider: AccountProvider
     let status: AccountStatus
     let iconSize: CGFloat = 80
     
@@ -17,7 +17,7 @@ struct HomeProvider: View {
                 .font(Rewards.theme.fontMedium(size: 12))
               .foregroundColor(Rewards.theme.secondaryTextColor)
               .padding(.top, 10)
-            Text(provider.rawValue)
+            Text(provider.name())
               .font(SpaceGrotesk.medium(size: 12))
               .foregroundColor(Rewards.theme.secondaryTextColor)
               .multilineTextAlignment(.center)

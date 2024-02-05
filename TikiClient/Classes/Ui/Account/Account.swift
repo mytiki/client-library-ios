@@ -9,7 +9,7 @@ import SwiftUI
 public struct Account: Hashable {
 
    public var username: String
-   public var provider: EmailProviderEnum
+   public var provider: AccountProvider
    public var status: AccountStatus = .unverified
    
    public func hash(into hasher: inout Hasher) {
@@ -22,7 +22,7 @@ public struct Account: Hashable {
        lhs.provider == rhs.provider
    }
     
-    public init(username: String, provider: EmailProviderEnum) {
+    public init(username: String, provider: AccountProvider) {
         self.username = username
         self.provider = provider
         self.status = EmailService.verifyStatus(email: username)

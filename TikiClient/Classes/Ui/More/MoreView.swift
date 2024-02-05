@@ -12,7 +12,7 @@ public struct MoreView: View{
     @State var selectedAccount: Account? = nil
     @State var showTerms: Bool = false
     @State var showAccount: Bool = false
-    @State var accounts = [Account(username: "test", provider: .google)]    
+    @State var accounts = [Account(username: "test", provider: .email(.google))]
     
     
     func onAccountSelected(account: Account) -> Void{

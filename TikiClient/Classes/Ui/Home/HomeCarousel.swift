@@ -8,7 +8,9 @@ import Foundation
 
 public struct HomeCarousel : View {
     
-    let providers: [EmailProviderEnum]
+    let providers: [AccountProvider]
+    let onProvider: (AccountProvider) ->  Void
+
 
     public var body: some View {
         ScrollView (.horizontal, showsIndicators: false){
@@ -17,6 +19,7 @@ public struct HomeCarousel : View {
                         HomeProvider(provider: provider, status: .unverified)
                             .onTapGesture {
                                 print(provider)
+                                onProvider(provider)
                         }
                     }
                 }
