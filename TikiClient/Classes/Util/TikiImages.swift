@@ -8,7 +8,9 @@ import SwiftUI
 
 public struct TikiImages{
     public static let google = Image(uiImage: icon(icon: "google"))
+    public static let outlook = Image(uiImage: icon(icon: "outlook"))
     public static let googleAuth = Image(uiImage: icon(icon: "google_auth"))
+    public static let microsoftOauth = Image(uiImage: icon(icon: "microsoft"))
     public static let gmail = Image(uiImage: icon(icon: "gmail"))
     public static let UberEats = Image(uiImage: icon(icon: "Uber Eats"))
     public static let DollarGeneral = Image(uiImage: icon(icon: "Dollar General"))
