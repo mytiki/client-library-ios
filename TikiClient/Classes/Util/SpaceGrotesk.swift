@@ -22,10 +22,11 @@ public struct SpaceGrotesk{
 
 extension Font {
     public static func registerSpaceGrotesk() {
-        let bundle = Bundle(for: TikiClient.self)
+        let bundle = Bundle(for: Rewards.self)
         let resourceBundle = Bundle(url: bundle.url(forResource: "RewardsAssets", withExtension: "bundle")!)!
         guard let fontURL = resourceBundle.url(forResource: "Assets/SpaceGrotesk", withExtension: "ttf") else {
-            fatalError("Couldn't find font SpaceGrotesk")
+            return 
+//            fatalError("Couldn't find font SpaceGrotesk")
         }
         var error: Unmanaged<CFError>?
         let success = CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, &error)
@@ -35,3 +36,5 @@ extension Font {
         }
     }
 }
+
+

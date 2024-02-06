@@ -29,4 +29,11 @@ Pod::Spec.new do |s|
   s.dependency 'TikiSdkRelease', '3.0.0', :configurations => 'Release'
   s.dependency 'AppAuth'
 
+  s.resource_bundles = {
+    'RewardsAssets' => [
+      'Rewards/Assets'
+    ],
+  }
+  s.resources = 'Rewards/Assets'
+
 end

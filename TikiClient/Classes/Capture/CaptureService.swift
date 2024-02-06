@@ -32,5 +32,17 @@ public class CaptureService {
     public func status(receiptId: String) -> PublishingStatusEnum {
         return .inProgress
     }
+    
+    
+    /// Retrieves a list of retailer offers for a specific account provider.
+    ///
+    /// - Parameter provider: The account provider for which offers should be retrieved.
+    /// - Returns: An array of `RetailerOffer` objects containing offer details.
+    func offers(provider: AccountProvider) -> [RetailerOffer] {
+        return [
+            RetailerOffer(provider: provider, description: "4% cashback on electronics", url: URL(string: "https://mytiki.com")!),
+            RetailerOffer(provider: provider, description: "10% off on electronics", url: URL(string: "https://mytiki.com")!)
+        ]
+    }
 }
 
