@@ -20,8 +20,7 @@ struct RewardsExampleApp: App {
         WindowGroup {
             if( !isInitialized ) {
                 Button(action: {
-                    emailService.login(.google, "252743744388-u57lenibhl7nr8q50d4e1dfjd36am22q.apps.googleusercontent.com")
-//                    emailService.login(.outlook, "dd0d9b1e-a128-434c-911e-3c79df961b9b")
+                    emailService.login()
                 }) {
                     HStack (spacing: 5) {
                         Image(systemName: "hand.tap.fill")
@@ -31,8 +30,7 @@ struct RewardsExampleApp: App {
                     }
                 }.padding(.bottom, 25)
                 Button(action: {
-                    emailService.refresh(.google, "jessemonteiroferreira@gmail.com", "252743744388-u57lenibhl7nr8q50d4e1dfjd36am22q.apps.googleusercontent.com")
-//                    emailService.login(.outlook, "dd0d9b1e-a128-434c-911e-3c79df961b9b")
+                    emailService.refresh()
                 }) {
                     HStack (spacing: 5) {
                         Image(systemName: "hand.tap.fill")
@@ -42,17 +40,17 @@ struct RewardsExampleApp: App {
                     }
                 }.padding(.bottom, 25)
                 Button(action: {
-                    emailService.logout(email: "email")
+                    print()
                 }) {
                     HStack (spacing: 5) {
                         Image(systemName: "hand.tap.fill")
                             .font(.system(size: 20, weight: .regular, design: .rounded))
-                        Text("Click to Remove Token")
+                        Text("Click to receive an account")
                             .font(.system(size: 20, weight: .regular, design: .rounded)).clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }.padding(.bottom, 25)
                 Button(action: {
-                    print(emailService.accounts())
+                    print(EmailService.accounts())
                 }) {
                     HStack (spacing: 5) {
                         Image(systemName: "hand.tap.fill")
@@ -62,8 +60,18 @@ struct RewardsExampleApp: App {
                     }
                 }.padding(.bottom, 25)
                 Button(action: {
-                    Rewards.config(terms: "Terms for testing", clientId: "clientId", clientSecret: "")
-                    try? Rewards.show(userId: "")
+                    EmailService.logout()
+                }) {
+                    HStack (spacing: 5) {
+                        Image(systemName: "hand.tap.fill")
+                            .font(.system(size: 20, weight: .regular, design: .rounded))
+                        Text("Click to Remove Account")
+                            .font(.system(size: 20, weight: .regular, design: .rounded)).clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                }.padding(.bottom, 25)
+                Button(action: {
+                    Rewards.config()
+                    try? Rewards.show()
                 }) {
                     HStack (spacing: 5) {
                         Image(systemName: "hand.tap.fill")

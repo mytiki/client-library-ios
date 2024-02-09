@@ -8,10 +8,10 @@ import Foundation
 /// Enum representing email providers.
 public enum EmailProviderEnum: String, CaseIterable {
     /// Google email provider.
-    case google = "GOOGLE"
+    case google
     
     /// Outlook email provider.
-    case outlook = "OUTLOOK"
+    case outlook
     
     public func authorizationEndpoint() -> URL{
         switch(self) {

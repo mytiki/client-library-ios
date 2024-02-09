@@ -4,9 +4,8 @@ import TikiSdk
 /// Service for managing user licenses.
 public class LicenseService {
 
-
     var _isLicensed: Bool = false
-    
+    private var tikiSdk: TikiSdk = TikiSdk.instance
     // MARK: - Public Methods
 
     /// The terms and conditions associated with the license.

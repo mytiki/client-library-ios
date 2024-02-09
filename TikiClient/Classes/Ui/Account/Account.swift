@@ -11,6 +11,14 @@ public struct Account: Hashable {
    public var username: String
    public var provider: AccountProvider
    public var status: AccountStatus = .unverified
+    
+    public static func toAccount(accounts: [AuthTokenResponse]) -> [Account]{
+        var accoutsReturn: [Account] = []
+        for account in accounts {
+            accoutsReturn.append(Account(username: account.email, provider: AccountProvider.toAccountProvider(provider: account.provider) ?? AccountProvider.email(.google)))
+        }
+        return accoutsReturn
+    }
    
    public func hash(into hasher: inout Hasher) {
      hasher.combine(username)

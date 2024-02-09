@@ -9,6 +9,8 @@ struct EmailLoginOAuth: View {
     
     @Binding var accounts: [Account]
     let provider: AccountProvider
+    let emailService = EmailService()
+    let onUpdate: () -> Void
 
     
     var body: some View {
@@ -18,7 +20,9 @@ struct EmailLoginOAuth: View {
                     .resizable()
                     .frame(height: 70)
                     .onTapGesture {
-                        print("TODO Google OAuth")
+                        emailService.login(.google, Rewards.configuration?.clientId ?? ""){
+                            onUpdate()
+                        }
                     }.padding(.top, 22)
             }
             if(provider.name() == "Outlook"){
@@ -29,13 +33,6 @@ struct EmailLoginOAuth: View {
                         print("TODO Microsoft OAuth")
                     }.padding(.top, 22)
             }
-            HStack(){
-                VStack{
-                    Divider()
-                        .frame(height: 1)
-                        .overlay(Rewards.theme.secondaryTextColor)
-                }
-            }.padding(.top, 32)
         }
     }
 }

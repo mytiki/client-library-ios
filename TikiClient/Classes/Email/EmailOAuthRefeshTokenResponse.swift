@@ -1,10 +1,7 @@
-//
-//  EmailOAuthRefeshTokenResponse.swift
-//  TikiClient
-//
-//  Created by Jesse Monteiro Ferreira on 30/01/24.
-//
-
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in the root directory.
+ */
 import Foundation
 
 public struct EmailOauthRefeshTokenResponse : Codable{

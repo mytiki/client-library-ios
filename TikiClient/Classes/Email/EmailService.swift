@@ -9,7 +9,6 @@ import AppAuth
 
 /// Service for managing email accounts.
 public class EmailService {
-
     
     static var currentAuthorizationFlow: OIDExternalUserAgentSession?
     
@@ -26,7 +25,7 @@ public class EmailService {
     ///   - account: An instance of the Account class containing user and account information.
     ///   - onError: A closure to handle error messages.
     ///   - onSuccess: A closure to handle success actions.
-    public func login(_ provider:EmailProviderEnum, _ clientID: String, _ clientSecret: String = "") {
+    public func login(_ provider:EmailProviderEnum, _ clientID: String, _ clientSecret: String = "", onComplete: (() -> Void)? = nil) {
 
         let configuration = OIDServiceConfiguration(
             authorizationEndpoint: provider.authorizationEndpoint(),
@@ -39,53 +38,57 @@ public class EmailService {
                                               redirectURL: provider.deeplinkReturn(),
                                               responseType: OIDResponseTypeCode,
                                               additionalParameters: nil)
+        
+            // performs authentication request
+            print("Initiating authorization request with scope: \(request.scope ?? "nil")")
 
-        // performs authentication request
-        print("Initiating authorization request with scope: \(request.scope ?? "nil")")
-
-        EmailService.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: request, presenting: viewController) { authState, error in
-            
-          if let authState = authState {
-            self.setAuthState(authState)
-              let authToken = AuthToken(auth: (authState.lastTokenResponse?.accessToken) ?? "",
-                                        refresh: (authState.lastTokenResponse?.refreshToken) ?? "",
-                                            expiration: authState.lastTokenResponse?.accessTokenExpirationDate)
-            
-            
-            // Get User Email Information
-            
-            let userinfoEndpoint = URL(string:provider.userInfoEndpoint())!
-
-              // Add Bearer token to request
-              var urlRequest = URLRequest(url: userinfoEndpoint)
-              urlRequest.allHTTPHeaderFields = ["Authorization": "Bearer \(authToken.auth)"]
-
-              URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-                  guard let httpResponse = response as? HTTPURLResponse,
-                        (200...299).contains(httpResponse.statusCode) else {
-                      print(response)
-                      return
-                  }
-                  do{
-                      let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
-                  }catch{
-                      print("error")
-                  }
-                  let dataReceived = String(data: data!, encoding: .utf8)
-                  let decoder = JSONDecoder()
-                  let body = dataReceived?.data(using: .utf8)
-                  let emailOauthResponse = try! decoder.decode(EmailOauthResponse.self, from: body!)
-
-
-                  EmailRepository.SaveEmailToken(authToken: authToken, email: emailOauthResponse.email)
-                  
-              }.resume()
-
-          } else {
-            print("Authorization error: \(error?.localizedDescription ?? "Unknown error")")
-            self.setAuthState(nil)
-          }
-        }
+            EmailService.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: request, presenting: viewController) { authState, error in
+                
+                if let authState = authState {
+                    self.setAuthState(authState)
+                    let authToken = AuthToken(auth: (authState.lastTokenResponse?.accessToken) ?? "",
+                                              refresh: (authState.lastTokenResponse?.refreshToken) ?? "",
+                                              provider: provider.rawValue,
+                                              expiration: authState.lastTokenResponse?.accessTokenExpirationDate)
+                    
+                    
+                    // Get User Email Information
+                    
+                    let userinfoEndpoint = URL(string:provider.userInfoEndpoint())!
+                    
+                    // Add Bearer token to request
+                    var urlRequest = URLRequest(url: userinfoEndpoint)
+                    urlRequest.allHTTPHeaderFields = ["Authorization": "Bearer \(authToken.auth)"]
+                    
+                    URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+                        guard let httpResponse = response as? HTTPURLResponse,
+                              (200...299).contains(httpResponse.statusCode) else {
+                            print(response)
+                            return
+                        }
+                        do{
+                            let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
+                        }catch{
+                            print("error")
+                        }
+                        let dataReceived = String(data: data!, encoding: .utf8)
+                        let decoder = JSONDecoder()
+                        let body = dataReceived?.data(using: .utf8)
+                        let emailOauthResponse = try! decoder.decode(EmailOauthResponse.self, from: body!)
+                        
+                        
+                        EmailRepository.SaveEmailToken(authToken: authToken, email: emailOauthResponse.email)
+                        onComplete?()
+                        
+                    }.resume()
+                    
+                } else {
+                    print("Authorization error: \(error?.localizedDescription ?? "Unknown error")")
+                    self.setAuthState(nil)
+                    onComplete?()
+                }
+            }
+    
         
     }
 
@@ -129,9 +132,9 @@ public class EmailService {
             let tokenRefreshed = try! decoder.decode(EmailOauthRefeshTokenResponse.self, from: body!)
             var date = Date.now
             date = date.addingTimeInterval(3600)
-            let userAuthToken = AuthToken(auth: tokenRefreshed.access_token, refresh: user.refresh, expiration: date)
+            let userAuthToken = AuthToken(auth: tokenRefreshed.access_token, refresh: user.refresh, provider: provider.rawValue, expiration: date)
             
-            EmailRepository.UpdateEmailToken(authToken: AuthToken(auth: tokenRefreshed.access_token, refresh: user.refresh, expiration: date), email: email)
+            EmailRepository.UpdateEmailToken(authToken: AuthToken(auth: tokenRefreshed.access_token, refresh: user.refresh, provider: provider.rawValue, expiration: date), email: email)
             
         }.resume()
 
@@ -145,14 +148,22 @@ public class EmailService {
     /// Retrieves the list of connected email accounts.
     ///
     /// - Returns: List of connected email accounts.
-    public func accounts() -> [String] {
-        return EmailRepository.ReadAllEmail()
+    public static func accounts() -> [Account] {
+        var accounts = Account.toAccount(accounts: EmailRepository.ReadAllEmail())
+        return accounts
+    }
+    
+    /// Retrieves the list of connected email accounts.
+    ///
+    /// - Returns: List of connected email accounts.
+    public func account(email: String) -> AuthToken {
+        return EmailRepository.ReadEmailToken(email: email)
     }
 
     /// Removes a previously added email account.
     ///
     /// - Parameter email: The email account to be removed.
-    public func logout(email: String) {
+    public static func logout(email: String) {
         EmailRepository.DeleteEmailToken(email: email)
     }
 }

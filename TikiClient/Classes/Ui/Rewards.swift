@@ -47,7 +47,7 @@ public class Rewards{
     /// An instance of `AccountService` for managing 3rd party accounts.
     public static let account = AccountService()
     
-    var _accounts: [Account] = []
+    var _accounts: [Account] = EmailService.accounts()
     
     /// An instance of `CaptureService` for handling data capture functionalities.
     public static var capture = CaptureService.init()

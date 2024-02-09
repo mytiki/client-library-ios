@@ -26,8 +26,14 @@ public class EmailRepository {
         let auth = try! decoder.decode(AuthToken.self, from: jsonData!)
         return auth
     }
-    public static func ReadAllEmail() -> [String] {
-        return KeychainHelper.readAll(service: ".email") ?? [""]
+    public static func ReadAllEmail() -> [AuthTokenResponse] {
+        let accounts = KeychainHelper.readAll(service: ".email")
+        var authTokenResponse: [AuthTokenResponse] = []
+        for account in accounts! {
+            var acc = ReadEmailToken(email: account)
+            authTokenResponse.append(AuthTokenResponse(auth: acc.auth, refresh: acc.refresh, provider: acc.provider, email: account, expiration: acc.expiration))
+        }
+        return authTokenResponse
     }
     
     public static func DeleteEmailToken(email: String){
