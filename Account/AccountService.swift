@@ -34,7 +34,7 @@ public class AccountService{
 // MARK: - Properties
 
 /// An array containing the user accounts managed by the service.
-var _accounts: [Account] = []
+    var _accounts: [Account] = EmailService.accounts()
 
 // MARK: - Public Methods
 
@@ -42,6 +42,7 @@ var _accounts: [Account] = []
 ///
 /// - Returns: An array of user accounts.
 func accounts() -> [Account] {
+    _accounts = EmailService.accounts()
     return _accounts
 }
 
@@ -50,6 +51,7 @@ func accounts() -> [Account] {
 /// - Parameter provider: The account provider for which accounts should be retrieved.
 /// - Returns: An array of user accounts for the specified provider.
 func accounts(for provider: AccountProvider) -> [Account] {
+    accounts()
     var accounts: [Account] = []
     _accounts.forEach { acc in
         if acc.provider == provider { accounts.append(acc) }
@@ -66,9 +68,6 @@ func providers() -> [AccountProvider] {
         let index = providers.firstIndex(where: {
             acc.provider.name() == $0.name()
         })
-        if index != nil {
-            providers.remove(at: index!)
-        }
     }
     return providers
 }
@@ -137,6 +136,7 @@ func login(username: String, password: String, provider: AccountProvider) throws
                 break
             case .email(let emailEnum):
                 accountType = .email(emailEnum)
+                EmailService.logout(email: username)
                 break
             }
         return account

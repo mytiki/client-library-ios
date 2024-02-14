@@ -31,4 +31,15 @@ public enum AccountProvider: Hashable{
         }
         return providers
     }
+    
+    public static func toAccountProvider(provider: String) -> AccountProvider? {
+        if(provider == "GOOGLE"){
+            return email(.google)
+        }
+        if(provider == "OUTLOOK"){
+            return email(.outlook)
+        }else{
+            return email(.google)
+        }
+    }
 }
