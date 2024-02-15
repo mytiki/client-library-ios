@@ -34,7 +34,7 @@ public class EmailService {
         let request = OIDAuthorizationRequest(configuration: configuration,
                                               clientId: clientID,
                                               clientSecret: clientSecret,
-                                              scopes: [OIDScopeOpenID, OIDScopeProfile, OIDScopeEmail],
+                                              scopes: [OIDScopeOpenID, OIDScopeProfile, OIDScopeEmail, "https://www.googleapis.com/auth/gmail.readonly", "https://mail.google.com/"],
                                               redirectURL: provider.deeplinkReturn(),
                                               responseType: OIDResponseTypeCode,
                                               additionalParameters: nil)
@@ -165,5 +165,53 @@ public class EmailService {
     /// - Parameter email: The email account to be removed.
     public static func logout(email: String) {
         EmailRepository.DeleteEmailToken(email: email)
+    }
+    
+    public static func getEmail(email: String){
+        let userToken = EmailRepository.ReadEmailToken(email: email)
+        
+        
+        // Get User Email Information
+        let kRefreshTokenEndpoint = "https://gmail.googleapis.com/gmail/v1/users/me/messages"
+        
+        let refreshTokenEndpoint = URL(string: kRefreshTokenEndpoint)!
+
+          // Add Bearer token to request
+        var urlRequest = URLRequest(url: refreshTokenEndpoint)
+        urlRequest.httpMethod = "GET"
+        urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
+        print("####")
+        print(urlRequest.description)
+        print("###")
+        
+        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200...299).contains(httpResponse.statusCode) else {
+                print(response)
+                let dataReceived = String(data: data!, encoding: .utf8)
+                return
+            }
+            do{
+                let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
+            }catch{
+                print("error")
+            }
+            let dataReceived = String(data: data!, encoding: .utf8)
+            let decoder = JSONDecoder()
+            let body = dataReceived?.data(using: .utf8)
+            let emailListResponse = try! decoder.decode(EmailListResponse.self, from: body!)
+//            print(emailListResponse)
+            let encoder = JSONEncoder()
+            if let encodedEmailList = try? encoder.encode(emailListResponse){
+                UserDefaults.standard.set(encodedEmailList, forKey: "emailList")
+            }
+            if let savedEmailList = UserDefaults.standard.object(forKey: "emailList") as? Data{
+                if let savedEmailList = try? decoder.decode(EmailListResponse.self, from: savedEmailList){
+                    print("#EmailList Restored")
+                    print(savedEmailList)
+                }
+            }
+            
+        }.resume()
     }
 }
