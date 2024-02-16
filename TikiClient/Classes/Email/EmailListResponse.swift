@@ -9,5 +9,5 @@ import Foundation
 public struct EmailListResponse: Codable{
     public var messages: [MessageResponse]
     public var nextPageToken: String?
-    public var resulteSizeEstimate: String?
+    public var resultSizeEstimate: Int?
 }

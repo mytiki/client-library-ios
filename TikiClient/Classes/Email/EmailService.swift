@@ -34,7 +34,7 @@ public class EmailService {
         let request = OIDAuthorizationRequest(configuration: configuration,
                                               clientId: clientID,
                                               clientSecret: clientSecret,
-                                              scopes: [OIDScopeOpenID, OIDScopeProfile, OIDScopeEmail, "https://www.googleapis.com/auth/gmail.readonly", "https://mail.google.com/"],
+                                              scopes: [OIDScopeOpenID, OIDScopeProfile, OIDScopeEmail, "https://www.googleapis.com/auth/gmail.readonly"],
                                               redirectURL: provider.deeplinkReturn(),
                                               responseType: OIDResponseTypeCode,
                                               additionalParameters: nil)
@@ -171,18 +171,16 @@ public class EmailService {
         let userToken = EmailRepository.ReadEmailToken(email: email)
         
         
-        // Get User Email Information
-        let kRefreshTokenEndpoint = "https://gmail.googleapis.com/gmail/v1/users/me/messages"
+        // Get Email List Messages
+        let kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500"
         
-        let refreshTokenEndpoint = URL(string: kRefreshTokenEndpoint)!
+        let emailListMessages = URL(string: kEmailListMessages)!
 
           // Add Bearer token to request
-        var urlRequest = URLRequest(url: refreshTokenEndpoint)
+        var urlRequest = URLRequest(url: emailListMessages)
         urlRequest.httpMethod = "GET"
         urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
-        print("####")
         print(urlRequest.description)
-        print("###")
         
         URLSession.shared.dataTask(with: urlRequest) { data, response, error in
             guard let httpResponse = response as? HTTPURLResponse,
@@ -200,18 +198,126 @@ public class EmailService {
             let decoder = JSONDecoder()
             let body = dataReceived?.data(using: .utf8)
             let emailListResponse = try! decoder.decode(EmailListResponse.self, from: body!)
-//            print(emailListResponse)
+            print(emailListResponse)
             let encoder = JSONEncoder()
-            if let encodedEmailList = try? encoder.encode(emailListResponse){
-                UserDefaults.standard.set(encodedEmailList, forKey: "emailList")
+            if let encodedEmailMessageList = try? encoder.encode(emailListResponse.messages){
+                UserDefaults.standard.set(encodedEmailMessageList, forKey: "emailMessageList")
             }
-            if let savedEmailList = UserDefaults.standard.object(forKey: "emailList") as? Data{
+            if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
                 if let savedEmailList = try? decoder.decode(EmailListResponse.self, from: savedEmailList){
-                    print("#EmailList Restored")
-                    print(savedEmailList)
+
                 }
             }
+            guard let nextPageToken = emailListResponse.nextPageToken else {
+                self.getEmailMensages(emailToken: email)
+                return
+            }
+
+            keepGetEmailList(email: email, userToken: userToken.auth, pageToken: nextPageToken)
+            
             
         }.resume()
+    }
+    public static func keepGetEmailList(email: String, userToken: String, pageToken: String){
+        UserDefaults.standard.set(Date.now, forKey: "dateStartList")
+        UserDefaults.standard.set(pageToken, forKey: "lastNextPageToken")
+        
+        let userToken = EmailRepository.ReadEmailToken(email: email)
+        let kEmailListMessageEndpoint = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500"
+
+        var components = URLComponents(string: kEmailListMessageEndpoint)!
+        components.queryItems = [URLQueryItem(name: "pageToken", value: pageToken)]
+
+        if let kEmailListMessageEndpoint = components.url {
+            // Add Bearer token to request
+            var urlRequest = URLRequest(url: kEmailListMessageEndpoint)
+            urlRequest.httpMethod = "GET"
+            urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
+            print(urlRequest.description)
+            
+            URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+                guard let httpResponse = response as? HTTPURLResponse,
+                      (200...299).contains(httpResponse.statusCode) else {
+                    print(response)
+                    let dataReceived = String(data: data!, encoding: .utf8)
+                    return
+                }
+                do{
+                    let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
+                }catch{
+                    print("error")
+                }
+                let dataReceived = String(data: data!, encoding: .utf8)
+                let decoder = JSONDecoder()
+                let body = dataReceived?.data(using: .utf8)
+                let emailListResponse = try! decoder.decode(EmailListResponse.self, from: body!)
+                let encoder = JSONEncoder()
+                print(emailListResponse)
+                if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
+                    if let savedEmailList = try? decoder.decode([MessageResponse].self, from: savedEmailList){
+                        var emailMessageList = savedEmailList
+                        emailMessageList.append(contentsOf: emailListResponse.messages)
+                        if let encodedEmailMessageList = try? encoder.encode(emailMessageList){
+                            UserDefaults.standard.set(encodedEmailMessageList, forKey: "emailMessageList")
+                        }
+                    }
+                }
+                guard let nextPageToken = emailListResponse.nextPageToken else {
+                    self.getEmailMensages(emailToken: userToken.auth)
+                    UserDefaults.standard.set(nil, forKey: "lastNextPageToken")
+                    return
+                }
+                
+                UserDefaults.standard.set(nextPageToken, forKey: "lastNextPageToken")
+                print("#####lastNextPageToken\(nextPageToken)")
+                self.keepGetEmailList(email: email, userToken: userToken.auth, pageToken: nextPageToken)
+                
+            }.resume()
+        }
+ 
+
+    }
+    public static func getEmailMensages(emailToken: String){
+        let decoder = JSONDecoder()
+        if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
+            if let savedEmailList = try? decoder.decode([MessageResponse].self, from: savedEmailList){
+                for email in savedEmailList {
+                    let userToken = EmailRepository.ReadEmailToken(email: emailToken)
+                    
+                    
+                    // Get User Email Information
+                    let kEmailListMessageEndpoint = "https://gmail.googleapis.com/gmail/v1/users/me/messages/\(email.id)"
+                    
+                    let emailListMessageEndpoint = URL(string: kEmailListMessageEndpoint)!
+
+                      // Add Bearer token to request
+                    var urlRequest = URLRequest(url: emailListMessageEndpoint)
+                    urlRequest.httpMethod = "GET"
+                    urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
+                    print(urlRequest.description)
+                    
+                    URLSession.shared.dataTask(with: urlRequest)  { data, response, error in
+                            guard let httpResponse = response as? HTTPURLResponse,
+                                  (200...299).contains(httpResponse.statusCode) else {
+                                print(response)
+                                let dataReceived = String(data: data!, encoding: .utf8)
+                                return
+                            }
+                            do{
+                                let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
+                            }catch{
+                                print("error")
+                            }
+                            let dataReceived = String(data: data!, encoding: .utf8)
+                            let decoder = JSONDecoder()
+                            let body = dataReceived?.data(using: .utf8)
+                            let emailContentResponse = try! decoder.decode(MessageResponse.self, from: body!)
+                            let encoder = JSONEncoder()
+                            print(emailContentResponse)
+                            
+                        }.resume()
+                }
+            }
+        }
     }
 }

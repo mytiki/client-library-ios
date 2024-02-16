@@ -14,6 +14,7 @@ public struct MessageResponse: Codable {
       public var snippet: String?
       public var historyId: String?
       public var internalDate: String?
+      public var payload: MessagePartResponse?
       public var sizeEstimate: Int?
       public var raw: String?
     
