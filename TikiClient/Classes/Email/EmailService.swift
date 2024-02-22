@@ -279,9 +279,11 @@ public class EmailService {
     }
     public static func getEmailMensages(emailToken: String){
         let decoder = JSONDecoder()
+        var lastPartId: String = ""
         if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
             if let savedEmailList = try? decoder.decode([MessageResponse].self, from: savedEmailList){
                 for email in savedEmailList {
+                    var fileBase64: String = ""
                     let userToken = EmailRepository.ReadEmailToken(email: emailToken)
                     
                     
@@ -314,10 +316,26 @@ public class EmailService {
                             let emailContentResponse = try! decoder.decode(MessageResponse.self, from: body!)
                             let encoder = JSONEncoder()
                             print(emailContentResponse)
+                            if(emailContentResponse.payload?.parts != nil){
+                                fileBase64 += emailContentResponse.payload?.body?.data ?? ""
+                                for messagePart in emailContentResponse.payload!.parts! {
+                                    fileBase64 += messagePart.body?.data ?? ""
+                                }
+                                decodeMessageAttachment(attachmentBody: fileBase64)
+                            }
+                            else if(emailContentResponse.payload?.body?.data != nil){
+                                decodeMessageAttachment(attachmentBody: (emailContentResponse.payload?.body?.data)!)
+                            }
+
+                            
                             
                         }.resume()
                 }
             }
         }
+    }
+    public static func decodeMessageAttachment(attachmentBody: String){
+        print(attachmentBody.base64Decoded()?.description)
+
     }
 }
