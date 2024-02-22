@@ -286,6 +286,7 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-TikiClient_Example/Pods-TikiClient_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework",
+				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/TikiClient/TikiClient.framework",
 				"${BUILT_PRODUCTS_DIR}/TikiSdkDebug/TikiSdk.framework",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TikiSdkDebug/App.framework/App",
@@ -303,6 +304,7 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AppAuth.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TikiClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TikiSdk.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/App.framework",

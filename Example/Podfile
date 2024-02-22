@@ -12,6 +12,7 @@ target 'TikiClient_Example' do
   pod 'TikiSdkRelease', '3.0.0', :configurations => 'Release'
   
   pod 'AppAuth'
+  pod 'CryptoSwift', '~> 1.8.1'
 
   target 'TikiClient_Tests' do
     inherit! :search_paths
