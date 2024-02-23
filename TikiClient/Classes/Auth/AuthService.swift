@@ -11,6 +11,46 @@ import CryptoSwift
 
 /// Authentication Service for TIKI
 public class AuthService {
+    
+    typealias TokenRequestCallback = (String?) -> Void
+
+    public struct CryptoKeyPair {
+        let publicKey: String
+        let privateKey: String
+    }
+    
+    static func getToken(providerId: String, completion: @escaping TokenRequestCallback) {
+        // Implement logic to fetch and return the provider token
+        // ...
+
+        // Simulate token retrieval completion with a result
+        let result: String? = "Simulated Provider Token"
+        completion(result)
+    }
+    
+    static func signMessage(message: String, privateKey: String, completion: @escaping (String?) -> Void) {
+        // Implement logic to sign the message using private key
+        // ...
+
+        // Simulate signature generation completion with a result
+        let result: String? = "SimulatedSignature"
+        completion(result)
+    }
+    
+    static func registerAddress(providerId: String, userId: String, completion: @escaping (Bool) -> Void) {
+        getToken(providerId: providerId) {
+            accessToken in
+            guard let accessToken = accessToken else {
+                print("Error getting token")
+                completion(false)
+                return
+            }
+            generateKeyPair()
+            
+            
+            
+        }
+    }
 
     /// Authenticates with TIKI and saves the auth and refresh tokens.
     ///
@@ -73,6 +113,16 @@ public class AuthService {
         publicKey = SecKeyCopyPublicKey(privateKey)
         
         return (publicKey!, privateKey)
+    }
+    
+    static func generateKey(completion: @escaping (CryptoKeyPair?) -> Void) {
+        // Implement logic to generate and return a key pair
+        // ...
+
+        // Simulate key pair generation completion with a result
+        var keyPair = generateKeyPair()
+        let result: CryptoKeyPair? = CryptoKeyPair(publicKey: "", privateKey: "SimulatedPrivateKey")
+        completion(result)
     }
 
     // Method to create the address using SHA-256 digest
