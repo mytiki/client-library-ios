@@ -28,6 +28,7 @@ Pod::Spec.new do |s|
   s.dependency 'TikiSdkDebug', '3.0.0', :configurations => 'Debug'
   s.dependency 'TikiSdkRelease', '3.0.0', :configurations => 'Release'
   s.dependency 'AppAuth'
+  s.dependency 'CryptoSwift', '~> 1.8.1'
 
   s.resource_bundles = {
     'RewardsAssets' => [

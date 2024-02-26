@@ -6,6 +6,8 @@
 
 import Foundation
 import AppAuth
+import PDFKit
+
 
 /// Service for managing email accounts.
 public class EmailService {
@@ -314,12 +316,77 @@ public class EmailService {
                             let decoder = JSONDecoder()
                             let body = dataReceived?.data(using: .utf8)
                             let emailContentResponse = try! decoder.decode(MessageResponse.self, from: body!)
-                            let encoder = JSONEncoder()
                             print(emailContentResponse)
                             if(emailContentResponse.payload?.parts != nil){
                                 fileBase64 += emailContentResponse.payload?.body?.data ?? ""
                                 for messagePart in emailContentResponse.payload!.parts! {
                                     fileBase64 += messagePart.body?.data ?? ""
+                                    if(messagePart.mimeType == "image/png"){
+                                        print("############ARQUIVO PNG")
+                                        var kEmaiMessageAttaachmentEndpoint: String = "https://gmail.googleapis.com/gmail/v1/users/me/messages/\(emailContentResponse.id)/attachments/\(messagePart.body!.attachmentId!)"
+                                        let emaiMessageAttaachmentEndpoint = URL(string: kEmaiMessageAttaachmentEndpoint)!
+                                        var urlRequest = URLRequest(url: emaiMessageAttaachmentEndpoint)
+                                        urlRequest.httpMethod = "GET"
+                                        urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
+                                        print(urlRequest.description)
+                                        
+                                        URLSession.shared.dataTask(with: urlRequest)  { data, response, error in
+                                            guard let httpResponse = response as? HTTPURLResponse,
+                                                  (200...299).contains(httpResponse.statusCode) else {
+                                                print(response)
+                                                let dataReceived = String(data: data!, encoding: .utf8)
+                                                return
+                                            }
+                                            do{
+                                                let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
+                                            }catch{
+                                                print("error")
+                                            }
+                                            let dataReceived = String(data: data!, encoding: .utf8)
+                                            let decoder = JSONDecoder()
+                                            let body = dataReceived?.data(using: .utf8)
+                                            let emailContentResponse = try! decoder.decode(MessagePartBodyResponse.self, from: body!)
+                                            var base64Url = base64urlToBase64(base64url: emailContentResponse.data!)
+                                            var image = base64Convert(base64String: base64Url)
+                                            if let base64Encoded = Data(base64Encoded: emailContentResponse.data!) {
+                                                if let image = UIImage(data: base64Encoded) {
+                                                    print("Image Get")
+                                                    // Use the `image` object
+                                                }
+                                            }
+                                            print(data?.debugDescription)
+                                        }.resume()
+                                    }
+                                    if(messagePart.mimeType == "application/pdf"){
+                                        print("ARQUIVO PDF")
+                                        var kEmaiMessageAttaachmentEndpoint: String = "https://gmail.googleapis.com/gmail/v1/users/me/messages/\(emailContentResponse.id)/attachments/\(messagePart.body!.attachmentId!)"
+                                        let emaiMessageAttaachmentEndpoint = URL(string: kEmaiMessageAttaachmentEndpoint)!
+                                        var urlRequest2 = URLRequest(url: emaiMessageAttaachmentEndpoint)
+                                        urlRequest2.httpMethod = "GET"
+                                        urlRequest2.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
+                                        print(urlRequest.description)
+                                        
+                                        URLSession.shared.dataTask(with: urlRequest2)  { data, response, error in
+                                            guard let httpResponse = response as? HTTPURLResponse,
+                                                  (200...299).contains(httpResponse.statusCode) else {
+                                                print(response)
+                                                let dataReceived = String(data: data!, encoding: .utf8)
+                                                return
+                                            }
+                                            do{
+                                                let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
+                                            }catch{
+                                                print("error")
+                                            }
+                                            let dataReceived = String(data: data!, encoding: .utf8)
+                                            let decoder = JSONDecoder()
+                                            let body = dataReceived?.data(using: .utf8)
+                                            let emailContentResponse = try! decoder.decode(MessagePartBodyResponse.self, from: body!)
+                                            var base64 = base64urlToBase64(base64url: emailContentResponse.data!)
+                                            saveBase64StringToPDF(base64)
+                                            print(data?.debugDescription)
+                                        }.resume()
+                                    }
                                 }
                                 decodeMessageAttachment(attachmentBody: fileBase64)
                             }
@@ -337,5 +404,54 @@ public class EmailService {
     public static func decodeMessageAttachment(attachmentBody: String){
         print(attachmentBody.base64Decoded()?.description)
 
+    }
+    
+    public static func base64Convert(base64String: String?) -> UIImage{
+       if (base64String?.isEmpty)! {
+           return #imageLiteral(resourceName: "kohls.png")
+       }else {
+           // !!! Separation part is optional, depends on your Base64String !!!
+           let temp = base64String?.components(separatedBy: ",")
+           let dataDecoded : Data = Data(base64Encoded: temp![0], options: .ignoreUnknownCharacters)!
+           let decodedimage = UIImage(data: dataDecoded)
+           return decodedimage!
+       }
+     }
+    
+    static func base64urlToBase64(base64url: String) -> String {
+        var base64 = base64url
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+        if base64.characters.count % 4 != 0 {
+            base64.append(String(repeating: "=", count: 4 - base64.characters.count % 4))
+        }
+        return base64
+    }
+    
+    static func saveBase64StringToPDF(_ base64String: String) {
+        guard
+            var documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last,
+            let convertedData = Data(base64Encoded: base64String)
+        else {
+            return
+        }
+        
+        documentsURL.appendPathComponent("document.pdf")
+        
+        do {
+            try convertedData.write(to: documentsURL)
+            let pdfView = PDFView()
+            print("PDF saved successfully at: \(documentsURL)")
+//            if let resourceUrl = Bundle.main.url(forResource: "document.pdf", withExtension: "pdf") {
+                if let document = PDFDocument(url: documentsURL) {
+                    pdfView.document = document
+                    print("Document successfully save")
+                }else {
+                    return
+                }
+//            }
+        } catch {
+            print("Error saving PDF: \(error.localizedDescription)")
+        }
     }
 }
