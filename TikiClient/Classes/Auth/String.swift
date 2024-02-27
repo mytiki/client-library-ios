@@ -1,14 +1,3 @@
-//
-//  UrlSafe.swift
-//  TikiClient
-//
-//  Created by Jesse Monteiro Ferreira on 26/02/24.
-//
-
-import Foundation
-
-extension String {
-    
     public func toUrlSafe() -> String {
         return self.addingPercentEncoding(withAllowedCharacters: String.formURLEncodedAllowedCharacters)!.replacingOccurrences(of: " ", with:"+")
     }
@@ -31,4 +20,18 @@ extension String {
         return allowed
     }()
 
-}
+    func base64Decoded() -> String? {
+        var st = self
+            .replacingOccurrences(of: "_", with: "/")
+            .replacingOccurrences(of: "-", with: "+")
+        let remainder = self.count % 4
+        if remainder > 0 {
+            st = self.padding(toLength: self.count + 4 - remainder,
+                              withPad: "=",
+                              startingAt: 0)
+        }
+        guard let d = Data(base64Encoded: st, options: .ignoreUnknownCharacters) else{
+            return nil
+        }
+        return String(data: d, encoding: .utf8)
+    }
