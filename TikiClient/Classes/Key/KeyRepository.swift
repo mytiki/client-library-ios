@@ -5,14 +5,11 @@
 
 import Foundation
 
-final class KeychainHelper {
+final class KeyRepository {
     
-    private static let bundle: String = "com.mytiki.publish.client"
+    private let bundle: String = "com.mytiki.publish.client"
     
-    static let standard = KeychainHelper()
-    private init() {}
-    
-    static func save(_ data: Data, service: String, key: String) {
+    func save(_ data: Data, service: String, key: String) {
         
         // Create query
         let query = [
@@ -45,7 +42,7 @@ final class KeychainHelper {
         }
     }
     
-    static func read(service: String, key: String) -> Data? {
+    func read(service: String, key: String) -> Data? {
         
         let query = [
             kSecAttrService: bundle + service,
@@ -60,26 +57,7 @@ final class KeychainHelper {
         return (result as? Data)
     }
     
-    static func readAll(service: String) -> [String]? {
-//        var accounts: [String] = []
-//        
-//        let query = [
-//          kSecClass as String: kSecClassGenericPassword,
-//          kSecAttrService as String: bundle + service, // change this line to match your service account value
-//          kSecReturnAttributes as String: true,
-//          kSecReturnData as String: true,
-//          kSecMatchLimit as String: kSecMatchLimitAll
-//        ] as? [String: Any]
-//                
-//        var result: CFTypeRef?
-//        
-//        let resultArray = result as? [NSDictionary]
-//        resultArray?.forEach { item in
-//            let accountData = item["acct"] as? String
-//            accounts.append(accountData ?? "")
-//            
-//        }
-//        return accounts
+    func readAll(service: String) -> [String]? {
         var accounts: [String] = []
         
         let query: [String: Any] = [
@@ -103,7 +81,7 @@ final class KeychainHelper {
     
     }
         
-    static func delete(service: String, key: String) {
+    func delete(service: String, key: String) {
         
         let query = [
             kSecAttrService: bundle + service,
@@ -114,7 +92,8 @@ final class KeychainHelper {
         // Delete item from keychain
         SecItemDelete(query)
     }
-    static func update(_ data: Data, service: String, key: String) {
+
+    func update(_ data: Data, service: String, key: String) {
 
         // Item already exist, thus update it.
         let query = [

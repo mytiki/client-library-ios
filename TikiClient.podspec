@@ -29,10 +29,10 @@ Pod::Spec.new do |s|
   s.dependency 'CryptoSwift'
 
   s.resource_bundles = {
-    'RewardsAssets' => [
-      'Rewards/Assets'
+    'TikiClientAssets' => [
+      'TikiClient/Assets'
     ],
   }
-  s.resources = 'Rewards/Assets'
+  s.resources = 'TikiClient/Assets'
 
 end
