@@ -21,34 +21,99 @@ public class AuthService {
     
     static func getToken(providerId: String, completion: @escaping TokenRequestCallback) {
         // Implement logic to fetch and return the provider token
-        // ...
 
         // Simulate token retrieval completion with a result
         let result: String? = "Simulated Provider Token"
         completion(result)
     }
     
-    static func signMessage(message: String, privateKey: String, completion: @escaping (String?) -> Void) {
-        // Implement logic to sign the message using private key
-        // ...
+    static func signMessage(message: String, privateKey: SecKey, completion: @escaping (String?) -> Void) {
+        let data = message.data(using: .utf8)!
+
+        var error: Unmanaged<CFError>?
+        guard let signedData = SecKeyCreateSignature(privateKey,
+                                                     .rsaSignatureDigestPKCS1v15SHA256,
+                                                     data as CFData,
+                                                     &error) as Data? else
+        {
+            completion(nil)
+            return
+        }
 
         // Simulate signature generation completion with a result
-        let result: String? = "SimulatedSignature"
+        let result: String? = signedData.base64EncodedString()
         completion(result)
     }
     
-    static func registerAddress(providerId: String, userId: String, completion: @escaping (Bool) -> Void) {
-        getToken(providerId: providerId) {
-            accessToken in
+    public static func registerAddress(providerId: String, userId: String, pubKey: String, completion: @escaping (Bool) -> Void) {
+        TokenRequestTask.execute(providerId: providerId, pubKey: pubKey){ accessToken in
             guard let accessToken = accessToken else {
                 print("Error getting token")
                 completion(false)
                 return
             }
-            generateKeyPair()
-            
-            
-            
+            generateKeyPair() { keyPair in
+                guard let keyPair = keyPair else {
+                    print("Error generating key pair")
+                    completion(false)
+                    return
+                }
+                address(publicKey: keyPair.publicKey){ address in
+                    guard let address = address else {
+                        print("Error generating address")
+                        completion(false)
+                        return
+                    }
+                    signMessage(message: "\(userId).\(address)", privateKey: keyPair.privateKey) { signature in
+                        guard let signature = signature else {
+                            print("Error generating signature")
+                            completion(false)
+                            return
+                        }
+                        
+                        let urlString = "https://account.mytiki.com/api/latest/provider/\(providerId)/user"
+                        guard let url = URL(string: urlString) else {
+                            print("Invalid URL")
+                            completion(false)
+                            return
+                        }
+                        
+                        var request = URLRequest(url: url)
+                        request.httpMethod = "POST"
+                        
+                        let encoder = JSONEncoder()
+                        var jsonString = ""
+                        guard let publicKeyData = SecKeyCopyExternalRepresentation(keyPair.publicKey, nil) as Data? else {
+                            completion(false)
+                            return
+                        }
+                        let body = UserAddressRequest(id: userId, address: address.toUrlSafe(), pubKey: publicKeyData.base64EncodedString(), signature: signature)
+                        if let jsonData = try? encoder.encode(body){
+                            jsonString = String(data: jsonData, encoding: .utf8)!
+                        }
+                        let data = Data(jsonString.utf8)
+                        request.httpBody = data
+                        
+                        request.addValue("application/json", forHTTPHeaderField: "accept")
+                        request.addValue("application/json", forHTTPHeaderField: "content-type")
+                        request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "authorization")
+                        
+                        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                                print("########User registration successful")
+                                completion(true)
+                            } else {
+                                print("Error registering user. HTTP status: \(response?.description ?? "Unknown")")
+                                print("HTTP error! Body: \(String(describing: String(data: data!, encoding: .utf8)))")
+                                completion(false)
+                            }
+                        }
+                        
+                        task.resume()
+
+                    }
+                }
+            }
         }
     }
 
@@ -86,7 +151,7 @@ public class AuthService {
     
  
     // Method to generate a key pair
-    public static func generateKeyPair() -> (publicKey: SecKey, privateKey: SecKey)? {
+    public static func generateKeyPair(completion: @escaping ((publicKey: SecKey, privateKey: SecKey)?) -> Void) {
         var publicKey, privateKey: SecKey?
         
         let attributes: [String: Any] = [
@@ -107,39 +172,47 @@ public class AuthService {
         var error: Unmanaged<CFError>?
         guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
             print("Error generating key pair: \(error.debugDescription)")
-            return nil
+            completion(nil)
+            return
         }
         
         publicKey = SecKeyCopyPublicKey(privateKey)
         
-        return (publicKey!, privateKey)
+        
+        completion((publicKey!, privateKey))
     }
-    
-    static func generateKey(completion: @escaping (CryptoKeyPair?) -> Void) {
-        // Implement logic to generate and return a key pair
-        // ...
 
-        // Simulate key pair generation completion with a result
-        var keyPair = generateKeyPair()
-        let result: CryptoKeyPair? = CryptoKeyPair(publicKey: "", privateKey: "SimulatedPrivateKey")
-        completion(result)
-    }
 
     // Method to create the address using SHA-256 digest
-    public static func address(publicKey: SecKey) -> String? {
+    public static func address(publicKey: SecKey, completion: @escaping (String?) -> Void) {
         do {
             // Get the public key data
             guard let publicKeyData = SecKeyCopyExternalRepresentation(publicKey, nil) as Data? else {
-                return nil
+                completion(nil)
+                return
             }
-
-            print(publicKeyData.base64EncodedString())
-            
             // Create SHA-256 digest of the public key
             let digest = publicKeyData.sha3(.sha256)
-            print(digest)
-
-            return Data(digest).base64EncodedString()
+            completion(Data(digest).base64EncodedString())
         }
     }
+    
+    private static let formURLEncodedAllowedCharacters: CharacterSet = {
+        typealias c = UnicodeScalar
+        
+        // https://url.spec.whatwg.org/#urlencoded-serializing
+        var allowed = CharacterSet()
+        allowed.insert(c(0x2A))
+        allowed.insert(charactersIn: c(0x2D)...c(0x2E))
+        allowed.insert(charactersIn: c(0x30)...c(0x39))
+        allowed.insert(charactersIn: c(0x41)...c(0x5A))
+        allowed.insert(c(0x5F))
+        allowed.insert(charactersIn: c(0x61)...c(0x7A))
+        
+        // and we'll deal with ` ` later…
+        allowed.insert(" ")
+        
+        return allowed
+    }()
 }
+

@@ -8,7 +8,7 @@ import Foundation
 class TokenAuth {
 
     func generateToken(providerId: String, publicKey: String) {
-        TokenRequestTask.execute(providerId: providerId, pubKey: publicKey)
+        TokenRequestTask.execute(providerId: providerId, pubKey: publicKey){_ in }
     }
 
     // TokenRequestCallback methods
