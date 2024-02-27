@@ -1,6 +1,6 @@
 class KeyService{
 
-  private static let repository = KeyRepository()
+  public static let repository = KeyRepository()
 
   static public func generate() -> SecKey? {
 
@@ -36,7 +36,7 @@ class KeyService{
     return Data(publicKeyData.sha3(.sha256))
   }
 
-  static public func sign(message: String, privateKey: SecKey) -> Data? {
+  public static func sign(message: String, privateKey: SecKey) -> Data? {
       let data = message.data(using: .utf8) as! CFData
 
       var error: Unmanaged<CFError>?

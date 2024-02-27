@@ -5,7 +5,6 @@
 
 import Foundation
 import SwiftUI
-import TikiSdk
 import AppAuth
 
 /// # Rewards
@@ -59,7 +58,7 @@ public class Rewards{
 //    public static let card = CardService()
     
     /// An instance of `Configuration` for receive the configuration.
-    public static var configuration: Configuration? = nil
+//    public static var configuration: Configuration? = nil
 
     /// An instance of `Company` for receive the company informations.
     public static var company: Company? = nil
@@ -88,9 +87,6 @@ public class Rewards{
     /// The home screen is presented modally with a cross-dissolve transition and a semi-transparent background.
     public static func show(_ theme: Theme? = nil, userId: String) throws {
         self.theme = theme ?? self.theme
-        if(configuration == nil){
-            throw NSError()
-        }
         Task(priority: .high){
 
             DispatchQueue.main.async{
@@ -127,10 +123,7 @@ public class Rewards{
         accentColor: Color? = nil,
         fontFamily: String? = nil
     ){
-        self.configuration = Configuration(
-            terms: terms,
-            clientId: clientId
-        )
+        
         if(primaryTextColor != nil && secondaryTextColor != nil && primaryTextColor != nil && secondaryTextColor != nil && accentColor != nil && fontFamily != nil){
             theme(primaryTextColor: primaryTextColor!, secondaryTextColor: secondaryTextColor!, primaryBackgroundColor: primaryBackgroundColor!, secondaryBackgroundColor: secondaryBackgroundColor!, accentColor: accentColor!, fontFamily: fontFamily!)
         }

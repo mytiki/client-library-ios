@@ -11,7 +11,7 @@ PODS:
     - CryptoSwift
 
 DEPENDENCIES:
-  - TikiClient (from `../../`)
+  - TikiClient (from `../`)
 
 SPEC REPOS:
   trunk:
@@ -20,13 +20,13 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   TikiClient:
-    :path: "../../"
+    :path: "../"
 
 SPEC CHECKSUMS:
   AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
   CryptoSwift: b9c701d6f5011df23794dbf7f2e480a77835d83d
-  TikiClient: f5816eac8b805c7c3bff0ae5756157e2ab4edb7b
+  TikiClient: 3a91dc7c2954d54e92f8a1f2f132844c29a50cbb
 
-PODFILE CHECKSUM: fd3d11779d55747e3f3ad79fdd52a85c1727148c
+PODFILE CHECKSUM: 339d426bb0b30438fc144e5f30cae3e597ba6423
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.14.3

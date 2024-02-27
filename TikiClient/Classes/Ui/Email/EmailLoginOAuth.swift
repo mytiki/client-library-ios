@@ -20,9 +20,6 @@ struct EmailLoginOAuth: View {
                     .resizable()
                     .frame(height: 70)
                     .onTapGesture {
-                        emailService.login(.google, Rewards.configuration?.clientId ?? ""){
-                            onUpdate()
-                        }
                     }.padding(.top, 22)
             }
             if(provider.name() == "Outlook"){

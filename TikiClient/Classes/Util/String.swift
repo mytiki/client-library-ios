@@ -1,6 +1,6 @@
  extension String {
     
-    public func urlencoded() -> String {
+    public func urlEncoded() -> String {
         return self.addingPercentEncoding(withAllowedCharacters: String.formURLEncodedAllowedCharacters)!.replacingOccurrences(of: " ", with:"+")
     }
 

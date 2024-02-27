@@ -41,7 +41,7 @@ public class TikiClient {
 
     /// Initiates the process of scraping receipts from emails.
     /// - Parameter emailProvider: The email provider (GOOGLE or OUTLOOK).
-    public func login(emailProvider: EmailProviderEnum) {
+    public func login() {
         // Implementation
     }
 
