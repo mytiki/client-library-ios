@@ -7,7 +7,4 @@ platform :ios, '15.0'
 target 'TikiClient_Example' do
   pod 'TikiClient', :path => '../'
 
-  target 'TikiClient_Tests' do
-    inherit! :search_paths
-  end
 end

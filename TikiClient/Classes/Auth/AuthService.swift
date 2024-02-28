@@ -29,16 +29,27 @@ public class AuthService {
                 completion(nil)
                 return
             }
+
+            guard let internalPubKey = SecKeyCopyPublicKey(privateKey),
+                let publicKeyData = SecKeyCopyExternalRepresentation(internalPubKey, nil) as Data? else {
+                    print("Error extracting Public Key Data")
+                    completion(nil)
+                    return
+                  }
             
-            let publicKey = SecKeyCopyPublicKey(privateKey)
-            
-            guard let address = KeyService.address(publicKey: publicKey!) else {
+            let keyType = kSecAttrKeyTypeRSA
+            let keySize = 256
+            let exportImportManager = CryptoExportImportManager()
+            let publicKeyB64 = exportImportManager.exportPublicKeyToPEM(publicKeyData, keySize: keySize)!
+
+            guard let address = KeyService.address(b64PubKey: publicKeyB64) else {
                 print("Error generating address")
                 completion(nil)
                 return
             }
+
             
-            let message = "\(userId).\(address.base64EncodedString())"
+            let message = "\(userId).\(address.base64EncodedString().base64UrlEncoding())"
             
             guard let signature = KeyService.sign(message: message, privateKey: privateKey) else {
                 print("Error generating signature")
@@ -46,13 +57,7 @@ public class AuthService {
                 return
             }
             
-            guard let publicKeyData = SecKeyCopyExternalRepresentation(publicKey!, nil) as Data? else {
-                print("Error extracting Public Key Data")
-                completion(nil)
-                return
-            }
-            
-            let reqBody = AuthAddrRequest(id: userId, address: address.base64EncodedString().urlEncoded(), pubKey: publicKeyData.base64EncodedString(), signature: signature.base64EncodedString())
+            let reqBody = AuthAddrRequest(id: userId, address: address.base64EncodedString().base64UrlEncoding(), pubKey: publicKeyB64, signature: signature.base64EncodedString())
             
             guard let jsonData = try? JSONEncoder().encode(reqBody) else {
                 print("Error encoding JSON")
@@ -124,6 +129,30 @@ public class AuthService {
         }.resume()
         
     }
+    public func exportPublicKey(_ rawPublicKeyBytes: Data, base64EncodingOptions: Data.Base64EncodingOptions = []) -> String?
+    {
+        return rawPublicKeyBytes.base64EncodedString(options: base64EncodingOptions)
     }
+    
+    func exportKeyAsPEM(_ key: SecKey, isPrivateKey: Bool) -> String? {
+        var cfError: Unmanaged<CFError>?
+        let data = SecKeyCopyExternalRepresentation(key, &cfError)
+        guard let keyData = data as Data?, cfError == nil else {
+            print("Error exporting key: \(cfError.debugDescription)")
+            return nil
+        }
+        
+        let pemType = isPrivateKey ? "PRIVATE" : "PUBLIC"
+        let keyHeader = "-----BEGIN RSA \(pemType) KEY-----\n"
+        let keyFooter = "\n-----END RSA \(pemType) KEY-----"
+        
+        var base64EncodedString = keyData.base64EncodedString()
+        // Wrap lines at 64 characters as per PEM format
+        base64EncodedString = base64EncodedString.enumerated().map { $0.offset % 64 == 0 ? "\n\($0.element)" : "\($0.element)" }.joined()
+        
+        return keyHeader + base64EncodedString + keyFooter
+    }
+
+}
 
 

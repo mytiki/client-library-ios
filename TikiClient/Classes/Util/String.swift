@@ -1,12 +1,20 @@
- extension String {
+extension String {
     
     public func urlEncoded() -> String {
         return self.addingPercentEncoding(withAllowedCharacters: String.formURLEncodedAllowedCharacters)!.replacingOccurrences(of: " ", with:"+")
     }
-
+    public func base64UrlEncoding() -> String {
+        return self
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
+        
+    }
+    
     public func base64Decoded() -> String? {
         var st = self
             .replacingOccurrences(of: "_", with: "/")
+            .replacingOccurrences(of: "-", with: "+")
             .replacingOccurrences(of: "-", with: "+")
         let remainder = self.count % 4
         if remainder > 0 {
@@ -18,6 +26,10 @@
             return nil
         }
         return String(data: d, encoding: .utf8)
+    }
+    public func removePadding() -> String? {
+        return self.replacingOccurrences(of: "=", with: "")
+        
     }
     
     private static let formURLEncodedAllowedCharacters: CharacterSet = {
@@ -37,4 +49,24 @@
         
         return allowed
     }()
- }
+}
+
+extension Data {
+    
+    init?(hexString: String) {
+        let len = hexString.count / 2
+        var data = Data(capacity: len)
+        var i = hexString.startIndex
+        for _ in 0..<len {
+            let j = hexString.index(i, offsetBy: 2)
+            let bytes = hexString[i..<j]
+            if var num = UInt8(bytes, radix: 16) {
+                data.append(&num, count: 1)
+            } else {
+                return nil
+            }
+            i = j
+        }
+        self = data
+    }
+}
