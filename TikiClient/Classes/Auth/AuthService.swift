@@ -13,8 +13,8 @@ import CryptoSwift
 public class AuthService {
     
     public init(){}
-    
-    public func address(providerId: String, userId: String, pubKey: String, completion: @escaping (String?) -> Void){
+     
+    public func address(providerId: String, userId: String, pubKey: String, completion: @escaping (String?) -> Void) {
         let urlString = URL(string: "https://account.mytiki.com/api/latest/provider/\(providerId)/user")
         
         token(providerId: providerId, clientSecret: pubKey){ token in
@@ -37,7 +37,6 @@ public class AuthService {
                     return
                   }
             
-            let keyType = kSecAttrKeyTypeRSA
             let keySize = 256
             let exportImportManager = CryptoExportImportManager()
             let publicKeyB64 = exportImportManager.exportPublicKeyToPEM(publicKeyData, keySize: keySize)!
