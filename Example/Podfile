@@ -6,5 +6,10 @@ platform :ios, '15.0'
 
 target 'TikiClient_Example' do
   pod 'TikiClient', :path => '../'
-
-end
+  end
+  
+  target 'TikiClientExampleTests' do
+    pod 'TikiClient', :path => '../'
+    pod 'CryptoSwift'
+    end
+    

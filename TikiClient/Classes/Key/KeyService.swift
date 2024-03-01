@@ -1,7 +1,7 @@
 import Security
 import CryptoSwift
 
-class KeyService{
+public class KeyService{
 
     public static let repository = KeyRepository()
 

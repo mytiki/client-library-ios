@@ -20,26 +20,13 @@
                ReferencedContainer = "container:TikiClient.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "607FACE41AFB9204008FA782"
-               BuildableName = "TikiClient_Tests.xctest"
-               BlueprintName = "TikiClient_Tests"
-               ReferencedContainer = "container:TikiClient.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      customLLDBInitFile = "/Users/jesse/TIKI/publish-client-ios/Example/TikiClient_ExampleTests"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <MacroExpansion>
          <BuildableReference
@@ -52,12 +39,13 @@
       </MacroExpansion>
       <Testables>
          <TestableReference
-            skipped = "NO">
+            skipped = "NO"
+            parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "607FACE41AFB9204008FA782"
-               BuildableName = "TikiClient_Tests.xctest"
-               BlueprintName = "TikiClient_Tests"
+               BlueprintIdentifier = "88E1B7C42B926458005429F1"
+               BuildableName = "TikiClientExampleTests.xctest"
+               BlueprintName = "TikiClientExampleTests"
                ReferencedContainer = "container:TikiClient.xcodeproj">
             </BuildableReference>
          </TestableReference>

@@ -5,7 +5,7 @@
 
 import Foundation
 
-final class KeyRepository {
+public final class KeyRepository {
     
     private let bundle: String = "com.mytiki.publish.client"
     
