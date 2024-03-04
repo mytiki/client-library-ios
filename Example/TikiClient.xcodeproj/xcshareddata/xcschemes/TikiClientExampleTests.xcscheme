@@ -14,12 +14,13 @@
       shouldAutocreateTestPlan = "YES">
       <Testables>
          <TestableReference
-            skipped = "NO">
+            skipped = "NO"
+            parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "607FACE41AFB9204008FA782"
-               BuildableName = "TikiClient_Tests.xctest"
-               BlueprintName = "TikiClient_Tests"
+               BlueprintIdentifier = "88E1B7C42B926458005429F1"
+               BuildableName = "TikiClientExampleTests.xctest"
+               BlueprintName = "TikiClientExampleTests"
                ReferencedContainer = "container:TikiClient.xcodeproj">
             </BuildableReference>
          </TestableReference>

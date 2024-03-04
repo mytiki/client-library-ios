@@ -8,25 +8,16 @@ PODS:
   - CryptoSwift (1.8.1)
   - TikiClient (0.1.0):
     - AppAuth
-    - CryptoSwift (~> 1.8.1)
-    - TikiSdkDebug (= 3.0.0)
-    - TikiSdkRelease (= 3.0.0)
-  - TikiSdkDebug (3.0.0)
-  - TikiSdkRelease (3.0.0)
+    - CryptoSwift
 
 DEPENDENCIES:
-  - AppAuth
-  - CryptoSwift (~> 1.8.1)
+  - CryptoSwift
   - TikiClient (from `../`)
-  - TikiSdkDebug (= 3.0.0)
-  - TikiSdkRelease (= 3.0.0)
 
 SPEC REPOS:
   trunk:
     - AppAuth
     - CryptoSwift
-    - TikiSdkDebug
-    - TikiSdkRelease
 
 EXTERNAL SOURCES:
   TikiClient:
@@ -35,10 +26,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
   CryptoSwift: b9c701d6f5011df23794dbf7f2e480a77835d83d
-  TikiClient: 09c9b5160649da8a2bf2f4b2540f102003613ded
-  TikiSdkDebug: 85a41ce306804d45014345fb12ed4f34b83defe0
-  TikiSdkRelease: 5979b718bf1776d1d9e66fbd503aed531f9e4d0d
+  TikiClient: 3a91dc7c2954d54e92f8a1f2f132844c29a50cbb
 
-PODFILE CHECKSUM: 139eae647314f28725475996d3411d971a7fef80
+PODFILE CHECKSUM: 7501e71a92a5f280b97aaf5f199fa519634e934c
 
 COCOAPODS: 1.14.3

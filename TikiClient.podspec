@@ -18,23 +18,21 @@ Pod::Spec.new do |s|
 
   s.homepage         = 'https://mytiki.com'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'ricardobrg' => 'ricardobrg@users.noreply.github.com' }
+  s.author           = { 'TIKI team' => 'hello@mytiki.com' }
   s.source           = { :git => 'https://github.com/tiki/publish-client-ios.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '15.0'
 
   s.source_files = 'TikiClient/Classes/**/*'
 
-  s.dependency 'TikiSdkDebug', '3.0.0', :configurations => 'Debug'
-  s.dependency 'TikiSdkRelease', '3.0.0', :configurations => 'Release'
   s.dependency 'AppAuth'
-  s.dependency 'CryptoSwift', '~> 1.8.1'
+  s.dependency 'CryptoSwift'
 
   s.resource_bundles = {
-    'RewardsAssets' => [
-      'Rewards/Assets'
+    'TikiClientAssets' => [
+      'TikiClient/Assets'
     ],
   }
-  s.resources = 'Rewards/Assets'
+  s.resources = 'TikiClient/Assets'
 
 end
