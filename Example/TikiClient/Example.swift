@@ -15,6 +15,7 @@ struct Main: App {
     @State private var selectedImage: UIImage?
     @State var image: UIImage?
     
+    var license = License()
 //    @State var isInitialized = false
 //    @State var startBtnEnabled = true
 //    @State var username: String = ""
@@ -39,6 +40,9 @@ struct Main: App {
                     CameraPickerView {image in
                         selectedImage = image
                     }
+                }
+                Button("Create License") {
+                    print(try? license.create(token: "token", postLicenseRequest: PostLicenseRequest(ptr: "askjdh", tags: ["asdasdasd"], uses:[], terms: "dasdasdasd", expiry: "", titleDesc: "", licenseDesc: "", privateKey: KeyService.generate()!)))
                 }
             }
         }

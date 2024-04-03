@@ -18,7 +18,6 @@ public class TikiClient {
     
     public let auth = AuthService()
     public let capture = CaptureService()
-    public let license = LicenseService()
 
     /// Initializes the `TikiClient` with the application context and sets its parameters.
     /// - Parameters:
