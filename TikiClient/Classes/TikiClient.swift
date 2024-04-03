@@ -16,9 +16,9 @@ import SwiftUI
 /// simplify the integration process or opt for individual libraries based on their specific needs.
 public class TikiClient {
     
-    public let auth = AuthService()
-    public let capture = CaptureService()
-    public let license = LicenseService()
+    public static let auth = AuthService()
+    public static let capture = CaptureService()
+    //public let license = LicenseService()
 
     /// Initializes the `TikiClient` with the application context and sets its parameters.
     /// - Parameters:
@@ -26,13 +26,13 @@ public class TikiClient {
     ///   - providerId: The TIKI Publishing ID of the data provider.
     ///   - userId: The user identification from the provider.
     ///   - company: The legal information of the company.
-    public func initialize(providerId: String, userId: String, company: Company) {
+    public static func initialize(providerId: String, userId: String, company: Company) {
         // Implementation
     }
 
     /// Initiates the process of scanning a physical receipt and returns the receipt ID.
     /// - Returns: The scanned receipt data or an empty string if the scan is unsuccessful.
-    public func scan() -> String {
+    public static func scan() -> String {
         return ""
     }
 

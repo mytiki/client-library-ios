@@ -9,7 +9,7 @@ public class CaptureService: UIViewController, UIImagePickerControllerDelegate, 
     /// Captures an image of a receipt for processing.
     ///
     /// - Returns: The captured receipt image.
-    public func camera(onFinish: @escaping (UIImage) -> Void){
+    public func scan(onFinish: @escaping (UIImage) -> Void){
       imagePickerCallback = onFinish
       let keyWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) ?? UIApplication.shared.windows.first
       imagePickerRootVc = keyWindow?.rootViewController

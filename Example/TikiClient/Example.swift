@@ -15,6 +15,7 @@ struct Main: App {
     @State private var selectedImage: UIImage?
     @State var image: UIImage?
     
+    
 //    @State var isInitialized = false
 //    @State var startBtnEnabled = true
 //    @State var username: String = ""
@@ -33,12 +34,9 @@ struct Main: App {
                         .scaledToFit()
                 }
                 Button("Open camera") {
-                    self.showCamera.toggle()
-                }
-                .fullScreenCover(isPresented: $showCamera) {
-                    CameraPickerView {image in
-                        selectedImage = image
-                    }
+                    TikiClient.capture.scan(onFinish: { image in
+                        print(image)
+                    })
                 }
             }
         }
