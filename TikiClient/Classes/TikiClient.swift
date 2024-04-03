@@ -18,10 +18,7 @@ public class TikiClient {
     
     public let auth = AuthService()
     public let capture = CaptureService()
-    public let clo = CloService()
-    public let email = EmailService()
     public let license = LicenseService()
-    private let ui = UiService()
 
     /// Initializes the `TikiClient` with the application context and sets its parameters.
     /// - Parameters:
@@ -72,30 +69,4 @@ public class TikiClient {
         // Implementation
     }
 
-    /// Retrieves card-linked offers for the user.
-    /// - Returns: List of card-linked offers.
-    public func offers() -> [Offer] {
-        return []
-    }
-
-    /// Submits a transaction for card-linked offer matching.
-    /// - Parameter transaction: The transaction information.
-    public func transaction(transaction: Transaction) {
-        // Implementation
-    }
-
-    /// Retrieves information about the user's rewards.
-    /// - Returns: List of user rewards.
-    public func rewards() -> [Reward] {
-        return []
-    }
-
-    /// Displays the widget for pre-built UIs with a custom theme.
-    /// - Parameter theme: The custom theme for the widget.
-    public func widget(theme: Theme?) {
-        // Implementation
-    }
 }
-//```
-//
-//Please note that the `@available(iOS 15.0, *)` attribute is used to indicate the minimum iOS version where the code is available. Adjust this according to your project's deployment target.

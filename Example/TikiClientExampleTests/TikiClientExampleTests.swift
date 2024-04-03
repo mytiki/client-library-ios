@@ -1,10 +1,7 @@
-//
-//  TikiClientExampleTests.swift
-//  TikiClientExampleTests
-//
-//  Created by Jesse Monteiro Ferreira on 01/03/24.
-//  Copyright © 2024 CocoaPods. All rights reserved.
-//
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in the root directory.
+ */
 
 import XCTest
 import TikiClient
@@ -43,5 +40,4 @@ final class TikiClientExampleTests: XCTestCase {
         let signMessage = KeyService.sign(message: "message", privateKey: privateKey!)
         XCTAssertNotNil(signMessage)
     }
-
 }

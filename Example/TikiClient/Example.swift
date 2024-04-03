@@ -3,85 +3,44 @@
  * MIT license. See LICENSE file in root directory.
  */
 
+import PhotosUI
 
 import SwiftUI
 import TikiClient
 
 @main
-struct RewardsExampleApp: App {
+struct Main: App {
     
-    @State var isInitialized = false
-    @State var startBtnEnabled = true
-    @State var username: String = ""
-    @State var password: String = ""
-    let emailService = EmailService()
+    @State private var showCamera = false
+    @State private var selectedImage: UIImage?
+    @State var image: UIImage?
     
+//    @State var isInitialized = false
+//    @State var startBtnEnabled = true
+//    @State var username: String = ""
+//    @State var password: String = ""
+//    @State var publickey: SecKey?
+//    let authService = AuthService()
+//    let clientSecret = "MIIBCgKCAQEAu97z7Ot6V6yCKwZR1ETGLfGI5e2ppL/jhbg1yPuBW1cbgB00N7QcJzjq4eevNWq+83BDXIVlJK5xmC4CquyIJxr9wlAqg389+5Srws3gfaa51LqyzcSzN6fLrGB2w7s7kgSHwvI1oDhhAsL6GDzoW91MysEKxbByMQkZ+Fqgum10JxUVgS18rVgw62zG/2BL1qxdwNR6rxc4gC7p2WOHNoO5IGwaQy3vq3qKLlswsoafl2V9CpQYnQb5a2ZeXvcFufE854pu+Hg7Kchs/zSHy+zJajbGl9qwIAYgQ/Oh+ZywzVh5sUIlK5gLgjRKp5j31ufqjAwhXEJxeBJQZTeb/QIDAQAB"
+//    let providerId = "c3e41a00-f9a3-4593-a3c6-f6cbb3b6c7de"
+
     var body: some Scene {
         WindowGroup {
-            if( !isInitialized ) {
-                Button(action: {
-                    emailService.login()
-                }) {
-                    HStack (spacing: 5) {
-                        Image(systemName: "hand.tap.fill")
-                            .font(.system(size: 20, weight: .regular, design: .rounded))
-                        Text("Click to Login")
-                            .font(.system(size: 20, weight: .regular, design: .rounded)).clipShape(RoundedRectangle(cornerRadius: 10))
-                    }
-                }.padding(.bottom, 25)
-                Button(action: {
-                    emailService.refresh()
-                }) {
-                    HStack (spacing: 5) {
-                        Image(systemName: "hand.tap.fill")
-                            .font(.system(size: 20, weight: .regular, design: .rounded))
-                        Text("Click to Refresh Token")
-                            .font(.system(size: 20, weight: .regular, design: .rounded)).clipShape(RoundedRectangle(cornerRadius: 10))
-                    }
-                }.padding(.bottom, 25)
-                Button(action: {
-                    print()
-                }) {
-                    HStack (spacing: 5) {
-                        Image(systemName: "hand.tap.fill")
-                            .font(.system(size: 20, weight: .regular, design: .rounded))
-                        Text("Click to receive an account")
-                            .font(.system(size: 20, weight: .regular, design: .rounded)).clipShape(RoundedRectangle(cornerRadius: 10))
-                    }
-                }.padding(.bottom, 25)
-                Button(action: {
-                    print(EmailService.accounts())
-                }) {
-                    HStack (spacing: 5) {
-                        Image(systemName: "hand.tap.fill")
-                            .font(.system(size: 20, weight: .regular, design: .rounded))
-                        Text("Click to Receive Accounts")
-                            .font(.system(size: 20, weight: .regular, design: .rounded)).clipShape(RoundedRectangle(cornerRadius: 10))
-                    }
-                }.padding(.bottom, 25)
-                Button(action: {
-                    EmailService.logout()
-                }) {
-                    HStack (spacing: 5) {
-                        Image(systemName: "hand.tap.fill")
-                            .font(.system(size: 20, weight: .regular, design: .rounded))
-                        Text("Click to Remove Account")
-                            .font(.system(size: 20, weight: .regular, design: .rounded)).clipShape(RoundedRectangle(cornerRadius: 10))
-                    }
-                }.padding(.bottom, 25)
-                Button(action: {
-                    Rewards.config()
-                    try? Rewards.show()
-                }) {
-                    HStack (spacing: 5) {
-                        Image(systemName: "hand.tap.fill")
-                            .font(.system(size: 20, weight: .regular, design: .rounded))
-                        Text("Click to open Rewards App")
-                            .font(.system(size: 20, weight: .regular, design: .rounded)).clipShape(RoundedRectangle(cornerRadius: 10))
+            VStack {
+                if let selectedImage {
+                    Image(uiImage: selectedImage)
+                        .resizable()
+                        .scaledToFit()
+                }
+                Button("Open camera") {
+                    self.showCamera.toggle()
+                }
+                .fullScreenCover(isPresented: $showCamera) {
+                    CameraPickerView {image in
+                        selectedImage = image
                     }
                 }
             }
         }
     }
 }
-
