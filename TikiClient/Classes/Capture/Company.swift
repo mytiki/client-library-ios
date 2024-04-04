@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in the root directory.
+ */
+
 import Foundation
 
 /// The company legal information. It is used to set up the terms for the licensed data.
