@@ -1,9 +1,8 @@
-//
-//  AuthAddrRequest.swift
-//  TikiClient
-//
-//  Created by Jesse Monteiro Ferreira on 26/02/24.
-//
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in the root directory.
+ */
+
 
 import Foundation
 

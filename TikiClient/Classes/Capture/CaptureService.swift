@@ -1,14 +1,21 @@
-import UIKit
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in the root directory.
+ */
 
 /// Service for capturing and processing receipt data.
 public class CaptureService {
+    
+    var captureScan = CaptureScan()
 
     /// Captures an image of a receipt for processing.
     ///
     /// - Returns: The captured receipt image.
-    public func camera() -> UIImage? {
-        return nil
+    public func scan(onFinish: @escaping (UIImage) -> Void){
+        captureScan.captureScan(onFinish: onFinish)
     }
+
+
 
     /// Downloads potential receipt data from known receipt email senders and publishes it.
     ///
@@ -33,16 +40,5 @@ public class CaptureService {
         return .inProgress
     }
     
-    
-    /// Retrieves a list of retailer offers for a specific account provider.
-    ///
-    /// - Parameter provider: The account provider for which offers should be retrieved.
-    /// - Returns: An array of `RetailerOffer` objects containing offer details.
-    func offers(provider: AccountProvider) -> [RetailerOffer] {
-        return [
-            RetailerOffer(provider: provider, description: "4% cashback on electronics", url: URL(string: "https://mytiki.com")!),
-            RetailerOffer(provider: provider, description: "10% off on electronics", url: URL(string: "https://mytiki.com")!)
-        ]
-    }
 }
 

@@ -2,6 +2,8 @@ import Foundation
 
 /// Service for managing user licenses.
 public class LicenseService {
+    
+    private var baseUrl: String = "https://trail.mytiki.com"
 
     var _isLicensed: Bool = false
     // MARK: - Public Methods
