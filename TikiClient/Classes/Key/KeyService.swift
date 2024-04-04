@@ -29,7 +29,7 @@ public class KeyService{
         return privateKey
   }
 
-  static public func address(b64PubKey: String) -> Data? {
+    public static func address(b64PubKey: String) -> Data? {
       let decoded = Data(base64Encoded: b64PubKey)!
     
       var dataAddress = decoded.sha3(.sha256)
@@ -48,5 +48,9 @@ public class KeyService{
       }
       return signedData
   }
+    
+    public static func get(providerId: String, userId: String) -> Data? {
+        return repository.read(service: providerId, key: userId)
+    }
     
 }

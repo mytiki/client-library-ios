@@ -10,25 +10,20 @@ public struct PostLicenseRequest : Codable {
    let tags: [String]
    let uses: [Use]
    let terms: String
+   let description: String
+   let origin: String
    let expiry: String?
-   let titleDesc: String?
-   let licenseDesc: String
-   let userSignature: String
+   let signature: String?
     
-    public init(ptr: String, tags: [String], uses: [Use], terms: String, expiry: String?, titleDesc: String?, licenseDesc: String, privateKey: SecKey){
+    public init(ptr: String, tags: [String], uses: [Use], terms: String, description: String, origin: String, expiry: String?, signature: String?) {
         self.ptr = ptr
         self.tags = tags
         self.uses = uses
         self.terms = terms
+        self.description = description
+        self.origin = origin
         self.expiry = expiry
-        self.titleDesc = titleDesc
-        self.licenseDesc = licenseDesc
-        let licenseRequest = LicenseRequest(ptr: ptr, tags: tags, uses: uses, terms: terms, licenseDesc: licenseDesc)
-
-        let jsonData = try! JSONEncoder().encode(licenseRequest)
-        let jsonString = String(data: jsonData, encoding: .utf8)!
-        
-        self.userSignature = (KeyService.sign(message: jsonString, privateKey: privateKey)?.base64EncodedString())!
+        self.signature = signature
     }
 }
 

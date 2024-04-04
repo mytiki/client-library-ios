@@ -16,8 +16,11 @@ import SwiftUI
 /// simplify the integration process or opt for individual libraries based on their specific needs.
 public class TikiClient {
     
-    public let auth = AuthService()
-    public let capture = CaptureService()
+    public static let auth = AuthService()
+    public static let capture = CaptureService()
+    public static let license = License()
+    public static var config: Config? = nil
+    public static var userId: String? = nil
 
     /// Initializes the `TikiClient` with the application context and sets its parameters.
     /// - Parameters:
@@ -25,47 +28,87 @@ public class TikiClient {
     ///   - providerId: The TIKI Publishing ID of the data provider.
     ///   - userId: The user identification from the provider.
     ///   - company: The legal information of the company.
-    public func initialize(providerId: String, userId: String, company: Company) {
-        // Implementation
+    public static func initialize(userId: String) {
+        if(TikiClient.config == nil){
+            fatalError("Config is nil")
+        }
+        
+        guard let key = KeyService.get(providerId: TikiClient.config!.providerId, userId: userId) else {
+            auth.address(providerId: TikiClient.config!.providerId, userId: userId, pubKey: TikiClient.config!.publicKey, completion: {address in
+                print("Address Register: \(address)")
+            })
+            return
+        }
+        
+        TikiClient.userId = userId
+    }
+    public static func configuration(configuration: Config) {
+        TikiClient.config = configuration
+    }
+    
+    public static func createLicense(){
+        if(TikiClient.config == nil){
+            fatalError("Config is nil")
+        }
+        if(TikiClient.userId == nil){
+            fatalError("UserId is nil")
+        }
+        
+        guard let key = KeyService.get(providerId: TikiClient.config!.providerId, userId: TikiClient.userId!) else {
+                print("Key Pair not found. Use the TikiClient.initialize method to register the user.")
+                return
+            }
+        let address = KeyService.address(b64PubKey: key.base64EncodedString())
+        
+        let signature = KeyService.sign(message: (address?.base64EncodedString())!, privateKey: key as! SecKey)
+        
+        TikiClient.auth.token(providerId: TikiClient.config!.providerId, clientSecret: (signature?.base64EncodedString())!, completion: { addressToken in
+            if(addressToken == nil){
+                print("It was not possible to get the token, try to inialize!")
+                return
+            }
+            let terms = TikiClient.terms()
+            
+            let bundleId = Bundle.main.bundleIdentifier
+            
+            var licenseReq = PostLicenseRequest(ptr: userId!, tags: ["purchase_history"], uses: [Use(usecases: [Usecase(usecase: .attribution)], destinations: ["*"])], terms: terms, description: "", origin: bundleId!, expiry: "undefined", signature: "")
+            
+            let encoder = JSONEncoder()
+            let decoder = JSONDecoder()
+            let licenseReqEncoded = try? encoder.encode(licenseReq)
+            
+            let licenseSignature = KeyService.sign(message: String(data: licenseReqEncoded!, encoding: .utf8)!, privateKey: key as! SecKey)
+            
+            licenseReq.signature = try? decoder.decode(PostLicenseRequest.self, from: licenseReq)
+            
+            return TikiClient.license.create(token: addressToken, postLicenseRequest: licenseReq)
+        })
+    }
+    
+    
+    public static func terms() -> String {
+        guard let path = Bundle(identifier: "org.cocoapods.TikiClient")!.path(forResource: "terms", ofType: "md") else {
+            fatalError("terms.md not found")
+        }
+        if(TikiClient.config == nil){
+            fatalError("Config is nil")
+        }
+        var terms = try? String(contentsOfFile: path)
+
+        let replacements = [
+            "{{{COMPANY}}}": TikiClient.config!.companyName,
+            "{{{JURISDICTION}}}": TikiClient.config!.companyJurisdiction,
+            "{{{TOS}}}": TikiClient.config!.tosUrl,
+            "{{{POLICY}}}": TikiClient.config!.privacyUrl
+        ]
+
+        for (key, value) in replacements {
+            terms = terms?.replacingOccurrences(of: key, with: value)
+        }
+
+        print(terms)
+        return terms ?? ""
     }
 
-    /// Initiates the process of scanning a physical receipt and returns the receipt ID.
-    /// - Returns: The scanned receipt data or an empty string if the scan is unsuccessful.
-    public func scan() -> String {
-        return ""
-    }
-
-    /// Initiates the process of scraping receipts from emails.
-    /// - Parameter emailProvider: The email provider (GOOGLE or OUTLOOK).
-    public func login() {
-        // Implementation
-    }
-
-    /// Removes a previously added email account.
-    /// - Parameter email: The email account to be removed.
-    public func logout(email: String) {
-        // Implementation
-    }
-
-    /// Retrieves the list of connected email accounts.
-    /// - Returns: List of connected email accounts.
-    public func accounts() -> [String] {
-        return []
-    }
-
-    /// Initiates the process of scraping receipts from emails.
-    public func scrape() {
-        // Implementation
-    }
-
-    /// Adds a card for card-linked offers.
-    /// - Parameters:
-    ///   - last4: Last 4 digits of the card.
-    ///   - bin: Bank Identification Number.
-    ///   - issuer: Card issuer.
-    ///   - network: Card network (VISA, MASTERCARD, AMERICAN EXPRESS, or DISCOVERY).
-    public func card(last4: String, bin: String, issuer: String, network: String) {
-        // Implementation
-    }
 
 }
