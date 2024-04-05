@@ -36,11 +36,21 @@ public class TikiClient {
         guard let key = KeyService.get(providerId: TikiClient.config!.providerId, userId: userId) else {
             auth.address(providerId: TikiClient.config!.providerId, userId: userId, pubKey: TikiClient.config!.publicKey, completion: {address in
                 print("Address Register: \(address)")
+                TikiClient.userId = userId
+                
+                var error: Unmanaged<CFError>?
+                guard let data = SecKeyCopyExternalRepresentation(KeyService.generate()!, &error) as? Data else {
+                    print("error")
+                    return
+                    }
+                
+                KeyService.save(data , service: TikiClient.config!.providerId, key: userId)
             })
             return
         }
         
         TikiClient.userId = userId
+        print(userId)
     }
     public static func configuration(configuration: Config) {
         TikiClient.config = configuration
@@ -58,31 +68,47 @@ public class TikiClient {
                 print("Key Pair not found. Use the TikiClient.initialize method to register the user.")
                 return
             }
+        
+        let keyAttributes: [String: Any] = [
+            kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
+            kSecAttrKeyClass as String: kSecAttrKeyClassPublic,
+            kSecAttrKeySizeInBits as String: 2048
+        ]
+        var error: Unmanaged<CFError>?
+        guard let keyData = SecKeyCreateWithData(key as CFData,
+                                                 keyAttributes as CFDictionary,
+                                                 &error) else {
+            if let error = error?.takeRetainedValue() {
+                print("Error creating SecKey: \(error)")
+            }
+            fatalError("Failed to create SecKey")
+        }
+                                                            
+        
+
         let address = KeyService.address(b64PubKey: key.base64EncodedString())
         
-        let signature = KeyService.sign(message: (address?.base64EncodedString())!, privateKey: key as! SecKey)
+        let signature = KeyService.sign(message: (address?.base64EncodedString())!, privateKey: keyData as SecKey)
         
-        TikiClient.auth.token(providerId: TikiClient.config!.providerId, clientSecret: (signature?.base64EncodedString())!, completion: { addressToken in
+        TikiClient.auth.token(providerId: TikiClient.config!.providerId, clientSecret: (signature?.base64EncodedString())!) { addressToken in print(addressToken!)
             if(addressToken == nil){
-                print("It was not possible to get the token, try to inialize!")
-                return
+               print("It was not possible to get the token, try to inialize!")
+               return
             }
             let terms = TikiClient.terms()
-            
+
             let bundleId = Bundle.main.bundleIdentifier
-            
+
             var licenseReq = PostLicenseRequest(ptr: userId!, tags: ["purchase_history"], uses: [Use(usecases: [Usecase(usecase: .attribution)], destinations: ["*"])], terms: terms, description: "", origin: bundleId!, expiry: "undefined", signature: "")
-            
+
             let encoder = JSONEncoder()
-            let decoder = JSONDecoder()
-            let licenseReqEncoded = try? encoder.encode(licenseReq)
-            
-            let licenseSignature = KeyService.sign(message: String(data: licenseReqEncoded!, encoding: .utf8)!, privateKey: key as! SecKey)
-            
-            licenseReq.signature = try? decoder.decode(PostLicenseRequest.self, from: licenseReq)
-            
-            return TikiClient.license.create(token: addressToken, postLicenseRequest: licenseReq)
-        })
+            let licenseReqStr: String = try! String(data: encoder.encode(licenseReq), encoding: .utf8)!
+
+            let licenseSignature = KeyService.sign(message: licenseReqStr, privateKey: key as! SecKey)
+            licenseReq.signature = licenseSignature?.base64EncodedString()
+            let license = TikiClient.license.create(token: addressToken!, postLicenseRequest: licenseReq)
+            print(license)
+        }
     }
     
     

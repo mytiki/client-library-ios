@@ -42,7 +42,7 @@ public class KeyService{
       let data = message.data(using: .utf8)! as CFData
       
       var error: Unmanaged<CFError>?
-        guard let signedData = SecKeyCreateSignature(privateKey, .rsaSignatureMessagePKCS1v15SHA256, data, &error) as Data? else {
+        guard let signedData = SecKeyCreateSignature (privateKey, .rsaSignatureMessagePKCS1v15SHA256, data, &error) as Data? else {
         print("Error generating key pair: \(error.debugDescription)")
         return nil
       }
@@ -50,7 +50,11 @@ public class KeyService{
   }
     
     public static func get(providerId: String, userId: String) -> Data? {
-        return repository.read(service: providerId, key: userId)
+        var retorno = repository.read(service: providerId, key: userId)
+        return retorno
     }
     
+    public static func save(_ data: Data, service: String, key: String) {
+        repository.save(data, service: service, key: key)
+    }
 }

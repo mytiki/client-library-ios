@@ -16,7 +16,7 @@ public class License {
      
      - Returns: The saved license object.
      */
-    public func create(token: String, postLicenseRequest: PostLicenseRequest) -> PostLicenseRequest {
+    public func create(token: String, postLicenseRequest: PostLicenseRequest) {
         let url = "\(baseUrl)/license/create"
         var request = URLRequest(url: URL(string: url)!)
         request.httpMethod = "POST"
@@ -24,7 +24,7 @@ public class License {
         
         guard let jsonData = try? JSONEncoder().encode(postLicenseRequest) else {
             print("Error encoding JSON")
-            return postLicenseRequest
+            return
         }
         
         request.httpBody = jsonData
@@ -40,10 +40,8 @@ public class License {
             } else {
                 print("Error registering license. HTTP status: \(response?.description ?? "Unknown")")
                 print("HTTP error! Body: \(String(describing: String(data: data!, encoding: .utf8)))")
-
             }
         }.resume()
-        return postLicenseRequest
     }
 
 

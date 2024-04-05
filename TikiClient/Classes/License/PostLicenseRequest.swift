@@ -13,7 +13,7 @@ public struct PostLicenseRequest : Codable {
    let description: String
    let origin: String
    let expiry: String?
-   let signature: String?
+   var signature: String?
     
     public init(ptr: String, tags: [String], uses: [Use], terms: String, description: String, origin: String, expiry: String?, signature: String?) {
         self.ptr = ptr
