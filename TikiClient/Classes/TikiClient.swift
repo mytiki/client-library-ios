@@ -28,10 +28,13 @@ public class TikiClient {
     ///   - providerId: The TIKI Publishing ID of the data provider.
     ///   - userId: The user identification from the provider.
     ///   - company: The legal information of the company.
-    public static func initialize(userId: String) {
+    public static func initialize(userId: String, configuration: Config) {
         if(TikiClient.config == nil){
             fatalError("Config is nil")
         }
+        
+        TikiClient.userId = userId
+        TikiClient.config = configuration
         
         guard let key = KeyService.get(providerId: TikiClient.config!.providerId, userId: userId) else {
             auth.address(providerId: TikiClient.config!.providerId, userId: userId, pubKey: TikiClient.config!.publicKey, completion: {address in
@@ -40,20 +43,14 @@ public class TikiClient {
                 
                 var error: Unmanaged<CFError>?
                 guard let data = SecKeyCopyExternalRepresentation(KeyService.generate()!, &error) as? Data else {
-                    print("error")
-                    return
-                    }
+                  print("error")
+                  return
+                }
                 
                 KeyService.save(data , service: TikiClient.config!.providerId, key: userId)
             })
             return
         }
-        
-        TikiClient.userId = userId
-        print(userId)
-    }
-    public static func configuration(configuration: Config) {
-        TikiClient.config = configuration
     }
     
     public static func createLicense(){
@@ -68,24 +65,7 @@ public class TikiClient {
                 print("Key Pair not found. Use the TikiClient.initialize method to register the user.")
                 return
             }
-        
-        let keyAttributes: [String: Any] = [
-            kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
-            kSecAttrKeyClass as String: kSecAttrKeyClassPublic,
-            kSecAttrKeySizeInBits as String: 2048
-        ]
-        var error: Unmanaged<CFError>?
-        guard let keyData = SecKeyCreateWithData(key as CFData,
-                                                 keyAttributes as CFDictionary,
-                                                 &error) else {
-            if let error = error?.takeRetainedValue() {
-                print("Error creating SecKey: \(error)")
-            }
-            fatalError("Failed to create SecKey")
-        }
                                                             
-        
-
         let address = KeyService.address(b64PubKey: key.base64EncodedString())
         
         let signature = KeyService.sign(message: (address?.base64EncodedString())!, privateKey: keyData as SecKey)
@@ -111,7 +91,6 @@ public class TikiClient {
         }
     }
     
-    
     public static func terms() -> String {
         guard let path = Bundle(identifier: "org.cocoapods.TikiClient")!.path(forResource: "terms", ofType: "md") else {
             fatalError("terms.md not found")
@@ -135,6 +114,4 @@ public class TikiClient {
         print(terms)
         return terms ?? ""
     }
-
-
 }

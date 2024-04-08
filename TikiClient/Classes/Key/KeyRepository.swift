@@ -61,11 +61,6 @@ public final class KeyRepository {
         guard status != errSecItemNotFound else {
           return nil
         }
-//        var result: CFTypeRef?
-//        SecItemCopyMatching(query as SecKey, &result)
-//        
-//        return result as? SecKey
-        
         return extractedData as? Data
     }
     

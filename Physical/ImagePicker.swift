@@ -36,16 +36,6 @@ public struct CameraPickerView: UIViewControllerRepresentable {
             self.onDismiss = onDismiss
             self.onImagePicked = onImagePicked
         }
-        
-        public func imagePickerController(_ picker: UIImagePickerController,
-                                          didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-            if let image = info[.originalImage] as? UIImage {
-                self.onImagePicked(image)
-            }
-            self.onDismiss()
-        }
-        public func imagePickerControllerDidCancel(_: UIImagePickerController) {
-            self.onDismiss()
-        }
+
     }
 }

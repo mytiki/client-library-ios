@@ -7,13 +7,13 @@
 import Foundation
 
 public class CaptureScan: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    var imagePickerCallback: ((UIImage) -> Void)? = nil
+    var imagePickerCallback: ((UIImage?) -> Void)? = nil
     var imagePickerRootVc: UIViewController? = nil
 
     /// Captures an image of a receipt for processing.
     ///
     /// - Returns: The captured receipt image.
-    public func captureScan(onFinish: @escaping (UIImage) -> Void){
+    public func start(onFinish: @escaping (UIImage) -> Void){
       imagePickerCallback = onFinish
       let keyWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) ?? UIApplication.shared.windows.first
       imagePickerRootVc = keyWindow?.rootViewController
@@ -23,12 +23,24 @@ public class CaptureScan: UIViewController, UIImagePickerControllerDelegate, UIN
       imagePickerController.delegate = self
       imagePickerRootVc?.present(imagePickerController, animated: true, completion: nil)
     }
+    
+    private func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        if let image = info[.originalImage] as? UIImage {
+          self.imagePickerCallback(image)
+        }else{
+          self.imagePickerCallback(nil)
+        }
+        cleanUp()
+    }
 
-    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        let tempImage = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
-        imagePickerCallback?(tempImage);
-        imagePickerRootVc?.dismiss(animated: true, completion: nil)
-        imagePickerCallback = nil
-        imagePickerRootVc = nil
+    private func imagePickerControllerDidCancel(_: UIImagePickerController) {
+        self.imagePickerCallback(nil)
+        cleanUp()
+    }
+
+    private cleanUp(){
+      imagePickerRootVc.dismiss()
+      imagePickerCallback = nil
+      imagePickerRootVc = nil
     }
 }
