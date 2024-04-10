@@ -4,35 +4,10 @@
 //
 //  Created by Ignacio Nieto Carvajal on 6/10/15.
 //  Copyright © 2015 Ignacio Nieto Carvajal. All rights reserved.
+//  MIT License. https://github.com/DigitalLeaves/CryptoExportImportManager/tree/master?tab=readme-ov-file#license
 //
 
 import UIKit
-
-/*
-
-EC keys: http://www.opensource.apple.com/source/security_certtool/security_certtool-55103/src/dumpasn1.cfg
-
-EC param 1
-OID = 06 07 2A 86 48 CE 3D 02 01
-Comment = ANSI X9.62 public key type
-Description = ecPublicKey (1 2 840 10045 2 1)
-
-EC param 2
-OID = 06 08 2A 86 48 CE 3D 03 01 07
-Comment = ANSI X9.62 named elliptic curve
-Description = ansiX9p256r1 (1 2 840 10045 3 1 7)
-
-OID = 06 05 2B 81 04 00 22
-Comment = SECG (Certicom) named elliptic curve
-Description = secp384r1 (1 3 132 0 34)
-
-OID = 06 05 2B 81 04 00 23
-Comment = SECG (Certicom) named elliptic curve
-Description = secp521r1 (1 3 132 0 35)
-
-EC params sequence: public key + curve 256r1
-30 13 06 07 2A 86 48 CE 3D 02 01 06 08 2A 86 48 CE 3D 03 01 07
-*/
 
 // SECP256R1 EC public key header (length + EC params (sequence) + bitstring
 private let kCryptoExportImportManagerSecp256r1CurveLen = 256
@@ -46,17 +21,6 @@ private let kCryptoExportImportManagerSecp384r1headerLen = 23
 private let kCryptoExportImportManagerSecp521r1CurveLen = 521
 private let kCryptoExportImportManagerSecp521r1header: [UInt8] = [0x30, 0x81, 0x9B, 0x30, 0x10, 0x06, 0x07, 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x02, 0x01, 0x06, 0x05, 0x2B, 0x81, 0x04, 0x00, 0x23, 0x03, 0x81, 0x86, 0x00]
 private let kCryptoExportImportManagerSecp521r1headerLen = 25
-
-/*
-
-RSA keys: http://www.opensource.apple.com/source/security_certtool/security_certtool-55103/src/dumpasn1.cfg
-
-OID = 06 09 2A 86 48 86 F7 0D 01 01 01
-Comment = PKCS #1
-Description = rsaEncryption (1 2 840 113549 1 1 1)
-
-NULL byte: 05 00
-*/
 
 // RSA OID header
 private let kCryptoExportImportManagerRSAOIDHeader: [UInt8] = [0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00]

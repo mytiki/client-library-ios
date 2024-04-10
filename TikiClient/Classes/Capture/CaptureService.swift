@@ -4,12 +4,16 @@ public class CaptureService {
     
     let publishUrl = "https://publish.mytiki.com"
     let captureScan = CaptureScan()
+    
+    public func onFinish(image: UIImage?){
+        print("The image is here")
+    }
 
     /// Captures an image of a receipt for processing.
     ///
     /// - Returns: The captured receipt image or nil if the user canceled.
     public func scan(onImage: @escaping (UIImage?) -> Void){
-        captureScan.start(onImage: onFinish)
+        captureScan.start(onFinish: onImage)
     }
 
     ///
@@ -18,11 +22,10 @@ public class CaptureService {
     ///   - images: Array of photos to be published in base64 strings.
     ///   - token: the address token to authenticate the request to our server.
     /// - Returns: A Promise that resolves with the ID of the request or void in case of any error.
-     */
     func publish(images: [UIImage], token: String, completion: @escaping (String?, Error?) -> Void) {
         let id = UUID().uuidString
         
-        var request = URLRequest(url: URL(string: "\(publishuRL)/receipt/\(id)")!)
+        var request = URLRequest(url: URL(string: "\(publishUrl)/receipt/\(id)")!)
         request.httpMethod = "POST"
         request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("image/jpeg", forHTTPHeaderField: "Content-Type")
@@ -36,7 +39,7 @@ public class CaptureService {
                             completion(nil, error)
                             return
                         }
-                        if let httpResponse = response as? HTTPURLResponse, !httpResponse.isSuccessStatusCode {
+                        if let httpResponse = response as? HTTPURLResponse, (httpResponse.statusCode == 200) {
                             print("Error uploading files. Status: \(httpResponse.statusCode)")
                             let uploadError = NSError(domain: "HTTPError", code: httpResponse.statusCode, userInfo: nil)
                             completion(nil, uploadError)

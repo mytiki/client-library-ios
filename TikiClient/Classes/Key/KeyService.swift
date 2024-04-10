@@ -46,9 +46,9 @@ public class KeyService{
       return signedData
     }
     
-    public static func get(providerId: String, userId: String) -> SecKey? {
-        let data = repository.read(service: providerId, key: userId)
-        return CriptoUtils.decodeSecKeyFromData(data)
+    public static func get(providerId: String, userId: String, isPrivate: Bool = false) -> SecKey? {
+        let data = repository.read(service: providerId, key: userId)!
+        return try? CriptoUtils.decodeSecKeyFromData(secKeyData: data, isPrivate: isPrivate)
     }
   
     public static func save(_ data: Data, service: String, key: String) {

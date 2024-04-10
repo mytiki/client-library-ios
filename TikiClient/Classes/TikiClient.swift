@@ -29,20 +29,17 @@ public class TikiClient {
     ///   - userId: The user identification from the provider.
     ///   - company: The legal information of the company.
     public static func initialize(userId: String, configuration: Config) {
-        if(TikiClient.config == nil){
-            fatalError("Config is nil")
-        }
-        
         TikiClient.userId = userId
         TikiClient.config = configuration
         
-        guard let key = KeyService.get(providerId: TikiClient.config!.providerId, userId: userId) else {
+        guard let key = KeyService.get(providerId: TikiClient.config!.providerId, userId: userId, isPrivate: true) else {
             auth.address(providerId: TikiClient.config!.providerId, userId: userId, pubKey: TikiClient.config!.publicKey, completion: {address in
                 print("Address Register: \(address)")
                 TikiClient.userId = userId
                 
                 var error: Unmanaged<CFError>?
-                guard let data = SecKeyCopyExternalRepresentation(KeyService.generate()!, &error) as? Data else {
+                let key = KeyService.generate()!
+                guard let data = SecKeyCopyExternalRepresentation(key, &error) as? Data else {
                   print("error")
                   return
                 }
@@ -61,16 +58,24 @@ public class TikiClient {
             fatalError("UserId is nil")
         }
         
-        guard let key = KeyService.get(providerId: TikiClient.config!.providerId, userId: TikiClient.userId!) else {
+        guard let key = KeyService.get(providerId: TikiClient.config!.providerId, userId: TikiClient.userId!, isPrivate: true) else {
                 print("Key Pair not found. Use the TikiClient.initialize method to register the user.")
                 return
             }
+        
+        var error:Unmanaged<CFError>?
+        var dataKeybB64 = String()
+        if let cfdata = SecKeyCopyExternalRepresentation(key, &error) {
+           let data:Data = cfdata as Data
+           let b64Key = data.base64EncodedString()
+            dataKeybB64 = b64Key
+        }
                                                             
-        let address = KeyService.address(b64PubKey: key.base64EncodedString())
+        let address = KeyService.address(b64PubKey: dataKeybB64)
         
-        let signature = KeyService.sign(message: (address?.base64EncodedString())!, privateKey: keyData as SecKey)
+        let signature = KeyService.sign(message: (address?.base64EncodedString())!, privateKey: key as SecKey)
         
-        TikiClient.auth.token(providerId: TikiClient.config!.providerId, clientSecret: (signature?.base64EncodedString())!) { addressToken in print(addressToken!)
+        TikiClient.auth.token(providerId: TikiClient.config!.providerId, secret: (signature?.base64EncodedString())!, scopes: ["asasas"], address: address?.base64EncodedString()) { addressToken in print(addressToken ?? "")
             if(addressToken == nil){
                print("It was not possible to get the token, try to inialize!")
                return
@@ -79,7 +84,7 @@ public class TikiClient {
 
             let bundleId = Bundle.main.bundleIdentifier
 
-            var licenseReq = PostLicenseRequest(ptr: userId!, tags: ["purchase_history"], uses: [Use(usecases: [Usecase(usecase: .attribution)], destinations: ["*"])], terms: terms, description: "", origin: bundleId!, expiry: "undefined", signature: "")
+            var licenseReq = LicenseRequest(ptr: userId!, tags: ["purchase_history"], uses: [Use(usecases: [Usecase(usecase: .attribution)], destinations: ["*"])], terms: terms, description: "", origin: bundleId!, expiry: "undefined", signature: "")
 
             let encoder = JSONEncoder()
             let licenseReqStr: String = try! String(data: encoder.encode(licenseReq), encoding: .utf8)!

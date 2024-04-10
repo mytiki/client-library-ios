@@ -1,3 +1,5 @@
+import Security
+
 public class CriptoUtils {
   static public func exportPublicKey(_ rawPublicKeyBytes: Data, base64EncodingOptions: Data.Base64EncodingOptions = []) -> String? {
     return rawPublicKeyBytes.base64EncodedString(options: base64EncodingOptions)
@@ -21,7 +23,7 @@ public class CriptoUtils {
     return keyHeader + base64EncodedString + keyFooter
   }
 
-  static public func decodeSecKeyFromData(secKeyData: Data, isPrivate: Bool = false) -> SecKey? {
+  static public func decodeSecKeyFromData(secKeyData: Data, isPrivate: Bool = false) throws -> SecKey? {
     var keyClass = kSecAttrKeyClassPublic
     if isPrivate {
         keyClass = kSecAttrKeyClassPrivate
@@ -29,11 +31,14 @@ public class CriptoUtils {
     let attributes: [String:Any] = [
         kSecAttrKeyClass as String: keyClass,
         kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
-        kSecAttrKeySizeInBits as String: 2048,
+        kSecAttrKeySizeInBits as String: 2048 as AnyObject,
     ]
 
-    guard let secKey = SecKeyCreateWithData(secKeyData as CFData, attributes as CFDictionary, nil) else {
+    var error: Unmanaged<CFError>? = nil
+      
+    guard let secKey = SecKeyCreateWithData(secKeyData as CFData, attributes as CFDictionary, &error) else {
         print("Error: Problem in SecKeyCreateWithData()")
+        print(error.debugDescription)
         return nil
     }
 

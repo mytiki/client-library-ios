@@ -14,7 +14,7 @@ public class AuthService {
     public func address(providerId: String, userId: String, pubKey: String, completion: @escaping (String?) -> Void) {
         let urlString = URL(string: "https://account.mytiki.com/api/latest/provider/\(providerId)/user")
         
-        token(providerId: providerId, clientSecret: pubKey){ token in
+        token(providerId: providerId, secret: pubKey, scopes: ["aa"], address: nil, completion: { token in
             guard let accessToken = token else{
                 print("Error getting token")
                 completion(nil)
@@ -27,12 +27,12 @@ public class AuthService {
                 return
             }
 
-            guard let internalPubKey = SecKeyCopyPublicKey(privateKey),
-                let publicKeyData = SecKeyCopyExternalRepresentation(internalPubKey, nil) as Data? else {
+            guard let internalPrivKey = SecKeyCopyPublicKey(privateKey),
+                let publicKeyData = SecKeyCopyExternalRepresentation(internalPrivKey, nil) as Data? else {
                     print("Error extracting Public Key Data")
                     completion(nil)
                     return
-                  }
+                    }
             
             let keySize = 256
             let exportImportManager = CryptoExportImportManager()
@@ -81,26 +81,42 @@ public class AuthService {
                 }
             }.resume()
             
-        }
+        })
     }
         
-    public func token(providerId: String, clientSecret: String, completion: @escaping (String?) -> Void){
+    public func token(providerId: String, secret: String, scopes: [String], address: String?,  completion: @escaping (String?) -> Void){
         var request = URLRequest(url: URL(string: "https://account.mytiki.com/api/latest/auth/token")!)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        if(address != nil){
+            
+        }
         
-        let postData = "grant_type=client_credentials&client_id=provider:\(providerId.urlEncoded())&client_secret=\(clientSecret.urlEncoded())&scope=account:provider trail publish&expires=600"
+        var data = URLComponents()
+        data.queryItems = [
+            URLQueryItem(name: "grant_type", value: "client_credentials"),
+            URLQueryItem(name: "client_id", value: address == nil ? "provider:\(providerId)" : "addr:\(providerId):\(address!)"),
+            URLQueryItem(name: "client_secret", value: secret.base64UrlEncoding()),
+            URLQueryItem(name: "scope", value: "account:provider trail publish".base64UrlEncoding()),
+            URLQueryItem(name: "expires", value: "600")
+        ]
+        
+        var provider = address == nil ? "provider:\(providerId.base64UrlEncoding())" : "addr:\(providerId.urlEncoded().base64UrlEncoding()):\(address!.urlEncoded().base64UrlEncoding())"
+
+        let postData = "grant_type=client_credentials&client_id=\(provider)&client_secret=\(secret.base64UrlEncoding())&scope=account:provider trail publish&expires=600"
+        
+        print(postData)
         
         request.httpBody = postData.data(using: .utf8)
-        
+                
         URLSession.shared.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
                 
                 
                 guard let body = String(data: data!, encoding: .utf8),
                         let httpResponse = response as? HTTPURLResponse,
-                      error == nil else {
+                        error == nil else {
                     print("Error fetching token: \(error?.localizedDescription ?? "Unknown error")")
                     completion(nil)
                     return

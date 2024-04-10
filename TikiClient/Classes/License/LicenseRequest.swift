@@ -5,7 +5,7 @@
 
 import Foundation
 
-public struct PostLicenseRequest : Codable {
+public struct LicenseRequest : Codable {
    let ptr: String
    let tags: [String]
    let uses: [Use]

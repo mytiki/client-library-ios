@@ -3,6 +3,8 @@ import Foundation
 /// Service for managing user licenses.
 public class License {
     
+    public init() {}
+    
     private var baseUrl: String = "https://trail.mytiki.com"
 
     /**
@@ -14,7 +16,7 @@ public class License {
      
      - Returns: The saved license object.
      */
-    public func create(token: String, postLicenseRequest: PostLicenseRequest) {
+    public func create(token: String, postLicenseRequest: LicenseRequest) {
         let url = "\(baseUrl)/license/create"
         var request = URLRequest(url: URL(string: url)!)
         request.httpMethod = "POST"

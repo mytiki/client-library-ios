@@ -40,4 +40,8 @@ final class TikiClientExampleTests: XCTestCase {
         let signMessage = KeyService.sign(message: "message", privateKey: privateKey!)
         XCTAssertNotNil(signMessage)
     }
+    
+    func testPermission() {
+        
+    }
 }

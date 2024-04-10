@@ -8,6 +8,7 @@ extension String {
             .replacingOccurrences(of: "+", with: "-")
             .replacingOccurrences(of: "/", with: "_")
             .replacingOccurrences(of: "=", with: "")
+            .replacingOccurrences(of: " ", with: "")
         
     }
     
