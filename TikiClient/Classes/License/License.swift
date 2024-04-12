@@ -26,7 +26,9 @@ public class License {
             return
         }
         
-        request.httpBody = jsonData
+        let jsonString = String(data: jsonData, encoding: .utf8)
+        
+        request.httpBody = jsonString?.data(using: .utf8)
         
         request.addValue("application/json", forHTTPHeaderField: "accept")
         request.addValue("application/json", forHTTPHeaderField: "content-type")

@@ -40,7 +40,7 @@ public class TikiClient {
                 guard let userAddress = address else {
                     fatalError("Error user address register")
                 }
-                print("Address Register: \(address)")
+                print("Address Register: \(userAddress)")
             })
         }
         TikiClient.userId = userId
@@ -58,32 +58,29 @@ public class TikiClient {
             fatalError("UserId is nil")
         }
         
-        guard let key = KeyService.get(providerId: TikiClient.config!.providerId, userId: TikiClient.userId!, isPrivate: true) else {
-                print("Key Pair not found. Use the TikiClient.initialize method to register the user.")
+        guard let privateKey = KeyService.get(providerId: TikiClient.config!.providerId, userId: TikiClient.userId!, isPrivate: true) else {
+                print("Private Key not found. Use the TikiClient.initialize method to register the user.")
                 return
             }
         
-        var error:Unmanaged<CFError>?
-        var dataKeybB64 = String()
-        if let cfdata = SecKeyCopyExternalRepresentation(key, &error) {
-           let data:Data = cfdata as Data
-           let b64Key = data.base64EncodedString()
-            dataKeybB64 = b64Key
+        guard let publicKeyB64 = KeyService.publicKeyB64(privateKey: privateKey) else{
+            print("Error extracting public key")
+            return
         }
                                                             
-        guard let address = KeyService.address(b64PubKey: dataKeybB64) else{
+        guard let address = KeyService.address(b64PubKey: publicKeyB64) else{
             print("error decoding address")
             return
         }
         print("address")
         print(address)
         
-        guard let signature = KeyService.sign(message: address, privateKey: key as SecKey) else{
+        guard let signature = KeyService.sign(message: address, privateKey: privateKey) else{
             print("error signing request")
             return
         }
         
-        TikiClient.auth.token(providerId: TikiClient.config!.providerId, secret: signature, scopes: ["trail", "publish"], completion: { addressToken in print(addressToken ?? "")
+        TikiClient.auth.token(providerId: TikiClient.config!.providerId, secret: signature, scopes: ["trail", "publish"], address: address, completion: { addressToken in print(addressToken ?? "")
             if(addressToken == nil){
                print("It was not possible to get the token, try to inialize!")
                return
@@ -92,20 +89,32 @@ public class TikiClient {
 
             let bundleId = Bundle.main.bundleIdentifier
 
-            var licenseReq = LicenseRequest(ptr: userId!, tags: ["purchase_history"], uses: [Use(usecases: [Usecase(usecase: .attribution)], destinations: ["*"])], terms: terms, description: "", origin: bundleId!, expiry: "undefined", signature: "")
+            var licenseReq = LicenseRequest(
+                ptr: userId!,
+                tags: ["purchase_history"],
+                uses: [Use(
+                    usecases: [Usecase(usecase: .attribution)],
+                   destinations: ["*"])],
+                terms: terms, 
+                description: "TIKI Client License",
+                origin: bundleId!,
+                signature: signature)
 
             let encoder = JSONEncoder()
             let licenseReqStr: String = try! String(data: encoder.encode(licenseReq), encoding: .utf8)!
 
-            let licenseSignature = KeyService.sign(message: licenseReqStr, privateKey: key as! SecKey)
+            guard let licenseSignature = KeyService.sign(message: licenseReqStr, privateKey: privateKey) else{
+                print("error generating signature")
+                return
+            }
             licenseReq.signature = licenseSignature
-            let license = TikiClient.license.create(token: addressToken!, postLicenseRequest: licenseReq)
-            print(license)
+            TikiClient.license.create(token: addressToken!, postLicenseRequest: licenseReq)
         })
     }
     
     public static func terms() -> String {
-        guard let path = Bundle(identifier: "org.cocoapods.TikiClient")!.path(forResource: "terms", ofType: "md") else {
+        return ""
+        guard let path = Bundle(path: "TikiClientAssets")!.path(forResource: "terms", ofType: "md") else {
             fatalError("terms.md not found")
         }
         if(TikiClient.config == nil){

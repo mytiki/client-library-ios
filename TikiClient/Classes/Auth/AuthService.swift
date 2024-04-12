@@ -26,17 +26,12 @@ public class AuthService {
                 completion(nil)
                 return
             }
-
-            guard let publicKey = SecKeyCopyPublicKey(privateKey),
-                let publicKeyData = SecKeyCopyExternalRepresentation(publicKey, nil) as Data? else {
-                    print("Error extracting Public Key Data")
-                    completion(nil)
-                    return
-                    }
             
-            let keySize = 256
-            let exportImportManager = CryptoExportImportManager()
-            let publicKeyB64 = exportImportManager.exportPublicKeyToPEM(publicKeyData, keySize: keySize)!
+            guard let publicKeyB64 = KeyService.publicKeyB64(privateKey: privateKey) else{
+                print("Error extracting public key")
+                completion(nil)
+                return
+            }
 
             guard let address = KeyService.address(b64PubKey: publicKeyB64) else {
                 print("Error generating address")
@@ -85,37 +80,7 @@ public class AuthService {
     }
         
     public func token(providerId: String, secret: String, scopes: [String], address: String? = nil,  completion: @escaping (String?) -> Void){
-//        let headers = [
-//          "User-Agent": "Thunder Client (https://www.thunderclient.com/)",
-//          "Accept": "application/json",
-//          "Content-Type": "application/x-www-form-urlencoded"
-//        ]
-//
-//        let postData = NSMutableData(data: "grant_type=client_credentials".data(using: String.Encoding.utf8)!)
-//        postData.append("&client_id=provider:8204cd6f-5b6c-4ddb-be14-dd5605c6a745".data(using: String.Encoding.utf8)!)
-//        postData.append("&client_secret=MIIBCgKCAQEAtk9JrSBKdppHhXx+pU7JTd7dGpv+Q6idZIUW6Aot7sYFYu+n4tr7YfKNpNHdor/Yujqfg9wPU2MOWTPiXbgH9nwnQLBM7o8szijIVY7J1GjlmGosEF0uk9/FZiE/FZY+R0+MqKd2kKEkeNddV94Jf8U683yZofFjfqEdW16cWUP5aAT1NBmemeTcbzZGlDGk3OebuPFPKnBulZrDCdkDdmGMJfmZvSp7XTbu91xV2Ff0VnxWlOMFi2AQVZ0F15QliXYnkA7zYWBBCP+lsE0V5tPqtL5jMg/fJI411Ez9x0rycoAXY7dfjKloZVw3mJdu1KAbkJDmk7TlymIvqeVL4QIDAQAB".data(using: String.Encoding.utf8)!)
-//        postData.append("&scope=account:provider".data(using: String.Encoding.utf8)!)
-//
-//        let request = NSMutableURLRequest(url: NSURL(string: "https://account.mytiki.com/api/latest/auth/token")! as URL,
-//                                                cachePolicy: .useProtocolCachePolicy,
-//                                            timeoutInterval: 10.0)
-//        request.httpMethod = "POST"
-//        request.allHTTPHeaderFields = headers
-//        request.httpBody = postData as Data
-//
-//        let session = URLSession.shared
-//        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
-//          if (error != nil) {
-//            print(error)
-//          } else {
-//            let httpResponse = response as? HTTPURLResponse
-//              print(String(data: data!, encoding: .utf8))
-//          }
-//        })
-//
-//        dataTask.resume()
         var request = URLRequest(url: URL(string: "https://account.mytiki.com/api/latest/auth/token")!)
-//        var request = URLRequest(url: URL(string: "https://postman-echo.com/post")!)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")

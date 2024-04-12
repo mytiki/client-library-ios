@@ -28,6 +28,20 @@ public class KeyService{
       }
       return privateKey
     }
+    
+    public static func publicKeyB64(privateKey: SecKey) -> String? {
+        
+        guard let publicKey = SecKeyCopyPublicKey(privateKey),
+              let publicKeyData = SecKeyCopyExternalRepresentation(publicKey, nil) as Data? else {
+                print("Error extracting Public Key Data")
+                return nil
+            }
+        
+        let keySize = 256
+        let exportImportManager = CryptoExportImportManager()
+        let publicKeyB64 = exportImportManager.exportPublicKeyToPEM(publicKeyData, keySize: keySize)!
+        return publicKeyB64
+    }
 
     public static func address(b64PubKey: String) -> String? {
       let decoded = Data(base64Encoded: b64PubKey)!
