@@ -71,13 +71,19 @@ public class TikiClient {
             dataKeybB64 = b64Key
         }
                                                             
-        let address = KeyService.address(b64PubKey: dataKeybB64)
+        guard let address = KeyService.address(b64PubKey: dataKeybB64) else{
+            print("error decoding address")
+            return
+        }
         print("address")
-        print(address?.base64EncodedString())
+        print(address)
         
-        let signature = KeyService.sign(message: (address?.base64EncodedString().base64UrlSafe())!, privateKey: key as SecKey)
+        guard let signature = KeyService.sign(message: address, privateKey: key as SecKey) else{
+            print("error signing request")
+            return
+        }
         
-        TikiClient.auth.token(providerId: TikiClient.config!.providerId, secret: signature!.base64EncodedString(), scopes: ["trail", "publish"], completion: { addressToken in print(addressToken ?? "")
+        TikiClient.auth.token(providerId: TikiClient.config!.providerId, secret: signature, scopes: ["trail", "publish"], completion: { addressToken in print(addressToken ?? "")
             if(addressToken == nil){
                print("It was not possible to get the token, try to inialize!")
                return
@@ -92,7 +98,7 @@ public class TikiClient {
             let licenseReqStr: String = try! String(data: encoder.encode(licenseReq), encoding: .utf8)!
 
             let licenseSignature = KeyService.sign(message: licenseReqStr, privateKey: key as! SecKey)
-            licenseReq.signature = licenseSignature?.base64EncodedString()
+            licenseReq.signature = licenseSignature
             let license = TikiClient.license.create(token: addressToken!, postLicenseRequest: licenseReq)
             print(license)
         })

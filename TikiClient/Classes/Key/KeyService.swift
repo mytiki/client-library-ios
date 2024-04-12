@@ -29,20 +29,20 @@ public class KeyService{
       return privateKey
     }
 
-    public static func address(b64PubKey: String) -> Data? {
+    public static func address(b64PubKey: String) -> String? {
       let decoded = Data(base64Encoded: b64PubKey)!
       let dataAddress = decoded.sha3(.sha256)
-      return dataAddress
+        return dataAddress.base64EncodedString().base64UrlSafe()
     }
 
-    public static func sign(message: String, privateKey: SecKey) -> Data? {
-      let data = message.data(using: .utf8)! as CFData 
+    public static func sign(message: String, privateKey: SecKey) -> String? {
+      let data = message.data(using: .utf8)! as CFData
       var error: Unmanaged<CFError>?
         guard let signedData = SecKeyCreateSignature (privateKey, .rsaSignatureMessagePKCS1v15SHA256, data, &error) as Data? else {
         print("Error generating key pair: \(error.debugDescription)")
         return nil
       }
-      return signedData
+      return signedData.base64EncodedString()
     }
     
     public static func get(providerId: String, userId: String, isPrivate: Bool = false) -> SecKey? {

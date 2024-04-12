@@ -44,7 +44,7 @@ public class AuthService {
                 return
             }
 
-            let message = "\(userId).\(address.base64EncodedString().base64UrlSafe())"
+            let message = "\(userId).\(address)"
             
             guard let signature = KeyService.sign(message: message, privateKey: privateKey) else {
                 print("Error generating signature")
@@ -52,7 +52,7 @@ public class AuthService {
                 return
             }
             
-            let reqBody = AuthAddrRequest(id: userId, address: address.base64EncodedString().base64UrlSafe(), pubKey: publicKeyB64.base64UrlSafe(), signature: signature.base64EncodedString())
+            let reqBody = AuthAddrRequest(id: userId, address: address, pubKey: publicKeyB64, signature: signature)
             
             guard let jsonData = try? JSONEncoder().encode(reqBody) else {
                 print("Error encoding JSON")
@@ -71,13 +71,13 @@ public class AuthService {
             URLSession.shared.dataTask(with: request) { (data, response, error) in
                 if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
                     print("########User registration successful")
-                    completion(address.base64EncodedString())
-                    
+                    completion(address)
+                    let privKeyData = SecKeyCopyExternalRepresentation(privateKey, nil)! as Data
+                    KeyService.save(privKeyData, service: providerId, key: userId)
                 } else {
                     print("Error registering user. HTTP status: \(response?.description ?? "Unknown")")
                     print("HTTP error! Body: \(String(describing: String(data: data!, encoding: .utf8)))")
                     completion(nil)
-                    
                 }
             }.resume()
             
@@ -126,7 +126,7 @@ public class AuthService {
         let provider = address == nil ? "provider:\(providerId)" : "addr:\(providerId):\(address!.base64UrlSafe())"
         let scopesJoined = scopes.joined(separator: " ")
         let slashedSecret = secret.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
-        let postData = "grant_type=client_credentials&client_id=\(provider)&client_secret=\(addSlashedSecret)&scope=\(scopesJoined)&expires=600"
+        let postData = "grant_type=client_credentials&client_id=\(provider)&client_secret=\(slashedSecret)&scope=\(scopesJoined)&expires=600"
         
         print(postData)
         
