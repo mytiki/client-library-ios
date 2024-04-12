@@ -23,7 +23,6 @@ public class KeyService{
 
       var error: Unmanaged<CFError>?
       guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
-          print("Error generating key pair: \(error.debugDescription)")
           return nil
       }
       return privateKey
@@ -33,7 +32,6 @@ public class KeyService{
         
         guard let publicKey = SecKeyCopyPublicKey(privateKey),
               let publicKeyData = SecKeyCopyExternalRepresentation(publicKey, nil) as Data? else {
-                print("Error extracting Public Key Data")
                 return nil
             }
         
@@ -53,7 +51,6 @@ public class KeyService{
       let data = message.data(using: .utf8)! as CFData
       var error: Unmanaged<CFError>?
         guard let signedData = SecKeyCreateSignature (privateKey, .rsaSignatureMessagePKCS1v15SHA256, data, &error) as Data? else {
-        print("Error generating key pair: \(error.debugDescription)")
         return nil
       }
       return signedData.base64EncodedString()

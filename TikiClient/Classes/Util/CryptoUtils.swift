@@ -9,7 +9,6 @@ public class CriptoUtils {
     var cfError: Unmanaged<CFError>?
     let data = SecKeyCopyExternalRepresentation(key, &cfError)
     guard let keyData = data as Data?, cfError == nil else {
-        print("Error exporting key: \(cfError.debugDescription)")
         return nil
     }
     
@@ -37,8 +36,6 @@ public class CriptoUtils {
     var error: Unmanaged<CFError>? = nil
       
     guard let secKey = SecKeyCreateWithData(secKeyData as CFData, attributes as CFDictionary, &error) else {
-        print("Error: Problem in SecKeyCreateWithData()")
-        print(error.debugDescription)
         return nil
     }
 

@@ -5,10 +5,6 @@ public class CaptureService {
     let publishUrl = "https://publish.mytiki.com"
     let captureScan = CaptureScan()
     
-    public func onFinish(image: UIImage?){
-        print("The image is here")
-    }
-
     /// Captures an image of a receipt for processing.
     ///
     /// - Returns: The captured receipt image or nil if the user canceled.
@@ -35,12 +31,11 @@ public class CaptureService {
                 if let imageData = image.jpegData(compressionQuality: 1.0) {
                     let task = URLSession.shared.uploadTask(with: request, from: imageData) { data, response, error in
                         if error == nil {
-                            print("Uploading files success")
+                            let httpResponse = response as? HTTPURLResponse
                             completion(id, nil)
                             return
                         }
                         if let httpResponse = response as? HTTPURLResponse, (httpResponse.statusCode > 299) {
-                            print("Error uploading files. Status: \(httpResponse.statusCode)")
                             let uploadError = NSError(domain: "HTTPError", code: httpResponse.statusCode, userInfo: nil)
                             completion(nil, uploadError)
                             return
@@ -53,7 +48,7 @@ public class CaptureService {
         }
     }
     
-    public func receipt(receiptId: String, token: String, completion: @escaping (String?) -> Void) {
+    public func receipt(receiptId: String, token: String, completion: @escaping (_ success: String?, _ error: String?) -> Void) {
 
         var request = URLRequest(url: URL(string: "\(publishUrl)/receipt/\(receiptId)")!)
         
@@ -63,13 +58,9 @@ public class CaptureService {
         
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                print("######## Image upload with success")
-                completion("Upload success")
+                completion("Upload Success", nil)
             } else {
-                print("Updoad Error. HTTP status: \(response?.description ?? "Unknown")")
-                print("HTTP error! Body: \(String(describing: String(data: data!, encoding: .utf8)))")
-                completion("Upload fail")
-
+                completion(nil, "HTTP error! Body: \(String(describing: String(data: data!, encoding: .utf8)))")
             }
         }.resume()
     }
