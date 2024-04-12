@@ -22,7 +22,7 @@ public class CaptureService {
     ///   - images: Array of photos to be published in base64 strings.
     ///   - token: the address token to authenticate the request to our server.
     /// - Returns: A Promise that resolves with the ID of the request or void in case of any error.
-    func publish(images: [UIImage], token: String, completion: @escaping (String?, Error?) -> Void) {
+    public func publish(images: [UIImage], token: String, completion: @escaping (String?, Error?) -> Void) {
         let id = UUID().uuidString
         
         var request = URLRequest(url: URL(string: "\(publishUrl)/receipt/\(id)")!)
@@ -34,12 +34,12 @@ public class CaptureService {
             for image in images {
                 if let imageData = image.jpegData(compressionQuality: 1.0) {
                     let task = URLSession.shared.uploadTask(with: request, from: imageData) { data, response, error in
-                        if let error = error {
-                            print("Error uploading files: \(error)")
-                            completion(nil, error)
+                        if error == nil {
+                            print("Uploading files success")
+                            completion(id, nil)
                             return
                         }
-                        if let httpResponse = response as? HTTPURLResponse, (httpResponse.statusCode == 200) {
+                        if let httpResponse = response as? HTTPURLResponse, (httpResponse.statusCode > 299) {
                             print("Error uploading files. Status: \(httpResponse.statusCode)")
                             let uploadError = NSError(domain: "HTTPError", code: httpResponse.statusCode, userInfo: nil)
                             completion(nil, uploadError)
@@ -51,5 +51,26 @@ public class CaptureService {
             }
             completion(id, nil)
         }
+    }
+    
+    public func receipt(receiptId: String, token: String, completion: @escaping (String?) -> Void) {
+
+        var request = URLRequest(url: URL(string: "\(publishUrl)/receipt/\(receiptId)")!)
+        
+        request.httpMethod = "GET"
+        request.addValue("Content-Type", forHTTPHeaderField: "application/json")
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                print("######## Image upload with success")
+                completion("Upload success")
+            } else {
+                print("Updoad Error. HTTP status: \(response?.description ?? "Unknown")")
+                print("HTTP error! Body: \(String(describing: String(data: data!, encoding: .utf8)))")
+                completion("Upload fail")
+
+            }
+        }.resume()
     }
 }
