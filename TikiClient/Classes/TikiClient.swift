@@ -113,12 +113,9 @@ public class TikiClient {
     }
     
     public static func terms() -> String {
-        return ""
-        guard let path = Bundle(path: "TikiClientAssets")!.path(forResource: "terms", ofType: "md") else {
+        let bundle = Bundle(for: TikiClient.self)
+        guard let path = bundle.path(forResource: "Assets/terms", ofType: "md") else {
             fatalError("terms.md not found")
-        }
-        if(TikiClient.config == nil){
-            fatalError("Config is nil")
         }
         var terms = try? String(contentsOfFile: path)
 
