@@ -3,7 +3,7 @@ extension String {
     public func urlEncoded() -> String {
         return self.addingPercentEncoding(withAllowedCharacters: String.formURLEncodedAllowedCharacters)!.replacingOccurrences(of: " ", with:"+")
     }
-    public func base64UrlEncoding() -> String {
+    public func base64UrlSafe() -> String {
         return self
             .replacingOccurrences(of: "+", with: "-")
             .replacingOccurrences(of: "/", with: "_")
@@ -11,6 +11,7 @@ extension String {
             .replacingOccurrences(of: " ", with: "")
         
     }
+    
     
     public func base64Decoded() -> String? {
         var st = self

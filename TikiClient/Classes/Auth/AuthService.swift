@@ -11,10 +11,10 @@ import CryptoSwift
 /// Authentication Service for TIKI
 public class AuthService {
 
-    public func address(providerId: String, userId: String, pubKey: String, completion: @escaping (String?) -> Void) {
+    public func registerAddress(userId: String, providerId: String, pubKey: String, completion: @escaping (String?) -> Void) {
         let urlString = URL(string: "https://account.mytiki.com/api/latest/provider/\(providerId)/user")
         
-        token(providerId: providerId, secret: pubKey, scopes: ["aa"], address: nil, completion: { token in
+        token(providerId: providerId, secret: pubKey, scopes: ["account:provider"], address: nil, completion: { token in
             guard let accessToken = token else{
                 print("Error getting token")
                 completion(nil)
@@ -27,8 +27,8 @@ public class AuthService {
                 return
             }
 
-            guard let internalPrivKey = SecKeyCopyPublicKey(privateKey),
-                let publicKeyData = SecKeyCopyExternalRepresentation(internalPrivKey, nil) as Data? else {
+            guard let publicKey = SecKeyCopyPublicKey(privateKey),
+                let publicKeyData = SecKeyCopyExternalRepresentation(publicKey, nil) as Data? else {
                     print("Error extracting Public Key Data")
                     completion(nil)
                     return
@@ -44,7 +44,7 @@ public class AuthService {
                 return
             }
 
-            let message = "\(userId).\(address.base64EncodedString().base64UrlEncoding())"
+            let message = "\(userId).\(address.base64EncodedString().base64UrlSafe())"
             
             guard let signature = KeyService.sign(message: message, privateKey: privateKey) else {
                 print("Error generating signature")
@@ -52,7 +52,7 @@ public class AuthService {
                 return
             }
             
-            let reqBody = AuthAddrRequest(id: userId, address: address.base64EncodedString().base64UrlEncoding(), pubKey: publicKeyB64, signature: signature.base64EncodedString())
+            let reqBody = AuthAddrRequest(id: userId, address: address.base64EncodedString().base64UrlSafe(), pubKey: publicKeyB64.base64UrlSafe(), signature: signature.base64EncodedString())
             
             guard let jsonData = try? JSONEncoder().encode(reqBody) else {
                 print("Error encoding JSON")
@@ -84,27 +84,49 @@ public class AuthService {
         })
     }
         
-    public func token(providerId: String, secret: String, scopes: [String], address: String?,  completion: @escaping (String?) -> Void){
+    public func token(providerId: String, secret: String, scopes: [String], address: String? = nil,  completion: @escaping (String?) -> Void){
+//        let headers = [
+//          "User-Agent": "Thunder Client (https://www.thunderclient.com/)",
+//          "Accept": "application/json",
+//          "Content-Type": "application/x-www-form-urlencoded"
+//        ]
+//
+//        let postData = NSMutableData(data: "grant_type=client_credentials".data(using: String.Encoding.utf8)!)
+//        postData.append("&client_id=provider:8204cd6f-5b6c-4ddb-be14-dd5605c6a745".data(using: String.Encoding.utf8)!)
+//        postData.append("&client_secret=MIIBCgKCAQEAtk9JrSBKdppHhXx+pU7JTd7dGpv+Q6idZIUW6Aot7sYFYu+n4tr7YfKNpNHdor/Yujqfg9wPU2MOWTPiXbgH9nwnQLBM7o8szijIVY7J1GjlmGosEF0uk9/FZiE/FZY+R0+MqKd2kKEkeNddV94Jf8U683yZofFjfqEdW16cWUP5aAT1NBmemeTcbzZGlDGk3OebuPFPKnBulZrDCdkDdmGMJfmZvSp7XTbu91xV2Ff0VnxWlOMFi2AQVZ0F15QliXYnkA7zYWBBCP+lsE0V5tPqtL5jMg/fJI411Ez9x0rycoAXY7dfjKloZVw3mJdu1KAbkJDmk7TlymIvqeVL4QIDAQAB".data(using: String.Encoding.utf8)!)
+//        postData.append("&scope=account:provider".data(using: String.Encoding.utf8)!)
+//
+//        let request = NSMutableURLRequest(url: NSURL(string: "https://account.mytiki.com/api/latest/auth/token")! as URL,
+//                                                cachePolicy: .useProtocolCachePolicy,
+//                                            timeoutInterval: 10.0)
+//        request.httpMethod = "POST"
+//        request.allHTTPHeaderFields = headers
+//        request.httpBody = postData as Data
+//
+//        let session = URLSession.shared
+//        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
+//          if (error != nil) {
+//            print(error)
+//          } else {
+//            let httpResponse = response as? HTTPURLResponse
+//              print(String(data: data!, encoding: .utf8))
+//          }
+//        })
+//
+//        dataTask.resume()
         var request = URLRequest(url: URL(string: "https://account.mytiki.com/api/latest/auth/token")!)
+//        var request = URLRequest(url: URL(string: "https://postman-echo.com/post")!)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         if(address != nil){
             
         }
-        
-        var data = URLComponents()
-        data.queryItems = [
-            URLQueryItem(name: "grant_type", value: "client_credentials"),
-            URLQueryItem(name: "client_id", value: address == nil ? "provider:\(providerId)" : "addr:\(providerId):\(address!)"),
-            URLQueryItem(name: "client_secret", value: secret.base64UrlEncoding()),
-            URLQueryItem(name: "scope", value: "account:provider trail publish".base64UrlEncoding()),
-            URLQueryItem(name: "expires", value: "600")
-        ]
-        
-        var provider = address == nil ? "provider:\(providerId.base64UrlEncoding())" : "addr:\(providerId.urlEncoded().base64UrlEncoding()):\(address!.urlEncoded().base64UrlEncoding())"
 
-        let postData = "grant_type=client_credentials&client_id=\(provider)&client_secret=\(secret.base64UrlEncoding())&scope=account:provider trail publish&expires=600"
+        let provider = address == nil ? "provider:\(providerId)" : "addr:\(providerId):\(address!.base64UrlSafe())"
+        let scopesJoined = scopes.joined(separator: " ")
+        let slashedSecret = secret.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
+        let postData = "grant_type=client_credentials&client_id=\(provider)&client_secret=\(addSlashedSecret)&scope=\(scopesJoined)&expires=600"
         
         print(postData)
         

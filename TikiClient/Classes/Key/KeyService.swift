@@ -31,8 +31,7 @@ public class KeyService{
 
     public static func address(b64PubKey: String) -> Data? {
       let decoded = Data(base64Encoded: b64PubKey)!
-      var dataAddress = decoded.sha3(.sha256)
-      let address = dataAddress.base64EncodedString().base64UrlEncoding()
+      let dataAddress = decoded.sha3(.sha256)
       return dataAddress
     }
 
@@ -47,11 +46,14 @@ public class KeyService{
     }
     
     public static func get(providerId: String, userId: String, isPrivate: Bool = false) -> SecKey? {
-        let data = repository.read(service: providerId, key: userId)!
+        guard let data = repository.read(service: providerId, key: userId) else {
+            return nil
+        }
         return try? CriptoUtils.decodeSecKeyFromData(secKeyData: data, isPrivate: isPrivate)
     }
   
     public static func save(_ data: Data, service: String, key: String) {
         repository.save(data, service: service, key: key)
     }
+    
 }
