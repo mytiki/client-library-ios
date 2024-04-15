@@ -8,59 +8,44 @@ import Security
 import CryptoKit
 import CryptoSwift
 
-
 /// Authentication Service for TIKI
 public class AuthService {
-    
-    public init(){}
-     
-    public func address(providerId: String, userId: String, pubKey: String, completion: @escaping (String?) -> Void) {
+
+    public func registerAddress(userId: String, providerId: String, pubKey: String, completion: @escaping (_ sucess: String?, _ error: String?) -> Void) {
         let urlString = URL(string: "https://account.mytiki.com/api/latest/provider/\(providerId)/user")
         
-        token(providerId: providerId, clientSecret: pubKey){ token in
+        token(providerId: providerId, secret: pubKey, scopes: ["account:provider"], address: nil, completion: { token, error  in
             guard let accessToken = token else{
-                print("Error getting token")
-                completion(nil)
+                completion(nil, "Error getting token")
                 return
             }
             
             guard let privateKey = KeyService.generate() else {
-                print("Error generating private key")
-                completion(nil)
+                completion(nil, "Error generating private key")
                 return
             }
-
-            guard let internalPubKey = SecKeyCopyPublicKey(privateKey),
-                let publicKeyData = SecKeyCopyExternalRepresentation(internalPubKey, nil) as Data? else {
-                    print("Error extracting Public Key Data")
-                    completion(nil)
-                    return
-                  }
             
-            let keySize = 256
-            let exportImportManager = CryptoExportImportManager()
-            let publicKeyB64 = exportImportManager.exportPublicKeyToPEM(publicKeyData, keySize: keySize)!
+            guard let publicKeyB64 = KeyService.publicKeyB64(privateKey: privateKey) else{
+                completion(nil, "Error extracting public key")
+                return
+            }
 
             guard let address = KeyService.address(b64PubKey: publicKeyB64) else {
-                print("Error generating address")
-                completion(nil)
+                completion(nil, "Error generating address")
                 return
             }
 
-            
-            let message = "\(userId).\(address.base64EncodedString().base64UrlEncoding())"
+            let message = "\(userId).\(address)"
             
             guard let signature = KeyService.sign(message: message, privateKey: privateKey) else {
-                print("Error generating signature")
-                completion(nil)
+                completion(nil, "Error generating signature")
                 return
             }
             
-            let reqBody = AuthAddrRequest(id: userId, address: address.base64EncodedString().base64UrlEncoding(), pubKey: publicKeyB64, signature: signature.base64EncodedString())
+            let reqBody = AuthAddrRequest(id: userId, address: address, pubKey: publicKeyB64, signature: signature)
             
             guard let jsonData = try? JSONEncoder().encode(reqBody) else {
-                print("Error encoding JSON")
-                completion(nil)
+                completion(nil, "Error encoding JSON")
                 return
             }
             
@@ -74,82 +59,59 @@ public class AuthService {
             
             URLSession.shared.dataTask(with: request) { (data, response, error) in
                 if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                    print("########User registration successful")
-                    completion(address.base64EncodedString())
-                    
+                    completion(address, nil)
+                    let privKeyData = SecKeyCopyExternalRepresentation(privateKey, nil)! as Data
+                    KeyService.save(privKeyData, service: providerId, key: userId)
                 } else {
-                    print("Error registering user. HTTP status: \(response?.description ?? "Unknown")")
-                    print("HTTP error! Body: \(String(describing: String(data: data!, encoding: .utf8)))")
-                    completion(nil)
-                    
+                    completion(nil, "Error registering user. HTTP status: \(response?.description ?? "Unknown")")
                 }
             }.resume()
             
-        }
+        })
     }
         
-    public func token(providerId: String, clientSecret: String, completion: @escaping (String?) -> Void){
+    public func token(providerId: String, secret: String, scopes: [String], address: String? = nil,  completion: @escaping (_ sucess: String?, _ error: String?) -> Void){
         var request = URLRequest(url: URL(string: "https://account.mytiki.com/api/latest/auth/token")!)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        
-        let postData = "grant_type=client_credentials&client_id=provider:\(providerId.urlEncoded())&client_secret=\(clientSecret.urlEncoded())&scope=account:provider trail publish&expires=600"
+        if(address != nil){
+            
+        }
+
+        let provider = address == nil ? "provider:\(providerId)" : "addr:\(providerId):\(address!.base64UrlSafe())"
+        let scopesJoined = scopes.joined(separator: " ")
+        let slashedSecret = secret.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
+        let postData = "grant_type=client_credentials&client_id=\(provider)&client_secret=\(slashedSecret)&scope=\(scopesJoined)&expires=600"
         
         request.httpBody = postData.data(using: .utf8)
-        
+                
         URLSession.shared.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
                 
                 
                 guard let body = String(data: data!, encoding: .utf8),
                         let httpResponse = response as? HTTPURLResponse,
-                      error == nil else {
-                    print("Error fetching token: \(error?.localizedDescription ?? "Unknown error")")
-                    completion(nil)
+                        error == nil else {
+                    completion(nil, "Error fetching token: \(error?.localizedDescription ?? "Unknow")")
                     return
                 }
                 
                 guard (200...299).contains(httpResponse.statusCode) else {
-                    print("HTTP error! Status: \(httpResponse.statusCode), Body: \(body)")
-                    completion(nil)
+                    completion(nil, "HTTP error! Status: \(httpResponse.statusCode), Body: \(body)")
                     return
                 }
                 
                 guard let responseData = try? JSONDecoder().decode(AuthTokenResponse.self, from: data!) else {
-                    print("Error decoding JSON: \(body)")
-                    completion(nil)
+                    completion(nil, "Error decoding JSON: \(body)")
                     return
                 }
                 
-                completion(responseData.access_token)
+                completion(responseData.access_token, nil)
                 
             }
         }.resume()
         
-    }
-    public func exportPublicKey(_ rawPublicKeyBytes: Data, base64EncodingOptions: Data.Base64EncodingOptions = []) -> String?
-    {
-        return rawPublicKeyBytes.base64EncodedString(options: base64EncodingOptions)
-    }
-    
-    func exportKeyAsPEM(_ key: SecKey, isPrivateKey: Bool) -> String? {
-        var cfError: Unmanaged<CFError>?
-        let data = SecKeyCopyExternalRepresentation(key, &cfError)
-        guard let keyData = data as Data?, cfError == nil else {
-            print("Error exporting key: \(cfError.debugDescription)")
-            return nil
-        }
-        
-        let pemType = isPrivateKey ? "PRIVATE" : "PUBLIC"
-        let keyHeader = "-----BEGIN RSA \(pemType) KEY-----\n"
-        let keyFooter = "\n-----END RSA \(pemType) KEY-----"
-        
-        var base64EncodedString = keyData.base64EncodedString()
-        // Wrap lines at 64 characters as per PEM format
-        base64EncodedString = base64EncodedString.enumerated().map { $0.offset % 64 == 0 ? "\n\($0.element)" : "\($0.element)" }.joined()
-        
-        return keyHeader + base64EncodedString + keyFooter
     }
 
 }

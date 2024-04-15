@@ -5,12 +5,15 @@
 
 import Foundation
 
-public struct LicenseRequest : Codable{
-    var ptr: String
-    var tags: [String]
-    var uses: [Use]
-    var terms: String
-    var expiry: String?
-    var titleDesc: String?
-    var licenseDesc: String
+public struct LicenseRequest : Codable {
+   let ptr: String
+   let tags: [String]
+   let uses: [Use]
+   let terms: String
+   let description: String
+   let origin: String
+   var signature: String
+   let expiry: String? = nil
 }
+
+

@@ -39,5 +39,10 @@ public class Usecase: Codable {
     public func toString() -> String {
         return value
     }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(value)
+    }
 
 }

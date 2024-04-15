@@ -51,10 +51,17 @@ public final class KeyRepository {
             kSecReturnData: true
         ] as CFDictionary
         
-        var result: AnyObject?
-        SecItemCopyMatching(query, &result)
-        
-        return (result as? Data)
+        var extractedData: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &extractedData)
+
+        guard status == errSecItemNotFound || status == errSecSuccess else {
+          fatalError("Unable to retrieve the secret")
+        }
+
+        guard status != errSecItemNotFound else {
+          return nil
+        }
+        return extractedData as? Data
     }
     
     func readAll(service: String) -> [String]? {

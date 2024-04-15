@@ -6,39 +6,66 @@
 /// Service for capturing and processing receipt data.
 public class CaptureService {
     
-    var captureScan = CaptureScan()
-
+    let publishUrl = "https://publish.mytiki.com"
+    let captureScan = CaptureScan()
+    
     /// Captures an image of a receipt for processing.
     ///
-    /// - Returns: The captured receipt image.
-    public func scan(onFinish: @escaping (UIImage) -> Void){
-        captureScan.captureScan(onFinish: onFinish)
+    /// - Returns: The captured receipt image or nil if the user canceled.
+    public func scan(onImage: @escaping (UIImage?) -> Void){
+        captureScan.start(onFinish: onImage)
     }
 
-
-
-    /// Downloads potential receipt data from known receipt email senders and publishes it.
     ///
-    /// - Parameter onPublish: The callback function to be called on each uploaded email.
-    public func email(onPublish: @escaping (String) -> Void) {
-        // Implementation
-    }
-
-    /// Uploads receipt images or email data for receipt data extraction.
-    ///
-    /// - Parameter data: The binary image or email data.
-    /// - Returns: The ID of the uploaded data to check publishing status.
-    public func publish(data: UIImage) -> String {
-        return ""
-    }
-
-    /// Checks the publishing status of the data.
-    ///
-    /// - Parameter receiptId: The ID of the published data.
-    /// - Returns: The publishing status.
-    public func status(receiptId: String) -> PublishingStatusEnum {
-        return .inProgress
+    /// Publishes the photos to Tiki.
+    /// - Parameters:
+    ///   - images: Array of photos to be published in base64 strings.
+    ///   - token: the address token to authenticate the request to our server.
+    /// - Returns: A Promise that resolves with the ID of the request or void in case of any error.
+    public func publish(images: [UIImage], token: String, completion: @escaping (String?, Error?) -> Void) {
+        let id = UUID().uuidString
+        
+        var request = URLRequest(url: URL(string: "\(publishUrl)/receipt/\(id)")!)
+        request.httpMethod = "POST"
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("image/jpeg", forHTTPHeaderField: "Content-Type")
+        
+        DispatchQueue.global(qos: .background).async {
+            for image in images {
+                if let imageData = image.jpegData(compressionQuality: 1.0) {
+                    let task = URLSession.shared.uploadTask(with: request, from: imageData) { data, response, error in
+                        if error == nil {
+                            let httpResponse = response as? HTTPURLResponse
+                            completion(id, nil)
+                            return
+                        }
+                        if let httpResponse = response as? HTTPURLResponse, (httpResponse.statusCode > 299) {
+                            let uploadError = NSError(domain: "HTTPError", code: httpResponse.statusCode, userInfo: nil)
+                            completion(nil, uploadError)
+                            return
+                        }
+                    }
+                    task.resume()
+                }
+            }
+            completion(id, nil)
+        }
     }
     
-}
+    public func receipt(receiptId: String, token: String, completion: @escaping (_ success: String?, _ error: String?) -> Void) {
 
+        var request = URLRequest(url: URL(string: "\(publishUrl)/receipt/\(receiptId)")!)
+        
+        request.httpMethod = "GET"
+        request.addValue("Content-Type", forHTTPHeaderField: "application/json")
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                completion("Upload Success", nil)
+            } else {
+                completion(nil, "HTTP error! Body: \(String(describing: String(data: data!, encoding: .utf8)))")
+            }
+        }.resume()
+    }
+}
