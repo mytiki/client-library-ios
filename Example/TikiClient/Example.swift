@@ -9,6 +9,8 @@ import SwiftUI
 import TikiClient
 
 import CoreLocation
+import AppTrackingTransparency
+
 
 @main
 struct Main: App {
@@ -20,6 +22,8 @@ struct Main: App {
     @State public var publishImageId: String?
     
     @StateObject var locationManager = LocationDataManager()
+    
+    @State var responseTrack = "Asking permission in progress"
     
     //Auth Token
     var providerId = ""
@@ -95,6 +99,21 @@ struct Main: App {
                             ProgressView()
                         }
                 }
+                VStack{
+                    if(TikiClient.tracking.isTrackingAccessAvailable()){
+                        Text("Granted consent, The Traking Identifier is: \(TikiClient.tracking.getTrackingIdentifier()!.uuidString)")
+                    }else{
+                        Button("Ask to track"){
+                            TikiClient.tracking.askToTrack() {
+                                response in
+                                responseTrack = response
+                            }
+                        }
+                        Text(responseTrack)
+                    }
+
+                }
+                
             }
         }
     }

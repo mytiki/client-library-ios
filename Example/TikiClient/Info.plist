@@ -46,11 +46,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We need use your location, please. Allow the location to us.</string>
+	<string>We need location permition to run our services, please, allow the location.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We need use your location, please. Allow the location to us.</string>
+	<string>We need location permition to run our services, please, allow the location.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need use your location, please. Allow the location to us.</string>
+	<string>We need location permition to run our services, please, allow the location.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>We need track permition to run our services, please, allow tracking.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
