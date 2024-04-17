@@ -1,12 +1,12 @@
 PODS:
-  - AppAuth (1.6.2):
-    - AppAuth/Core (= 1.6.2)
-    - AppAuth/ExternalUserAgent (= 1.6.2)
-  - AppAuth/Core (1.6.2)
-  - AppAuth/ExternalUserAgent (1.6.2):
+  - AppAuth (1.7.4):
+    - AppAuth/Core (= 1.7.4)
+    - AppAuth/ExternalUserAgent (= 1.7.4)
+  - AppAuth/Core (1.7.4)
+  - AppAuth/ExternalUserAgent (1.7.4):
     - AppAuth/Core
-  - CryptoSwift (1.8.1)
-  - TikiClient (0.1.0):
+  - CryptoSwift (1.8.2)
+  - TikiClient (0.0.1):
     - AppAuth
     - CryptoSwift
 
@@ -24,10 +24,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
-  CryptoSwift: b9c701d6f5011df23794dbf7f2e480a77835d83d
-  TikiClient: 3a91dc7c2954d54e92f8a1f2f132844c29a50cbb
+  AppAuth: 182c5b88630569df5acb672720534756c29b3358
+  CryptoSwift: c63a805d8bb5e5538e88af4e44bb537776af11ea
+  TikiClient: ea86f2ab4a89f34a03d630e7ce19acc53ab7cba0
 
-PODFILE CHECKSUM: 7501e71a92a5f280b97aaf5f199fa519634e934c
+PODFILE CHECKSUM: d04f75c2c60901a06a6b718e6847f1bacac77834
 
 COCOAPODS: 1.15.2
