@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'TikiClient'
-  s.version          = '0.0.3'
+  s.version          = '0.0.4'
   s.summary          = 'Lean Cocoapods lib for seamless integration with TIKI Rest APIs'
   s.swift_version    = '5.9'
   s.description      = <<-DESC
