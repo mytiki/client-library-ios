@@ -60,6 +60,6 @@ jobs:
 
       - name: Create a Release
         continue-on-error: true
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@master
         with:
           tag: ${{ steps.semver.outputs.nextStrict }}
