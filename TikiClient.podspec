@@ -1,8 +1,8 @@
 Pod::Spec.new do |s|
   s.name             = 'TikiClient'
-  s.version          = '0.1.0'
+  s.version          = '0.0.2'
   s.summary          = 'Lean Cocoapods lib for seamless integration with TIKI Rest APIs'
-
+  s.swift_version    = '5.9'
   s.description      = <<-DESC
   The TIKI APIs comprise a set of HTTP REST APIs designed for seamless integration with any
   standard HTTP client. The Client Libraries serve as a user-friendly layer around the TIKI APIs,
@@ -25,9 +25,8 @@ Pod::Spec.new do |s|
 
   s.source_files = 'TikiClient/Classes/**/*'
 
-  s.dependency 'AppAuth'
   s.dependency 'CryptoSwift'
-
+  
   s.resource_bundles = {
     'TikiClientAssets' => [
       'TikiClient/Assets'

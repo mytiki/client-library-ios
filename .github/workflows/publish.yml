@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+     - closed
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Publish Jazzy Docs
+      uses: steven0351/publish-jazzy-docs@v1
+      with:
+        personal_access_token: ${{ secrets.ACCESS_TOKEN }}
+        branch: main
+
+  release:
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/')
+    environment: Production
+    outputs:
+      tag: ${{ steps.semver.outputs.nextStrict }}
+    runs-on: macos-latest
+    steps:
+      - name: Checkout TIKI SDK iOS
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Version
+        id: semver
+        uses: ietf-tools/semver-action@v1
+        with:
+          token: ${{ github.token }}
+
+      - name: Create a new tag
+        run: |
+          git tag ${{ steps.semver.outputs.nextStrict }}
+          git push origin ${{ steps.semver.outputs.nextStrict }}
+
+      - name: Deploy to Cocoapods
+        run: |
+          set -eo pipefail
+          pod lib lint --allow-warnings
+          pod trunk push TikiSdkDebug.podspec --allow-warnings
+          pod trunk push TikiSdkRelease.podspec --allow-warnings
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+
+      - name: Create a Release
+        continue-on-error: true
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.semver.outputs.nextStrict }}

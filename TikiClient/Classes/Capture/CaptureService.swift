@@ -35,7 +35,7 @@ public class CaptureService {
                 if let imageData = image.jpegData(compressionQuality: 1.0) {
                     let task = URLSession.shared.uploadTask(with: request, from: imageData) { data, response, error in
                         if error == nil {
-                            let httpResponse = response as? HTTPURLResponse
+                            response as? HTTPURLResponse
                             completion(id, nil)
                             return
                         }
