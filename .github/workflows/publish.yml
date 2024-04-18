@@ -54,8 +54,7 @@ jobs:
         run: |
           set -eo pipefail
           pod lib lint --allow-warnings
-          pod trunk push TikiSdkDebug.podspec --allow-warnings
-          pod trunk push TikiSdkRelease.podspec --allow-warnings
+          pod trunk push TikiClient.podspec --allow-warnings
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
 
