@@ -32,4 +32,4 @@ jobs:
       - name: Run tests
         run: |
           cd Example
-          xcodebuild test -workspace TikiClient.xcworkspace -scheme TikiClientExample -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 14'
+          xcodebuild test -workspace TikiClient.xcworkspace -scheme TikiClient-Example -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 14'
