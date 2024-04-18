@@ -10,6 +10,7 @@
 		886417CD2B62B1F40088A07C /* Example.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886417CC2B62B1F40088A07C /* Example.swift */; };
 		8867C3042BCDA75D008A0D00 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8867C3032BCDA75D008A0D00 /* Location.swift */; };
 		888188F12B603B1C006DE4CE /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 888188F02B603B1C006DE4CE /* Security.framework */; };
+		88A01BA62BD18BC5005828BE /* TikiClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A01BA52BD18BC5005828BE /* TikiClientTests.swift */; };
 		88E1B7C82B926458005429F1 /* TikiClientExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E1B7C72B926458005429F1 /* TikiClientExampleTests.swift */; };
 		C337CE9336F6DA1302FD5900 /* Pods_TikiClientExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7B6B338594F5A37E754066E /* Pods_TikiClientExampleTests.framework */; };
 		E109A5293EEF29B311855F8C /* Pods_TikiClient_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F02D43BBF21874BF12F34C8 /* Pods_TikiClient_Example.framework */; };
@@ -36,6 +37,7 @@
 		886417CC2B62B1F40088A07C /* Example.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example.swift; sourceTree = "<group>"; };
 		8867C3032BCDA75D008A0D00 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		888188F02B603B1C006DE4CE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		88A01BA52BD18BC5005828BE /* TikiClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikiClientTests.swift; sourceTree = "<group>"; };
 		88E1B7C52B926458005429F1 /* TikiClientExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TikiClientExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		88E1B7C72B926458005429F1 /* TikiClientExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikiClientExampleTests.swift; sourceTree = "<group>"; };
 		A312AB41962D3733F97980EA /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				88E1B7C72B926458005429F1 /* TikiClientExampleTests.swift */,
+				88A01BA52BD18BC5005828BE /* TikiClientTests.swift */,
 			);
 			path = TikiClientExampleTests;
 			sourceTree = "<group>";
@@ -206,7 +209,7 @@
 					};
 					88E1B7C42B926458005429F1 = {
 						CreatedOnToolsVersion = 15.2;
-						DevelopmentTeam = 8B528SGCJW;
+						DevelopmentTeam = JC63RM5U2M;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
@@ -321,12 +324,14 @@
 				"${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework",
 				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/TikiClient/TikiClient.framework",
+				"${BUILT_PRODUCTS_DIR}/MockingbirdFramework/Mockingbird.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AppAuth.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TikiClient.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mockingbird.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -372,6 +377,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				88E1B7C82B926458005429F1 /* TikiClientExampleTests.swift in Sources */,
+				88A01BA62BD18BC5005828BE /* TikiClientTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -549,7 +555,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 8B528SGCJW;
+				DEVELOPMENT_TEAM = JC63RM5U2M;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -585,7 +591,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8B528SGCJW;
+				DEVELOPMENT_TEAM = JC63RM5U2M;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;

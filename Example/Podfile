@@ -11,5 +11,6 @@ target 'TikiClient_Example' do
   target 'TikiClientExampleTests' do
     pod 'TikiClient', :path => '../'
     pod 'CryptoSwift'
+    pod 'MockingbirdFramework', '~> 0.20'
     end
     

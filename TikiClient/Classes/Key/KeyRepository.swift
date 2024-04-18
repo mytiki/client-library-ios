@@ -5,6 +5,7 @@
 
 import Foundation
 
+/// Class to manage the keychain
 public final class KeyRepository {
     
     private let bundle: String = "com.mytiki.publish.client"

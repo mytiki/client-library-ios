@@ -6,6 +6,7 @@
 import Foundation
 import CoreLocation
 
+/// Class to manage the location permission
 public class LocationDataManager : NSObject, ObservableObject, CLLocationManagerDelegate {
     public var locationManager = CLLocationManager()
     @Published public var authorizationStatus: CLAuthorizationStatus?
@@ -16,6 +17,7 @@ public class LocationDataManager : NSObject, ObservableObject, CLLocationManager
         locationManager.delegate = self
     }
     
+    /// Request location permission
     public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .authorizedWhenInUse:  // Location services are available.

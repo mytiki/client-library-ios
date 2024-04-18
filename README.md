@@ -1,96 +1,144 @@
-# TIKI Client Library - iOS Specification
+# TIKI Publish Client Library
 
-## Technologies Used
+The TIKI Data Provider APIs comprise a set of HTTP REST APIs used by [Data Providers](https://mytiki.com/reference/overview) to publish data to TIKI. This enables compatibility with any standard HTTP client for sending requests and handling responses.
 
-1. **Language:** Swift
-2. **Networking:** URLSession for HTTP communication
-3. **Authentication:** AppAuth for OAuth2
-4. **Encrypted Storage:** Keychain for secure storage
-5. **Storage:** UserDefaults for small non-sensitive key-value pairs and the filesystem for lengthy information, like the index of email IDs.
-6. **Camera Integration:** AVFoundation for receipt image capture
-7. **UI Components:** SwiftUI
+The TIKI Publish Client Library simplifies application integration by providing convenient methods for authorization, licensing, capture, and upload, reducing the amount of code necessary to connect a web app with TIKI.
 
-## Library Structure
+## Getting Started
 
-1. **TikiClient:** The primary entry point for the TIKI Client Library.
+To begin, visit [mytiki.com](https://mytiki.com) and apply for beta access. Our team will then set up the provider ID and public key for your project, which you'll use to configure the client.
 
-2. **TikiClient.auth:** Handles authentication, token retrieval, revocation, and refresh.
+## Installation
 
-3. **TikiClient.license:** Manages user licenses, including creation, retrieval, revocation, and verification.
+Install the TIKI Client library using `CocoaPods`
 
-4. **TikiClient.email:** Manages email-related operations such as adding, retrieving, and removing email accounts.
+Add to your Podfile project: 
+```bash
+pod 'TikiClient'
+```
+and then run:
+```bash
+pod install
+```
 
-5. **TikiClient.capture:** Deals with capturing receipt images, downloading and publishing email receipt data, uploading receipt images, and checking publishing status.
+The app must provide a message explaining why it needs access to the device's camera, location and track. This is done by setting up the `NSCameraUsageDescription`,`NSLocationAlwaysUsageDescription` , `NSLocationWhenInUseUsageDescription`, `NSLocationAlwaysAndWhenInUseUsageDescription`,
+`Privacy - Track Usage Description`  in the `info.plist`:
 
-6. **TikiClient.clo:** Handles card-linked offers, including adding cards, retrieving offers, getting user rewards, and publishing transaction information.
 
-## Implementation
+## Configuration
 
-### TikiClient
+Before executing any commands with the TikiClient library, you need to configure it. This includes providing the Provider ID and Public Key obtained during Provider Registration, as well as company information for generating license terms.
 
-- **Methods:**
-  - `initialize(providerId: String, userId: String, company: CompanyInfo)`: Initializes the TikiClient with parameters.
-  - `scan() -> String`: Initiates the process of scanning a physical receipt and returns the receipt ID.
-  - `login(provider: EmailProviderEnum)`: Initiates the process of scraping receipts from emails.
-  - `logout(email: String)`: Removes a previously added email account.
-  - `accounts() -> [EmailAccount]`: Retrieves the list of connected email accounts.
-  - `scrape()`: Initiates the process of scraping receipts from emails.
-  - `card(last4: String, bin: String, issuer: String, network: String)`: Adds a card for card-linked offers.
-  - `offers() -> [Offer]`: Retrieves card-linked offers for the user.
-  - `transaction(transaction: Transaction)`: Submits a transaction for card-linked offer matching.
-  - `rewards() -> [Reward]`: Retrieves information about the user's rewards.
-  - `widget(theme: Theme?)`: Displays the widget for pre-built UIs with a custom theme.
+```swift
+let config: Config = {
+  providerId: "<PROVIDER-ID>", // Provided by TIKI
+  publicKey: "<PUBLIC-KEY>", // Provided by TIKI
+  companyName: "ACME Inc",
+  companyJurisdiction: "Nashville, TN",
+  tosUrl: "https://acme.inc/tos",
+  privacyUrl: "https://acme.inc/privacy"
+}
+TikiClient.configure(config)
+```
 
-### TikiClient.auth
+## How to Use
 
-- **Methods:**
-  - `authenticate() -> String`: Authenticates with TIKI and saves the auth and refresh tokens.
-  - `token() -> String`: Retrieves the authentication token, refreshing if necessary.
-  - `revoke()`: Revokes the authentication token.
-  - `refresh() -> String`: Refreshes the authentication token.
+The TikiClient is a singleton used as the main entry point for all functionalities of the library. The configuration sets the parameters used by all methods.
 
-### TikiClient.license
+### Initialization
 
-- **Methods:**
-  - `create() -> LicenseRecord`: Creates a new license for the user.
-  - `get() -> License`: Retrieves the user's active license.
-  - `revoke() -> License`: Revokes the user's existing license.
-  - `verify() -> Bool`: Verifies the validity of the user's license.
+This method authenticates with the TIKI API and registers the user's device to publish data. It is an asynchronous method due to the necessary API calls.
 
-### Email
+The user ID can be any arbitrary string that identifies the user in the application using the client library. It is not recommended to use personally identifiable information, such as emails. If necessary, use a hashed version of it.
 
-- **Methods:**
-  - `login(provider: EmailProvider)`: Authenticates with OAuth and adds an email account for scraping receipts.
-  - `accounts() -> [EmailAccount]`: Retrieves the list of connected email accounts.
-  - `logout(email: String)`: Removes a previously added email account.
+```swift
+TikiClient.initialize("<the-client-user-id>")
+```
 
-### TikiClient.capture
+To switch the active user, call the `TikiClient.initialize` method again.
 
-- **Methods:**
-  - `camera() -> UIImage`: Captures an image of a receipt for processing.
-  - `email(onPublish: (receiptId: String) -> Void)`: Downloads potential receipt data from known receipt email senders and publishes it.
-  - `publish(data: ImageData) -> String`: Uploads receipt images or email data for receipt data extraction.
-  - `status(receiptId: String) -> PublishingStatus`: Checks the publishing status of the data.
+### Data License
 
-### TikiClient.clo
+To successfully capture and upload receipt data to our platform, it is essential to establish a valid User Data License Agreement (UDLA). This agreement serves as a clear, explicit addendum to your standard app terms of service, delineating key aspects:
 
-- **Methods:**
-  - `card(last4: String, bin: String, issuer: String, network: String)`: Adds a card to the user's account.
-  - `offers() -> [Offer]`: Retrieves card-linked offers for the user.
-  - `rewards() -> [Reward]`: Retrieves information about the user's rewards.
-  - `transaction(transaction: Transaction)`: Sends transaction information to match card-linked offers.
+a) User Ownership: It explicitly recognizes the user as the rightful owner of the data.
 
-## Documentation
+b) Usage Terms: It outlines the terms governing how the data will be licensed and used.
 
-The library should provide comprehensive documentation including:
+c) Compensation: It defines the compensation arrangements offered in exchange for the provided data.
 
-1. **Getting Started Guide:** Instructions on how to integrate the library into an iOS project.
-2. **API Reference:** Detailed documentation for each class, method, and parameter.
-3. **Sample Code:** Examples demonstrating how to use key functionalities of the library.
-4. **Configuration Guide:** Guidelines on setting up TIKI credentials and other necessary configurations.
-5. **Error Handling:** Information on handling errors and exceptions.
-6. **Example App** An example app with basic UI, for manual testing.
+Our Client Library streamlines this process by providing a pre-qualified agreement, filled with the company information provided in the library configuration. 
 
-## Non-Native Dependencies
+Retrieve the formatted terms of the license, presented in Markdown, using the `TikiClient.terms()` method. This allows you to present users with a clear understanding of the terms before they agree to license their data. This agreement comes , ensuring a seamless integration into the license registry.
 
-- AppAuth for OAuth2.
+```swift
+let terms = TikiClient.terms()
+```
+
+Upon user agreement, generate the license using the `TikiClient.createLicense` method.
+
+```swift
+TikiClient.createLicense()
+```
+
+This method needs to be invoked once for each device. Once executed, the license is registered in TIKI storage, eliminating the need to recreate it in the future.
+
+
+### Data Capture
+
+The Client Library offers an **optional** method for scanning physical receipts via the mobile device camera.
+
+Use the `TikiClient.capture.scan()` method to trigger the receipt scanning process, leveraging the Capacitor Camera plugin. This method returns a `Promise` containing the base64 representation of the captured `image/jpg`.
+
+```swift
+const image = TikiClient.capture.scan();
+```
+
+### Data Upload
+
+Utilize the `TikiClient.capture.publish` method to upload receipt images to TIKI for processing. This method is versatile, as it can receive results from the `TikiClient.capture.scan` method, or your application can implement a custom scan extraction method, sending the results to `TikiClient.capture.publish`.
+
+The `images` parameter accepts an array of base64 image strings, providing flexibility to capture and scan multiple images, ideal for processing lengthy receipts.
+
+```swift
+TikiClient.capture.scan() {
+  image in
+  TikiClient.capture.publish([image])
+}
+```
+### Retrieve Results
+
+Once you've uploaded receipt images to TIKI for processing using the `TikiClient.capture.publish` method, you can retrieve the extracted data associated with a specific receipt by calling the `TikiClient.capture.receipt(receiptId)` method.
+
+```swift
+// Assuming you have the receiptId stored in a variable named 'receiptId'
+TikiClient.receipt(receiptId){
+  success, error in 
+  print("Success: \(success). Error: \(error))
+}
+
+```
+
+**Note**: The data extraction from receipts is performed asynchronously by Amazon Textract. Processing typically takes a few seconds, but it can occasionally take up to a minute. It's important to note that making subsequent calls to `TikiClient.capture.receipt(receiptId)` shortly after using `TikiClient.capture.publish` might lead to unexpected results and false `404` errors from the API. We recommend allowing sufficient time for the extraction process to complete before attempting to retrieve the extracted data.
+
+
+
+Upon execution, this method returns a unique ID for the receipt, facilitating easy retrieval of the extracted data or referencing it in the [Data Cleanroom](https://mytiki.com/reference/data-cleanrooms).
+
+## API Reference
+
+The central API interface in the library is the TikiClient object, designed to abstract the complexities of authorization and API requests. While serving as the primary entry point, it's important to note that all APIs within the library are public and accessible.
+
+For detailed usage instructions, please consult the [TIKI Client API Documentation](https://mytiki.com/reference/client-library/swift). This comprehensive resource provides direct insights into utilizing the various functionalities offered by the TIKI Client Library.
+
+## Example App
+
+To see a simple implementation of the TIKI Client library in a Capacitor + Vue.js app, check the [Example App](https://github.com/tiki/publish-client-ios/tree/main/Example).
+
+# Contributing
+
+- Use [GitHub Issues](https://github.com/tiki/publish-client-ios/issues) to report bugs or
+
+ request enhancements.
+- To contact our team or other active contributors, join our 👾 [Discord](https://discord.gg/tiki).
+- Please adhere to [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) when contributing code to this project.

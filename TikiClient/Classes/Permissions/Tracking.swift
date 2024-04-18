@@ -6,29 +6,36 @@
 import AppTrackingTransparency
 import AdSupport
 
+/// Class to manage the advertising tracking
 public class Tracking {
-    
-    public func askToTrack(completion: @escaping (String) -> Void) {
+    /**
+     Request tracking permission
+     - Parameters:
+     - completion: The callback to call when the request is completed.
+     - Parameter completion: escaping closure with ATTrackingManager.AuthorizationStatus
+     */
+    public func askToTrack(completion: @escaping (ATTrackingManager.AuthorizationStatus) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
             ATTrackingManager.requestTrackingAuthorization(completionHandler: { status in
                 switch status {
                 case .notDetermined:
-                    completion("Unknown consent")
+                    completion(.notDetermined)
                     break
                 case .restricted:
-                    completion("Device has an MDM solution applied")
+                    completion(.restricted)
                 case .denied:
-                    completion("Denied consent")
+                    completion(.denied)
                 case .authorized:
-                    completion("Granted consent, The Traking Identifier is: \(self.getTrackingIdentifier()?.uuidString)")
+                    completion(.authorized)
                 default:
-                    completion("Unknown")
+                    completion(.notDetermined)
                 }
             })
         }
     }
     
-    
+    /// Get the tracking identifier
+    /// - Returns: The UUID of the tracking identifier
     public func getTrackingIdentifier() -> UUID? {
         if(self.isTrackingAccessAvailable())
         {
@@ -37,6 +44,8 @@ public class Tracking {
         return nil
     }
     
+    /// Check if tracking permission is available
+    /// - Returns: Boolean if tracking permission is available
     public func isTrackingAccessAvailable() -> Bool {
         switch ATTrackingManager.trackingAuthorizationStatus {
         case .authorized:

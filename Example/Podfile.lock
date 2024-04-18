@@ -6,18 +6,21 @@ PODS:
   - AppAuth/ExternalUserAgent (1.6.2):
     - AppAuth/Core
   - CryptoSwift (1.8.1)
+  - MockingbirdFramework (0.20.0)
   - TikiClient (0.1.0):
     - AppAuth
     - CryptoSwift
 
 DEPENDENCIES:
   - CryptoSwift
+  - MockingbirdFramework (~> 0.20)
   - TikiClient (from `../`)
 
 SPEC REPOS:
   trunk:
     - AppAuth
     - CryptoSwift
+    - MockingbirdFramework
 
 EXTERNAL SOURCES:
   TikiClient:
@@ -26,8 +29,9 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
   CryptoSwift: b9c701d6f5011df23794dbf7f2e480a77835d83d
+  MockingbirdFramework: 54e35fbbb47b806c1a1fae2cf3ef99f6eceb55e5
   TikiClient: 3a91dc7c2954d54e92f8a1f2f132844c29a50cbb
 
-PODFILE CHECKSUM: 7501e71a92a5f280b97aaf5f199fa519634e934c
+PODFILE CHECKSUM: f26dad71ef07e2d27cbcfa503319eaaf943c7fef
 
 COCOAPODS: 1.14.3

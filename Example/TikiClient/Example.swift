@@ -21,7 +21,7 @@ struct Main: App {
     
     @State public var publishImageId: String?
     
-    @StateObject var locationManager = LocationDataManager()
+    @StateObject var locationManager = TikiClient.location
     
     @State var responseTrack = "Asking permission in progress"
     
@@ -106,7 +106,17 @@ struct Main: App {
                         Button("Ask to track"){
                             TikiClient.tracking.askToTrack() {
                                 response in
-                                responseTrack = response
+                                switch response {
+                                case .notDetermined:
+                                    responseTrack = "Not Determined"
+                                case .restricted:
+                                    responseTrack = "Restricted"
+                                case .denied:
+                                    responseTrack = "Denied"
+                                case .authorized:
+                                    responseTrack = "Authorized"
+                                }
+                                
                             }
                         }
                         Text(responseTrack)

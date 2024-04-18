@@ -14,12 +14,14 @@ import SwiftUI
 /// `TikiClient` is the top-level entry point for the TIKI Client Library. It offers simple methods
 /// that call the underlying libraries to perform common operations. Programmers can use it to
 /// simplify the integration process or opt for individual libraries based on their specific needs.
+
 public class TikiClient {
     
     public static let auth = AuthService()
     public static let capture = CaptureService()
     public static let license = License()
     public static let tracking = Tracking()
+    public static let location =  ()
     public static var config: Config? = nil
     public static var userId: String? = nil
 
@@ -31,7 +33,8 @@ public class TikiClient {
     ///   - company: The legal information of the company.
     public static func initialize(userId: String, completion: @escaping (String?) -> Void) {
         if(config == nil){
-            fatalError("Config is nil")
+            completion("Config is nil")
+            return
         }
 
         let key = KeyService.get(providerId: TikiClient.config!.providerId, userId: userId, isPrivate: true)
@@ -47,10 +50,14 @@ public class TikiClient {
         TikiClient.userId = userId
     }
     
+    /// Sets the configuration of the TikiClient
+    /// - Parameters:
+    ///   - config: The configuration object with all the needed information to configurate
     public static func configuration(config: Config){
         TikiClient.config = config
     }
     
+    /// Creates a license to publish data to Tiki.
     public static func createLicense(completion: @escaping (String?) -> Void){
         if(TikiClient.config == nil){
             completion("Config is nil")
@@ -58,6 +65,13 @@ public class TikiClient {
         if(TikiClient.userId == nil){
             completion("UserId is nil")
         }
+        
+//        for permission in permissions {
+//            if(!permission.isAuthorized()){
+//                completion("\(permission.name()) has no permission, please, ask this permission first")
+//                return
+//            }
+//        }
         
         guard let privateKey = KeyService.get(providerId: TikiClient.config!.providerId, userId: TikiClient.userId!, isPrivate: true) else {
                 completion("Private Key not found. Use the TikiClient.initialize method to register the user.")
@@ -112,6 +126,7 @@ public class TikiClient {
         })
     }
     
+    /// Gets the terms of use
     public static func terms(completion: @escaping (String?) -> Void) -> String {
         let bundle = Bundle(for: TikiClient.self)
         guard let path = bundle.path(forResource: "Assets/terms", ofType: "md") else {
