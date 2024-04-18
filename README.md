@@ -133,7 +133,7 @@ For detailed usage instructions, please consult the [TIKI Client API Documentati
 
 ## Example App
 
-To see a simple implementation of the TIKI Client library in a Capacitor + Vue.js app, check the [Example App](https://github.com/tiki/publish-client-ios/tree/main/Example).
+To see a simple implementation of the TIKI Client library, check the [Example App](https://github.com/tiki/publish-client-ios/tree/main/Example).
 
 # Contributing
 
