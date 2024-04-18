@@ -37,7 +37,7 @@ public class TikiClient {
             
         if(key == nil){
             auth.registerAddress(userId: userId, providerId: TikiClient.config!.providerId, pubKey: TikiClient.config!.publicKey, completion: {address, error  in
-                guard let userAddress = address else {
+                guard address != nil else {
                     completion("Register Adress Error")
                     return
                 }

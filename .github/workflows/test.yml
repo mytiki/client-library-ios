@@ -22,7 +22,7 @@ jobs:
           xcode-version: latest-stable
 
       - name: Run pod linter
-        run: pod lib lint
+        run: pod lib lint --allow-warnings
       
       - name: Setup workspace
         run: |

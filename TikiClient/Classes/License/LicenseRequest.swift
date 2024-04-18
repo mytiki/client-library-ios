@@ -13,7 +13,7 @@ public struct LicenseRequest : Codable {
    let description: String
    let origin: String
    var signature: String
-   let expiry: String? = nil
+   var expiry: String? = nil
 }
 
 
