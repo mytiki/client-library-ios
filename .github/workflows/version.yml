@@ -39,8 +39,7 @@ jobs:
 
       - name: Update Podspec
         run: |
-          sed -i 's/${{ steps.semver.outputs.current }}/${{ steps.semver.outputs.nextStrict }}/' TikiClient.podspec 
-          sed -i 's/${{ steps.semver.outputs.current }}/${{ steps.semver.outputs.nextStrict }}/' TikiSdkRelease.podspec 
+          sed -i 's/${{ steps.semver.outputs.current }}/${{ steps.semver.outputs.nextStrict }}/' TikiClient.podspec
           sed -i 's/${{ steps.semver.outputs.current }}/${{ steps.semver.outputs.nextStrict }}/' README.md
 
       - name: Commit Changes
@@ -50,8 +49,7 @@ jobs:
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GH Action"
-          git add TikiSdkDebug.podspec
-          git add TikiSdkRelease.podspec
+          git add TikiClient.podspec
           git add README.md
-          git commit -m 'version bump'
+          git commit -m 'ci: version bump'
           git push
