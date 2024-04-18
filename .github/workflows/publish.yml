@@ -48,7 +48,7 @@ jobs:
       - name: Create a new tag
         run: |
           git tag ${{ steps.semver.outputs.nextStrict }}
-          git push origin ${{ steps.semver.outputs.nextStrict }}
+          git push origin ${{ steps.semver.outputs.nextStrict }} 
 
       - name: Deploy to Cocoapods
         run: |
