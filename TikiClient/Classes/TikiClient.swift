@@ -14,7 +14,7 @@ import SwiftUI
 /// `TikiClient` is the top-level entry point for the TIKI Client Library. It offers simple methods
 /// that call the underlying libraries to perform common operations. Programmers can use it to
 /// simplify the integration process or opt for individual libraries based on their specific needs.
-public class TikiClient {
+public class TikiClient: TikiClientProtocol {
     
     public static let auth = AuthService()
     public static let capture = CaptureService()
