@@ -1,0 +1,10 @@
+name: PublishDocumentation
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy_docs:
+ 
