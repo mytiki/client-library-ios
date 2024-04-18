@@ -8,6 +8,10 @@ import PhotosUI
 import SwiftUI
 import TikiClient
 
+import CoreLocation
+import AppTrackingTransparency
+
+
 @main
 struct Main: App {
     
@@ -15,8 +19,20 @@ struct Main: App {
     @State private var selectedImage: UIImage?
     @State var image: UIImage?
     
-    @State public var publishImageId: String? = nil
-        
+    @State public var publishImageId: String?
+    
+    @StateObject var locationManager = LocationDataManager()
+    
+    @State var responseTrack = "Asking permission in progress"
+    
+    //Auth Token
+    var providerId = ""
+    var secret = ""
+    var companyName = ""
+    var tosUrl = ""
+    var privacyUrl = ""
+    var userId = ""
+       
     var license = License()
     var body: some Scene {
         WindowGroup {
@@ -48,12 +64,12 @@ struct Main: App {
                     }))
                 }.padding(.bottom, 2)
                 Button("Initialize") {
-                    TikiClient.initialize(userId: "JesseLegal222", completion: { message in
+                    TikiClient.initialize(userId: userId, completion: { message in
                         print(message)
                     })
                 }.padding(.bottom, 2)
                 Button("configuration") {
-                    TikiClient.configuration(config:  Config(providerId: "8204cd6f-5b6c-4ddb-be14-dd5605c6a745", publicKey: "MIIBCgKCAQEAtk9JrSBKdppHhXx+pU7JTd7dGpv+Q6idZIUW6Aot7sYFYu+n4tr7YfKNpNHdor/Yujqfg9wPU2MOWTPiXbgH9nwnQLBM7o8szijIVY7J1GjlmGosEF0uk9/FZiE/FZY+R0+MqKd2kKEkeNddV94Jf8U683yZofFjfqEdW16cWUP5aAT1NBmemeTcbzZGlDGk3OebuPFPKnBulZrDCdkDdmGMJfmZvSp7XTbu91xV2Ff0VnxWlOMFi2AQVZ0F15QliXYnkA7zYWBBCP+lsE0V5tPqtL5jMg/fJI411Ez9x0rycoAXY7dfjKloZVw3mJdu1KAbkJDmk7TlymIvqeVL4QIDAQAB", companyName:  "jesse", companyJurisdiction: "USA", tosUrl: "www.jessemonteiro.com", privacyUrl: "www.jessemonteiro.com"))
+                    TikiClient.configuration(config:  Config(providerId: providerId, publicKey: secret, companyName:  companyName, companyJurisdiction: "USA", tosUrl: tosUrl, privacyUrl: privacyUrl))
                 }.padding(.bottom, 2)
                 Button("Verify Capture Upload Image") {
                     TikiClient.auth.token(providerId: "", secret: "", scopes: ["publish"], completion: { token, error  in
@@ -63,6 +79,41 @@ struct Main: App {
                         })
                     })
                 }.padding(.bottom, 2)
+                VStack {
+                    switch locationManager.authorizationStatus {
+                        case .authorizedWhenInUse:  // Location services are available.
+                            Text("Allow location when in use and your current location is:")
+                            Text("Latitude: \(locationManager.locationManager.location?.coordinate.latitude.description ?? "Error loading")")
+                            Text("Longitude: \(locationManager.locationManager.location?.coordinate.longitude.description ?? "Error loading")")
+                        case .authorizedAlways: // Location services are available.
+                            Text("Allow location always and your current location is:")
+                            Text("Latitude: \(locationManager.locationManager.location?.coordinate.latitude.description ?? "Error loading")")
+                            Text("Longitude: \(locationManager.locationManager.location?.coordinate.longitude.description ?? "Error loading")")
+                        case .restricted, .denied:  // Location services currently unavailable.
+                            // Handle with user reject
+                            Text("Current location data was restricted or denied.")
+                        case .notDetermined:        // Authorization not determined yet.
+                            Text("Finding your location...")
+                            ProgressView()
+                        default:
+                            ProgressView()
+                        }
+                }
+                VStack{
+                    if(TikiClient.tracking.isTrackingAccessAvailable()){
+                        Text("Granted consent, The Traking Identifier is: \(TikiClient.tracking.getTrackingIdentifier()!.uuidString)")
+                    }else{
+                        Button("Ask to track"){
+                            TikiClient.tracking.askToTrack() {
+                                response in
+                                responseTrack = response
+                            }
+                        }
+                        Text(responseTrack)
+                    }
+
+                }
+                
             }
         }
     }

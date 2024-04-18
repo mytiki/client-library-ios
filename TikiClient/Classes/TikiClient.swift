@@ -19,6 +19,7 @@ public class TikiClient {
     public static let auth = AuthService()
     public static let capture = CaptureService()
     public static let license = License()
+    public static let tracking = Tracking()
     public static var config: Config? = nil
     public static var userId: String? = nil
 
