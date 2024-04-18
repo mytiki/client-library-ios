@@ -45,7 +45,7 @@ struct Main: App {
                 Button("Open camera") {
                     TikiClient.capture.scan(onImage: { image in
                         selectedImage = image
-                        TikiClient.auth.token(providerId: providerId, secret: secret, scopes: ["publish"], completion: { token, error  in
+                        TikiClient.auth.token(providerId: "", secret: "", scopes: ["publish"], completion: { token, error  in
                             TikiClient.capture.publish(images: [image!], token: token!, completion: { publishId, error2 in
                                 if(error == nil){
                                     publishImageId = publishId
@@ -72,7 +72,7 @@ struct Main: App {
                     TikiClient.configuration(config:  Config(providerId: providerId, publicKey: secret, companyName:  companyName, companyJurisdiction: "USA", tosUrl: tosUrl, privacyUrl: privacyUrl))
                 }.padding(.bottom, 2)
                 Button("Verify Capture Upload Image") {
-                    TikiClient.auth.token(providerId: providerId, secret: secret, scopes: ["publish"], completion: { token, error  in
+                    TikiClient.auth.token(providerId: "", secret: "", scopes: ["publish"], completion: { token, error  in
                         TikiClient.capture.receipt(receiptId: publishImageId!, token: token!, completion: { message, error  in
                             print(message)
                             
