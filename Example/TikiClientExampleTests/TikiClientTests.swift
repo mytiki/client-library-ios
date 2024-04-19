@@ -1,6 +1,5 @@
 // TikiClient can be initialized with a user ID and completion block
 import XCTest
-import Mockingbird
 @testable import TikiClient
 
 class TikiClientTests: XCTestCase {
