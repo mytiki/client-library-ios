@@ -51,7 +51,7 @@ jobs:
   
       - name: Convert to Static
         run: |
-          $(xcrun --find docc) process-archive transform-for-static-hosting ../build/Debug-iphoneos/TikiClient/TikiClient.doccarchive --output-path ../../docs
+          $(xcrun --find docc) process-archive transform-for-static-hosting ./Example/build/Debug-iphoneos/TikiClient/TikiClient.doccarchive --output-path ../../docs
   
       - name: Commit Docs
         continue-on-error: true
