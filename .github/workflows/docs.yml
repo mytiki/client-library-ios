@@ -1,4 +1,4 @@
-name: Dokka
+name: Docs
 
 on:
   pull_request:
@@ -20,7 +20,7 @@ jobs:
     environment:
       name: Production
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout TIKI Publish Client
         uses: actions/checkout@v4
