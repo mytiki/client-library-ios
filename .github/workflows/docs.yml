@@ -47,11 +47,11 @@ jobs:
           export TEMP_DIR=$(mktemp -d)
           echo "TEMP_DIR=$TEMP_DIR" >> $GITHUB_OUTPUT 
           cd Example/Pods
-          xcodebuild docbuild -scheme TikiClient -derivedDataPath $TEMP_DIR -destination generic/platform=iOS
+          xcodebuild docbuild -scheme TikiClient -destination generic/platform=iOS
   
       - name: Convert to Static
         run: |
-          $(xcrun --find docc) process-archive transform-for-static-hosting ${{steps.build_docs.outputs.TEMP_DIR}}/Build/Products/Debug-iphoneos/TikiClient.doccarchive --output-path docs
+          $(xcrun --find docc) process-archive transform-for-static-hosting ../build/Debug-iphoneos/TikiClient/TikiClient.doccarchive --output-path ../../docs
   
       - name: Commit Docs
         continue-on-error: true
