@@ -81,6 +81,7 @@
 				607FACD11AFB9204008FA782 /* Products */,
 				B5408F1A29BE29310354D039 /* Pods */,
 				F14D1E576C29C1F52310D1D8 /* Frameworks */,
+				8CBDD72C2BD26AD400549A74 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -128,6 +129,15 @@
 				88E1B7C72B926458005429F1 /* TikiClientExampleTests.swift */,
 			);
 			path = TikiClientExampleTests;
+			sourceTree = "<group>";
+		};
+		8CBDD72C2BD26AD400549A74 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				99997F9EA2E68CC22E9BC31D /* Pods_TikiClient_Example.framework */,
+				FFF57A86C217F3BB10B27DE9 /* Pods_TikiClientExampleTests.framework */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		B5408F1A29BE29310354D039 /* Pods */ = {
@@ -207,7 +217,7 @@
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
-						DevelopmentTeam = JC63RM5U2M;
+						DevelopmentTeam = BKX7BJ2Q77;
 						LastSwiftMigration = 0900;
 					};
 					88E1B7C42B926458005429F1 = {
@@ -499,7 +509,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
-				DEVELOPMENT_TEAM = JC63RM5U2M;
+				DEVELOPMENT_TEAM = BKX7BJ2Q77;
 				INFOPLIST_FILE = TikiClient/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "The app need the camera permision";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
@@ -520,7 +530,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
-				DEVELOPMENT_TEAM = JC63RM5U2M;
+				DEVELOPMENT_TEAM = BKX7BJ2Q77;
 				INFOPLIST_FILE = TikiClient/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "The app need the camera permision";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
