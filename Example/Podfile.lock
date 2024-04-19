@@ -1,6 +1,6 @@
 PODS:
   - CryptoSwift (1.8.2)
-  - TikiClient (0.0.2):
+  - TikiClient (0.0.4):
     - CryptoSwift
 
 DEPENDENCIES:
@@ -9,7 +9,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - CryptoSwift
-    - MockingbirdFramework
 
 EXTERNAL SOURCES:
   TikiClient:
@@ -17,8 +16,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   CryptoSwift: c63a805d8bb5e5538e88af4e44bb537776af11ea
-  TikiClient: a267c74ffcf7ebe39e869e602d26caf05aebeeb6
+  TikiClient: b8d731fc3aa47a8262a49cde6ee77592f3438445
 
-PODFILE CHECKSUM: 40b4e084f57008f1517e1137525ad282b8756281
+PODFILE CHECKSUM: 96d93e7c36e6d9cd116be19ddc3938e717dc0264
 
 COCOAPODS: 1.15.2
