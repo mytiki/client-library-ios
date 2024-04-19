@@ -17,16 +17,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  docs:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Publish Jazzy Docs
-      uses: steven0351/publish-jazzy-docs@v1
-      with:
-        personal_access_token: ${{ secrets.ACCESS_TOKEN }}
-        branch: main
-
   release:
     if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/')
     environment: Production
