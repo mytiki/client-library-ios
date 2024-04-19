@@ -1,16 +1,13 @@
+platform :ios, '15.0'
+
 source 'https://cdn.cocoapods.org/'
 
 use_frameworks!
 
-platform :ios, '15.0'
-
 target 'TikiClient_Example' do
-  pod 'TikiClient', :path => '../'
+    pod 'TikiClient', :path => '../'
   end
-  
+    
   target 'TikiClientExampleTests' do
     pod 'TikiClient', :path => '../'
-    pod 'CryptoSwift'
-    pod 'MockingbirdFramework', '~> 0.20'
-    end
-    
+  end

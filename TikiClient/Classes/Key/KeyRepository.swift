@@ -12,7 +12,6 @@ public final class KeyRepository {
     
     func save(_ data: Data, service: String, key: String) {
         
-        // Create query
         let query = [
             kSecValueData: data,
             kSecClass: kSecClassGenericPassword,
@@ -20,11 +19,9 @@ public final class KeyRepository {
             kSecAttrAccount: key,
         ] as CFDictionary
         
-        // Add data in query to keychain
         let status = SecItemAdd(query, nil)
         
         if status == errSecDuplicateItem {
-            // Item already exist, thus update it.
             let query = [
                 kSecAttrService: bundle + service,
                 kSecAttrAccount: key,
@@ -33,12 +30,10 @@ public final class KeyRepository {
 
             let attributesToUpdate = [kSecValueData: data] as CFDictionary
 
-            // Update existing item
             SecItemUpdate(query, attributesToUpdate)
         }
         
         if status != errSecSuccess {
-            // Print out the error
             print("Error: \(status)")
         }
     }
@@ -77,7 +72,7 @@ public final class KeyRepository {
         ]
                 
         var result: CFTypeRef?
-        let operationStatus = SecItemCopyMatching(query as CFDictionary, &result)
+        SecItemCopyMatching(query as CFDictionary, &result)
         
         let resultArray = result as? [NSDictionary]
         resultArray?.forEach { item in
@@ -97,13 +92,11 @@ public final class KeyRepository {
             kSecClass: kSecClassGenericPassword,
             ] as CFDictionary
         
-        // Delete item from keychain
         SecItemDelete(query)
     }
 
     func update(_ data: Data, service: String, key: String) {
 
-        // Item already exist, thus update it.
         let query = [
             kSecAttrService: bundle + service,
             kSecAttrAccount: key,
@@ -112,8 +105,7 @@ public final class KeyRepository {
 
         let attributesToUpdate = [kSecValueData: data] as CFDictionary
 
-        // Update existing item
-        let error = SecItemUpdate(query, attributesToUpdate)
+        SecItemUpdate(query, attributesToUpdate)
     }
     
 }

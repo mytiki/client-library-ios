@@ -24,7 +24,7 @@ final class TikiClientExampleTests: XCTestCase {
         let exportImportManager = CryptoExportImportManager()
         let publicKeyB64 = exportImportManager.exportPublicKeyToPEM(publicKeyData!, keySize: keySize)!
         let publicKey = KeyService.address(b64PubKey: publicKeyB64)
-        XCTAssertNotNil(publicKey!)
+        XCTAssertNotNil(publicKey)
     }
     
     func testAddressStaticKey() {

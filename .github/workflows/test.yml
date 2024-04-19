@@ -1,0 +1,35 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout TIKI SDK iOS
+        uses: actions/checkout@v4
+
+      - name: Setup XCode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Run pod linter
+        run: pod lib lint --allow-warnings
+      
+      - name: Setup workspace
+        run: |
+          cd Example
+          pod install --repo-update
+
+      - name: Run tests
+        run: |
+          cd Example
+          xcodebuild test -workspace TikiClient.xcworkspace -scheme TikiClient-Example -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 14'

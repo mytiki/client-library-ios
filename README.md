@@ -24,7 +24,6 @@ pod install
 The app must provide a message explaining why it needs access to the device's camera, location and track. This is done by setting up the `NSCameraUsageDescription`,`NSLocationAlwaysUsageDescription` , `NSLocationWhenInUseUsageDescription`, `NSLocationAlwaysAndWhenInUseUsageDescription`,
 `Privacy - Track Usage Description`  in the `info.plist`:
 
-
 ## Configuration
 
 Before executing any commands with the TikiClient library, you need to configure it. This includes providing the Provider ID and Public Key obtained during Provider Registration, as well as company information for generating license terms.
