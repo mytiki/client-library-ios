@@ -21,7 +21,7 @@ public class TikiClient {
     public static let capture = CaptureService()
     public static let license = License()
     public static let tracking = Tracking()
-    public static let location =  ()
+    public static let location =  LocationDataManager()
     public static var config: Config? = nil
     public static var userId: String? = nil
 
@@ -58,12 +58,12 @@ public class TikiClient {
     }
     
     /// Creates a license to publish data to Tiki.
-    public static func createLicense(completion: @escaping (String?) -> Void){
+    public static func createLicense(completion: @escaping (String?) -> Void, onError: @escaping (String?) -> Void){
         if(TikiClient.config == nil){
-            completion("Config is nil")
+            onError("Config is nil")
         }
         if(TikiClient.userId == nil){
-            completion("UserId is nil")
+            onError("UserId is nil")
         }
         
 //        for permission in permissions {
@@ -74,32 +74,32 @@ public class TikiClient {
 //        }
         
         guard let privateKey = KeyService.get(providerId: TikiClient.config!.providerId, userId: TikiClient.userId!, isPrivate: true) else {
-                completion("Private Key not found. Use the TikiClient.initialize method to register the user.")
+                onError("Private Key not found. Use the TikiClient.initialize method to register the user.")
                 return
             }
         
         guard let publicKeyB64 = KeyService.publicKeyB64(privateKey: privateKey) else{
-            completion("Error extracting public key")
+            onError("Error extracting public key")
             return
         }
                                                             
         guard let address = KeyService.address(b64PubKey: publicKeyB64) else{
-            completion("Error decoding address")
+            onError("Error decoding address")
             return
         }
 
         
         guard let signature = KeyService.sign(message: address, privateKey: privateKey) else{
-            completion("Error sign request")
+            onError("Error sign request")
             return
         }
         
         TikiClient.auth.token(providerId: TikiClient.config!.providerId, secret: signature, scopes: ["trail", "publish"], address: address, completion: { addressToken, error in
             if(addressToken == nil){
-               completion("It was not possible to get the token, try to inialize!")
+               onError("It was not possible to get the token, try to inialize!")
                return
             }
-            let terms = TikiClient.terms(completion: completion)
+            let terms = TikiClient.terms(completion: completion, onError: onError)
 
             let bundleId = Bundle.main.bundleIdentifier
 
@@ -118,7 +118,7 @@ public class TikiClient {
             let licenseReqStr: String = try! String(data: encoder.encode(licenseReq), encoding: .utf8)!
 
             guard let licenseSignature = KeyService.sign(message: licenseReqStr, privateKey: privateKey) else{
-                completion("error generating signature")
+                onError("error generating signature")
                 return
             }
             licenseReq.signature = licenseSignature
@@ -127,10 +127,10 @@ public class TikiClient {
     }
     
     /// Gets the terms of use
-    public static func terms(completion: @escaping (String?) -> Void) -> String {
+    public static func terms(completion: @escaping (String?) -> Void, onError: @escaping (String?) -> Void) -> String {
         let bundle = Bundle(for: TikiClient.self)
         guard let path = bundle.path(forResource: "Assets/terms", ofType: "md") else {
-            completion("terms.md not found")
+            onError("terms.md not found")
             return ""
         }
         var terms = try? String(contentsOfFile: path)

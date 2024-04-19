@@ -61,6 +61,8 @@ struct Main: App {
                     print(TikiClient.createLicense(completion: { message in
                         print(message)
                         
+                    }, onError: {error in
+                        print(error)
                     }))
                 }.padding(.bottom, 2)
                 Button("Initialize") {
