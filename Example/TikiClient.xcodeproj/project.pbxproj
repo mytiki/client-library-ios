@@ -215,7 +215,7 @@
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
-						DevelopmentTeam = BKX7BJ2Q77;
+						DevelopmentTeam = JC63RM5U2M;
 						LastSwiftMigration = 0900;
 					};
 					88E1B7C42B926458005429F1 = {
@@ -513,7 +513,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
-				DEVELOPMENT_TEAM = BKX7BJ2Q77;
+				DEVELOPMENT_TEAM = JC63RM5U2M;
 				INFOPLIST_FILE = TikiClient/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "The app need the camera permision";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
@@ -534,7 +534,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
-				DEVELOPMENT_TEAM = BKX7BJ2Q77;
+				DEVELOPMENT_TEAM = JC63RM5U2M;
 				INFOPLIST_FILE = TikiClient/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "The app need the camera permision";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
