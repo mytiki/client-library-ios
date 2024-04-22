@@ -1,32 +1,65 @@
 # TIKI Publish Client Library
 
-The TIKI Data Provider APIs comprise a set of HTTP REST APIs used by [Data Providers](https://mytiki.com/reference/overview) to publish data to TIKI. This enables compatibility with any standard HTTP client for sending requests and handling responses.
+The TIKI Data Provider APIs comprise a set of HTTP REST APIs used by [Data Providers](https://mytiki.com/reference/overview) to 
+publish data to TIKI. This enables compatibility with any standard HTTP client for sending 
+requests and handling responses.
 
-The TIKI Publish Client Library simplifies application integration by providing convenient methods for authorization, licensing, capture, and upload, reducing the amount of code necessary to connect a web app with TIKI.
+The TIKI Publish Client Library simplifies application integration by providing convenient methods 
+for authorization, licensing, capture, and upload, reducing the amount of code necessary to connect 
+a web app with TIKI.
 
 ## Getting Started
 
-To begin, visit [mytiki.com](https://mytiki.com) and apply for beta access. Our team will then set up the provider ID and public key for your project, which you'll use to configure the client.
+To begin, visit [mytiki.com](https://mytiki.com) and apply for beta access. Our team will then set up 
+the provider ID and public key for your project, which you'll use to configure the client.
 
 ## Installation
 
 Install the TIKI Client library using `CocoaPods`
 
 Add to your Podfile project: 
-```bash
-pod 'TikiClient'
+```text
+target '<your target>' do
+    ... other deps
+    pod 'TikiClient'
+    ... other deps
+  end
 ```
+
 and then run:
 ```bash
 pod install
 ```
+### Camera and Location Permissions Management
 
-The app must provide a message explaining why it needs access to the device's camera, location and track. This is done by setting up the `NSCameraUsageDescription`,`NSLocationAlwaysUsageDescription` , `NSLocationWhenInUseUsageDescription`, `NSLocationAlwaysAndWhenInUseUsageDescription`,
-`Privacy - Track Usage Description`  in the `info.plist`:
+TikiClient offers users the optional feature to capture receipt images and efficiently 
+manage device permissions. To ensure a seamless user experience, the app must justify its need 
+for access to the device's camera, location, and tracking functionalities. This justification is 
+communicated to the user through descriptive messages  in the `info.plist` file:
+
+- **Camera Usage Description (`NSCameraUsageDescription`):**
+  Specify why the app requires access to the camera. This is crucial for functionalities such as capturing receipt images.
+
+- **Location Permissions:**
+  - **Always (`NSLocationAlwaysUsageDescription`):** If the app necessitates continuous access 
+  to location data for its operations.
+  - **When In Use (`NSLocationWhenInUseUsageDescription`):** If the app only requires location 
+  access while it's actively being used.
+  - **Always and When In Use (`NSLocationAlwaysAndWhenInUseUsageDescription`):** If the app 
+  functions with location access both in the foreground and background.
+
+- **Privacy Tracking Usage Description (`Privacy - Track Usage Description`):**
+  Provide an explanation if the app tracks user activities for analytics or other purposes.
+
+If any of these permissions are not utilized by the application, it's essential to include a 
+placeholder message such as "not used" in the corresponding section of the `info.plist` file. 
+This ensures clarity and transparency regarding the app's data usage policies.
 
 ## Configuration
 
-Before executing any commands with the TikiClient library, you need to configure it. This includes providing the Provider ID and Public Key obtained during Provider Registration, as well as company information for generating license terms.
+Before executing any commands with the TikiClient library, you need to configure it. This includes 
+providing the Provider ID and Public Key obtained during Provider Registration, as well as company 
+information for generating license terms.
 
 ```swift
 let config: Config = {
@@ -42,13 +75,17 @@ TikiClient.configure(config)
 
 ## How to Use
 
-The TikiClient is a singleton used as the main entry point for all functionalities of the library. The configuration sets the parameters used by all methods.
+The TikiClient is a singleton used as the main entry point for all functionalities of the library. 
+The configuration sets the parameters used by all methods.
 
 ### Initialization
 
-This method authenticates with the TIKI API and registers the user's device to publish data. It is an asynchronous method due to the necessary API calls.
+This method authenticates with the TIKI API and registers the user's device to publish data. It is an 
+asynchronous method due to the necessary API calls.
 
-The user ID can be any arbitrary string that identifies the user in the application using the client library. It is not recommended to use personally identifiable information, such as emails. If necessary, use a hashed version of it.
+The user ID can be any arbitrary string that identifies the user in the application using the client 
+library. It is not recommended to use personally identifiable information, such as emails. If necessary, 
+use a hashed version of it.
 
 ```swift
 TikiClient.initialize("<the-client-user-id>")
@@ -58,7 +95,9 @@ To switch the active user, call the `TikiClient.initialize` method again.
 
 ### Data License
 
-To successfully capture and upload receipt data to our platform, it is essential to establish a valid User Data License Agreement (UDLA). This agreement serves as a clear, explicit addendum to your standard app terms of service, delineating key aspects:
+To successfully capture and upload receipt data to our platform, it is essential to establish a valid 
+User Data License Agreement (UDLA). This agreement serves as a clear, explicit addendum to your standard 
+app terms of service, delineating key aspects:
 
 a) User Ownership: It explicitly recognizes the user as the rightful owner of the data.
 
@@ -66,9 +105,12 @@ b) Usage Terms: It outlines the terms governing how the data will be licensed an
 
 c) Compensation: It defines the compensation arrangements offered in exchange for the provided data.
 
-Our Client Library streamlines this process by providing a pre-qualified agreement, filled with the company information provided in the library configuration. 
+Our Client Library streamlines this process by providing a pre-qualified agreement, filled with the 
+company information provided in the library configuration. 
 
-Retrieve the formatted terms of the license, presented in Markdown, using the `TikiClient.terms()` method. This allows you to present users with a clear understanding of the terms before they agree to license their data. This agreement comes , ensuring a seamless integration into the license registry.
+Retrieve the formatted terms of the license, presented in Markdown, using the `TikiClient.terms()` method. 
+This allows you to present users with a clear understanding of the terms before they agree to license their 
+data. This agreement comes , ensuring a seamless integration into the license registry.
 
 ```swift
 let terms = TikiClient.terms()
@@ -80,14 +122,16 @@ Upon user agreement, generate the license using the `TikiClient.createLicense` m
 TikiClient.createLicense()
 ```
 
-This method needs to be invoked once for each device. Once executed, the license is registered in TIKI storage, eliminating the need to recreate it in the future.
-
+This method needs to be invoked once for each device. Once executed, the license is registered in TIKI 
+storage, eliminating the need to recreate it in the future.
 
 ### Data Capture
 
 The Client Library offers an **optional** method for scanning physical receipts via the mobile device camera.
 
-Use the `TikiClient.capture.scan()` method to trigger the receipt scanning process, leveraging the Capacitor Camera plugin. This method returns a `Promise` containing the base64 representation of the captured `image/jpg`.
+Use the `TikiClient.capture.scan()` method to trigger the receipt scanning process, leveraging the 
+Capacitor Camera plugin. This method returns a `Promise` containing the base64 representation of the captured 
+`image/jpg`.
 
 ```swift
 const image = TikiClient.capture.scan();
@@ -95,9 +139,12 @@ const image = TikiClient.capture.scan();
 
 ### Data Upload
 
-Utilize the `TikiClient.capture.publish` method to upload receipt images to TIKI for processing. This method is versatile, as it can receive results from the `TikiClient.capture.scan` method, or your application can implement a custom scan extraction method, sending the results to `TikiClient.capture.publish`.
+Utilize the `TikiClient.capture.publish` method to upload receipt images to TIKI for processing. This method 
+is versatile, as it can receive results from the `TikiClient.capture.scan` method, or your application can 
+implement a custom scan extraction method, sending the results to `TikiClient.capture.publish`.
 
-The `images` parameter accepts an array of base64 image strings, providing flexibility to capture and scan multiple images, ideal for processing lengthy receipts.
+The `images` parameter accepts an array of base64 image strings, providing flexibility to capture and scan 
+multiple images, ideal for processing lengthy receipts.
 
 ```swift
 TikiClient.capture.scan() {
@@ -107,7 +154,9 @@ TikiClient.capture.scan() {
 ```
 ### Retrieve Results
 
-Once you've uploaded receipt images to TIKI for processing using the `TikiClient.capture.publish` method, you can retrieve the extracted data associated with a specific receipt by calling the `TikiClient.capture.receipt(receiptId)` method.
+Once you've uploaded receipt images to TIKI for processing using the `TikiClient.capture.publish` method, 
+you can retrieve the extracted data associated with a specific receipt by calling the 
+`TikiClient.capture.receipt(receiptId)` method.
 
 ```swift
 // Assuming you have the receiptId stored in a variable named 'receiptId'
@@ -118,17 +167,24 @@ TikiClient.receipt(receiptId){
 
 ```
 
-**Note**: The data extraction from receipts is performed asynchronously by Amazon Textract. Processing typically takes a few seconds, but it can occasionally take up to a minute. It's important to note that making subsequent calls to `TikiClient.capture.receipt(receiptId)` shortly after using `TikiClient.capture.publish` might lead to unexpected results and false `404` errors from the API. We recommend allowing sufficient time for the extraction process to complete before attempting to retrieve the extracted data.
+**Note**: The data extraction from receipts is performed asynchronously by Amazon Textract. Processing 
+typically takes a few seconds, but it can occasionally take up to a minute. It's important to note that 
+making subsequent calls to `TikiClient.capture.receipt(receiptId)` shortly after using 
+`TikiClient.capture.publish` might lead to unexpected results and false `404` errors from the API. 
+We recommend allowing sufficient time for the extraction process to complete before attempting to 
+retrieve the extracted data.
 
-
-
-Upon execution, this method returns a unique ID for the receipt, facilitating easy retrieval of the extracted data or referencing it in the [Data Cleanroom](https://mytiki.com/reference/data-cleanrooms).
+Upon execution, this method returns a unique ID for the receipt, facilitating easy retrieval of the extracted 
+data or referencing it in the [Data Cleanroom](https://mytiki.com/reference/data-cleanrooms).
 
 ## API Reference
 
-The central API interface in the library is the TikiClient object, designed to abstract the complexities of authorization and API requests. While serving as the primary entry point, it's important to note that all APIs within the library are public and accessible.
+The central API interface in the library is the TikiClient object, designed to abstract the complexities of 
+authorization and API requests. While serving as the primary entry point, it's important to note that all 
+APIs within the library are public and accessible.
 
-For detailed usage instructions, please consult the [TIKI Client API Documentation](https://mytiki.com/reference/client-library/swift). This comprehensive resource provides direct insights into utilizing the various functionalities offered by the TIKI Client Library.
+For detailed usage instructions, please consult the [TIKI Client API Documentation](https://ios.client.mytiki.com/documentation/tikiclient/). 
+This comprehensive resource provides direct insights into utilizing the various functionalities offered by the TIKI Client Library.
 
 ## Example App
 
