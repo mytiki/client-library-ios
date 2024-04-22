@@ -11,7 +11,6 @@ import TikiClient
 import CoreLocation
 import AppTrackingTransparency
 
-
 @main
 struct Main: App {
     
@@ -25,7 +24,6 @@ struct Main: App {
     
     @State var responseTrack = "Asking permission in progress"
     
-    //Auth Token
     var providerId = ""
     var secret = ""
     var companyName = ""
