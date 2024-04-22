@@ -134,8 +134,6 @@
 		8CBDD72C2BD26AD400549A74 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				99997F9EA2E68CC22E9BC31D /* Pods_TikiClient_Example.framework */,
-				FFF57A86C217F3BB10B27DE9 /* Pods_TikiClientExampleTests.framework */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -273,11 +271,13 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-TikiClientExampleTests/Pods-TikiClientExampleTests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework",
 				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/TikiClient/TikiClient.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AppAuth.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TikiClient.framework",
 			);
@@ -315,11 +315,13 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-TikiClient_Example/Pods-TikiClient_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework",
 				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/TikiClient/TikiClient.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AppAuth.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TikiClient.framework",
 			);

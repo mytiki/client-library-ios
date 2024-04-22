@@ -26,7 +26,8 @@ Pod::Spec.new do |s|
   s.source_files = 'TikiClient/Classes/**/*'
 
   s.dependency 'CryptoSwift'
-  
+  s.dependency 'AppAuth'
+
   s.resource_bundles = {
     'TikiClientAssets' => [
       'TikiClient/Assets'
