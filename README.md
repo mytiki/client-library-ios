@@ -1,34 +1,42 @@
-# TIKI Client Library - iOS Usage Guide
+# TIKI Publish Client Library
 
-The TIKI Client Library for iOS provides a set of APIs that developers can use to publish data to TIKI. This library simplifies the process of integrating your iOS application with TIKI by providing convenient methods for authorization, licensing, capture, and upload.
+The TIKI Data Provider APIs comprise a set of HTTP REST APIs used by [Data Providers](https://mytiki.com/reference/overview) to publish data to TIKI. This enables compatibility with any standard HTTP client for sending requests and handling responses.
+
+The TIKI Publish Client Library simplifies application integration by providing convenient methods for authorization, licensing, capture, and upload, reducing the amount of code necessary to connect a web app with TIKI.
 
 ## Getting Started
 
-To get started, visit mytiki.com and apply for beta access. Our team will then set up the provider ID and public key for your project, which you'll use to configure the client.
+To begin, visit [mytiki.com](https://mytiki.com) and apply for beta access. Our team will then set up the provider ID and public key for your project, which you'll use to configure the client.
 
 ## Installation
 
-Include TikiClient in your `Podfile`
+Install the TIKI Client library using `CocoaPods`
 
+Add to your Podfile project: 
+```bash
+pod 'TikiClient'
 ```
-target 'YourApplication' do
-    pod 'TikiClient'
-  end
+and then run:
+```bash
+pod install
 ```
+
+The app must provide a message explaining why it needs access to the device's camera, location and track. This is done by setting up the `NSCameraUsageDescription`,`NSLocationAlwaysUsageDescription` , `NSLocationWhenInUseUsageDescription`, `NSLocationAlwaysAndWhenInUseUsageDescription`,
+`Privacy - Track Usage Description`  in the `info.plist`:
 
 ## Configuration
 
 Before executing any commands with the TikiClient library, you need to configure it. This includes providing the Provider ID and Public Key obtained during Provider Registration, as well as company information for generating license terms.
 
 ```swift
-let config = Config(
-    providerId = "<PROVIDER-ID>", // Provided by TIKI
-    publicKey = "<PUBLIC-KEY>", // Provided by TIKI
-    companyName = "ACME Inc",
-    companyJurisdiction = "Nashville, TN",
-    tosUrl = "https://acme.inc/tos",
-    privacyUrl = "https://acme.inc/privacy"
-)
+let config: Config = {
+  providerId: "<PROVIDER-ID>", // Provided by TIKI
+  publicKey: "<PUBLIC-KEY>", // Provided by TIKI
+  companyName: "ACME Inc",
+  companyJurisdiction: "Nashville, TN",
+  tosUrl: "https://acme.inc/tos",
+  privacyUrl: "https://acme.inc/privacy"
+}
 TikiClient.configure(config)
 ```
 
@@ -52,66 +60,84 @@ To switch the active user, call the `TikiClient.initialize` method again.
 
 To successfully capture and upload receipt data to our platform, it is essential to establish a valid User Data License Agreement (UDLA). This agreement serves as a clear, explicit addendum to your standard app terms of service, delineating key aspects:
 
-- User Ownership: It explicitly recognizes the user as the rightful owner of the data.
-- Usage Terms: It outlines the terms governing how the data will be licensed and used.
-- Compensation: It defines the compensation arrangements offered in exchange for the provided data.
+a) User Ownership: It explicitly recognizes the user as the rightful owner of the data.
 
-Our Client Library streamlines this process by providing a pre-qualified agreement, filled with the company information provided in the library configuration.
+b) Usage Terms: It outlines the terms governing how the data will be licensed and used.
+
+c) Compensation: It defines the compensation arrangements offered in exchange for the provided data.
+
+Our Client Library streamlines this process by providing a pre-qualified agreement, filled with the company information provided in the library configuration. 
 
 Retrieve the formatted terms of the license, presented in Markdown, using the `TikiClient.terms()` method. This allows you to present users with a clear understanding of the terms before they agree to license their data. This agreement comes , ensuring a seamless integration into the license registry.
+
+```swift
+let terms = TikiClient.terms()
+```
 
 Upon user agreement, generate the license using the `TikiClient.createLicense` method.
 
 ```swift
-let license = TikiClient.createLicense()
+TikiClient.createLicense()
 ```
 
 This method needs to be invoked once for each device. Once executed, the license is registered in TIKI storage, eliminating the need to recreate it in the future.
 
+
 ### Data Capture
 
-The Client Library offers an optional method for scanning physical receipts via the mobile device camera.
+The Client Library offers an **optional** method for scanning physical receipts via the mobile device camera.
 
-Use the `TikiClient.scan()` method to initiate the receipt scanning process. This method does not directly return the scanned receipt data. Instead, it provides the data through a callback function that you supply.
-
-Here's an example of how to use it:
+Use the `TikiClient.capture.scan()` method to trigger the receipt scanning process, leveraging the Capacitor Camera plugin. This method returns a `Promise` containing the base64 representation of the captured `image/jpg`.
 
 ```swift
-TikiClient.scan() { image: UIImage ->
-    // Handle the scanned bitmap here
-}
+const image = TikiClient.capture.scan();
 ```
-
-In this example, `image` is the scanned receipt, and the code inside the callback function (i.e., `// Handle the scanned bitmap here`) is where you can process or use the scanned data.
 
 ### Data Upload
 
-Utilize the `TikiClient.publish` method to upload receipt images to TIKI for processing. This method is versatile, as it can receive results from the `TikiClient.scan` method, or your application can implement a custom scan extraction method, sending the results to `TikiClient.publish`.
+Utilize the `TikiClient.capture.publish` method to upload receipt images to TIKI for processing. This method is versatile, as it can receive results from the `TikiClient.capture.scan` method, or your application can implement a custom scan extraction method, sending the results to `TikiClient.capture.publish`.
 
-The `publish` method accepts a bitmap image or an array of bitmap images, providing flexibility to capture and scan multiple images, ideal for processing lengthy receipts.
+The `images` parameter accepts an array of base64 image strings, providing flexibility to capture and scan multiple images, ideal for processing lengthy receipts.
 
 ```swift
-let data: UIImage = ... // The scanned receipt
-let result = TikiClient.publish(data)
+TikiClient.capture.scan() {
+  image in
+  TikiClient.capture.publish([image])
+}
 ```
-
-Upon execution, this method returns a `CompletableDeferred` object that will be completed when the data has been published.
-
 ### Retrieve Results
 
-Once you've uploaded receipt images to TIKI for processing using the `TikiClient.publish` method, you can retrieve the extracted data associated with a specific receipt by calling the `TikiClient.receipt(receiptId)` method.
+Once you've uploaded receipt images to TIKI for processing using the `TikiClient.capture.publish` method, you can retrieve the extracted data associated with a specific receipt by calling the `TikiClient.capture.receipt(receiptId)` method.
 
 ```swift
 // Assuming you have the receiptId stored in a variable named 'receiptId'
-let receiptData = await TikiClient.receipt(receiptId);
-print(receiptData);
+TikiClient.receipt(receiptId){
+  success, error in 
+  print("Success: \(success). Error: \(error))
+}
+
 ```
 
-**Note**: The data extraction from receipts is performed asynchronously by Amazon Textract. Processing typically takes a few seconds, but it can occasionally take up to a minute. It's important to note that making subsequent calls to `TikiClient.receipt(receiptId)` shortly after using `TikiClient.publish` might lead to unexpected results and false `404` errors from the API. We recommend allowing sufficient time for the extraction process to complete before attempting to retrieve the extracted data.
- 
+**Note**: The data extraction from receipts is performed asynchronously by Amazon Textract. Processing typically takes a few seconds, but it can occasionally take up to a minute. It's important to note that making subsequent calls to `TikiClient.capture.receipt(receiptId)` shortly after using `TikiClient.capture.publish` might lead to unexpected results and false `404` errors from the API. We recommend allowing sufficient time for the extraction process to complete before attempting to retrieve the extracted data.
+
+
+
+Upon execution, this method returns a unique ID for the receipt, facilitating easy retrieval of the extracted data or referencing it in the [Data Cleanroom](https://mytiki.com/reference/data-cleanrooms).
 
 ## API Reference
 
-The central API interface in the library is the `TikiClient` object, designed to abstract the complexities of authorization and API requests. While serving as the primary entry point, it's important to note that all APIs within the library are public and accessible.
+The central API interface in the library is the TikiClient object, designed to abstract the complexities of authorization and API requests. While serving as the primary entry point, it's important to note that all APIs within the library are public and accessible.
 
-For detailed usage instructions, please consult the TIKI Client API Documentation. This comprehensive resource provides direct insights into utilizing the various functionalities offered by the TIKI Client Library.
+For detailed usage instructions, please consult the [TIKI Client API Documentation](https://mytiki.com/reference/client-library/swift). This comprehensive resource provides direct insights into utilizing the various functionalities offered by the TIKI Client Library.
+
+## Example App
+
+To see a simple implementation of the TIKI Client library, check the [Example App](https://github.com/tiki/publish-client-ios/tree/main/Example).
+
+# Contributing
+
+- Use [GitHub Issues](https://github.com/tiki/publish-client-ios/issues) to report bugs or
+
+ request enhancements.
+- To contact our team or other active contributors, join our 👾 [Discord](https://discord.gg/tiki).
+- Please adhere to [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) when contributing code to this project.

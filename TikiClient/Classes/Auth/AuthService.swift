@@ -11,6 +11,7 @@ import CryptoSwift
 /// Authentication Service for TIKI
 public class AuthService {
 
+    /// Register an address
     public func registerAddress(userId: String, providerId: String, pubKey: String, completion: @escaping (_ sucess: String?, _ error: String?) -> Void) {
         let urlString = URL(string: "https://account.mytiki.com/api/latest/provider/\(providerId)/user")
         
@@ -69,7 +70,8 @@ public class AuthService {
             
         })
     }
-        
+    
+    /// Request a token
     public func token(providerId: String, secret: String, scopes: [String], address: String? = nil,  completion: @escaping (_ sucess: String?, _ error: String?) -> Void){
         var request = URLRequest(url: URL(string: "https://account.mytiki.com/api/latest/auth/token")!)
         request.httpMethod = "POST"

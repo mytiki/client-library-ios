@@ -6,10 +6,12 @@
 import Security
 import CryptoSwift
 
+/// Class to manage the keychain service
 public class KeyService{
 
     public static let repository = KeyRepository()
 
+    /// Generates a new private key
     static public func generate() -> SecKey? {
       let attributes: [String: Any] = [
           kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
@@ -33,6 +35,7 @@ public class KeyService{
       return privateKey
     }
     
+    /// Extracts the public key from a private key in Base64
     public static func publicKeyB64(privateKey: SecKey) -> String? {
         
         guard let publicKey = SecKeyCopyPublicKey(privateKey),
@@ -46,12 +49,14 @@ public class KeyService{
         return publicKeyB64
     }
 
+    /// Extracts the address hash from a public key in Base64
     public static func address(b64PubKey: String) -> String? {
       let decoded = Data(base64Encoded: b64PubKey)!
       let dataAddress = decoded.sha3(.sha256)
         return dataAddress.base64EncodedString().base64UrlSafe()
     }
 
+    /// Signs a message
     public static func sign(message: String, privateKey: SecKey) -> String? {
       let data = message.data(using: .utf8)! as CFData
       var error: Unmanaged<CFError>?
@@ -61,6 +66,7 @@ public class KeyService{
       return signedData.base64EncodedString()
     }
     
+    /// Get the private key from the keychain
     public static func get(providerId: String, userId: String, isPrivate: Bool = false) -> SecKey? {
         guard let data = repository.read(service: providerId, key: userId) else {
             return nil
@@ -68,6 +74,7 @@ public class KeyService{
         return try? CriptoUtils.decodeSecKeyFromData(secKeyData: data, isPrivate: isPrivate)
     }
   
+    /// Save the private key in the keychain
     public static func save(_ data: Data, service: String, key: String) {
         repository.save(data, service: service, key: key)
     }

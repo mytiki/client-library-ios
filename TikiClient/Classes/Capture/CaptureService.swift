@@ -52,6 +52,11 @@ public class CaptureService {
         }
     }
     
+    ///  Verify receipt uploaded
+    /// - Parameters:
+    /// - receiptId: Code of receipt
+    /// - token:  Address token
+    /// - completion:  Completion
     public func receipt(receiptId: String, token: String, completion: @escaping (_ success: String?, _ error: String?) -> Void) {
 
         var request = URLRequest(url: URL(string: "\(publishUrl)/receipt/\(receiptId)")!)
