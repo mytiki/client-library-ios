@@ -32,7 +32,7 @@ branches:
           - CodeQL
 
 milestones:
-  - title: 0.3.0
+  - title: 0.2.0
     description: |
       Adds support for intelligent email scraping of e-receipts. Emails are fetched using a pre-qualified list
       of known receipt senders and parsed locally to the mobile device to protect privacy. Emails are eagerly fetched
