@@ -13,5 +13,5 @@ public struct EmailOauthResponse : Codable{
     public var picture: String
     public var email: String
     public var email_verified: Bool
-    public var locale: String
+    public var locale: String?
 }

@@ -12,7 +12,7 @@ public struct Account: Hashable {
    public var provider: AccountProvider
    public var status: AccountStatus = .unverified
     
-    public static func toAccount(accounts: [AuthEmailTokenResponse]) -> [Account]{
+    public static func toAccount(accounts: [EmailAuthTokenResponse]) -> [Account]{
         var accoutsReturn: [Account] = []
         for account in accounts {
             accoutsReturn.append(Account(username: account.email, provider: AccountProvider.toAccountProvider(provider: account.provider) ?? AccountProvider.email(.google)))

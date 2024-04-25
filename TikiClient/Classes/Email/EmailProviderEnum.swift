@@ -44,7 +44,7 @@ public enum EmailProviderEnum: String, CaseIterable {
     public func deeplinkReturn() -> URL{
         switch(self) {
             case .google :
-                return URL(string: "com.mytiki.TikiClient-Example:app-auth")!
+                return URL(string: "com.mytiki.TikiClientExample:app-auth")!
             case .outlook :
                 return URL(string:"msauth.com.mytiki.TikiClient-Example://auth")!
             
