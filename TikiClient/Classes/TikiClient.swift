@@ -1,6 +1,7 @@
 
 import Foundation
 import SwiftUI
+import AppAuth
 
 /// Tiki Client Library
 ///
@@ -24,6 +25,8 @@ public class TikiClient {
     public static let location =  LocationDataManager()
     public static var config: Config? = nil
     public static var userId: String? = nil
+    private static var authState: OIDAuthState?
+
 
     /// Initializes the `TikiClient` with the application context and sets its parameters.
     /// - Parameters:
@@ -38,6 +41,11 @@ public class TikiClient {
         }
 
         let key = KeyService.get(providerId: TikiClient.config!.providerId, userId: userId, isPrivate: true)
+        
+        let authorizationEndpoint = URL(string: "https://accounts.google.com/o/oauth2/v2/auth")!
+        let tokenEdpoint = URL(string: "https://www.googleapis.com/oauth2/v4/token")!
+        let configuration = OIDServiceConfiguration(authorizationEndpoint: authorizationEndpoint,
+                                                    tokenEndpoint: tokenEdpoint)
             
         if(key == nil){
             auth.registerAddress(userId: userId, providerId: TikiClient.config!.providerId, pubKey: TikiClient.config!.publicKey, completion: {address, error  in
