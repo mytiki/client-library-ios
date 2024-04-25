@@ -9,22 +9,21 @@ import Foundation
 public class EmailRepository {
     
     public static func SaveEmailToken(authToken: AuthToken, email: String){
-//        let encoder = JSONEncoder()
-//        var jsonString = ""
-//        if let jsonData = try? encoder.encode(authToken){
-//            jsonString = String(data: jsonData, encoding: .utf8)!
-//        }
-//        let data = Data(jsonString.utf8)
-//        KeychainHelper.save(data, service: ".email", key: email)
+        let encoder = JSONEncoder()
+        var jsonString = ""
+        if let jsonData = try? encoder.encode(authToken){
+            jsonString = String(data: jsonData, encoding: .utf8)!
+        }
+        let data = Data(jsonString.utf8)
+        KeychainEmail.save(data, service: ".email", key: email)
     }
     
     public static func ReadEmailToken(email: String) -> AuthToken {
-//         -> AuthToken
-//        let data = KeychainHelper.read(service: ".email", key: email)!
-//        let authToken = String(data: data, encoding: .utf8)!
-//        let decoder = JSONDecoder()
-//        let jsonData = authToken.data(using: .utf8)
-//        let auth = try! decoder.decode(AuthToken.self, from: jsonData!)
+        let data = KeychainEmail.read(service: ".email", key: email)!
+        let authToken = String(data: data, encoding: .utf8)!
+        let decoder = JSONDecoder()
+        let jsonData = authToken.data(using: .utf8)
+        let auth = try! decoder.decode(AuthToken.self, from: jsonData!)
         return AuthToken.init(auth: "", refresh: "", provider: "", expiration: nil)
     }
     public static func ReadAllEmail() -> [AuthEmailTokenResponse]{
