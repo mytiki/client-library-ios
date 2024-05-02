@@ -171,9 +171,18 @@ public class EmailService {
     public static func getEmail(email: String){
         let userToken = EmailRepository.ReadEmailToken(email: email)
         
+        let lastDateEmailRead = UserDefaults.standard.object(forKey: "lastEmailRead")
         
+        var kEmailListMessages = ""
+        
+        if(lastDateEmailRead != nil){
+            kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500?q=older:\(lastDateEmailRead)"
+            print("already read email")
+        }else{
+            kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500"
+            print("don`t read email yet")
+        }
         // Get Email List Messages
-        let kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500"
         
         let emailListMessages = URL(string: kEmailListMessages)!
 
@@ -279,12 +288,17 @@ public class EmailService {
  
 
     }
+
     public static func getEmailMensages(emailToken: String){
+        
         let decoder = JSONDecoder()
         var lastPartId: String = ""
         if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
             if let savedEmailList = try? decoder.decode([MessageResponse].self, from: savedEmailList){
                 for email in savedEmailList {
+                    // Save the date of the last email read
+                    UserDefaults.standard.set(email.internalDate, forKey: "lastEmailRead")
+                    
                     var fileBase64: String = ""
                     let userToken = EmailRepository.ReadEmailToken(email: emailToken)
                     
