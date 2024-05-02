@@ -208,7 +208,6 @@ public class EmailService {
             let decoder = JSONDecoder()
             let body = dataReceived?.data(using: .utf8)
             let emailListResponse = try! decoder.decode(EmailListResponse.self, from: body!)
-            print(emailListResponse)
             let encoder = JSONEncoder()
             if let encodedEmailMessageList = try? encoder.encode(emailListResponse.messages){
                 UserDefaults.standard.set(encodedEmailMessageList, forKey: "emailMessageList")
@@ -263,7 +262,6 @@ public class EmailService {
                 let body = dataReceived?.data(using: .utf8)
                 let emailListResponse = try! decoder.decode(EmailListResponse.self, from: body!)
                 let encoder = JSONEncoder()
-                print(emailListResponse)
                 if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
                     if let savedEmailList = try? decoder.decode([MessageResponse].self, from: savedEmailList){
                         var emailMessageList = savedEmailList
@@ -280,7 +278,6 @@ public class EmailService {
                 }
                 
                 UserDefaults.standard.set(nextPageToken, forKey: "lastNextPageToken")
-                print("#####lastNextPageToken\(nextPageToken)")
                 self.keepGetEmailList(email: email, userToken: userToken.auth, pageToken: nextPageToken)
                 
             }.resume()
@@ -290,7 +287,6 @@ public class EmailService {
     }
 
     public static func getEmailMensages(emailToken: String){
-        
         let decoder = JSONDecoder()
         var lastPartId: String = ""
         if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
@@ -330,13 +326,11 @@ public class EmailService {
                             let decoder = JSONDecoder()
                             let body = dataReceived?.data(using: .utf8)
                             let emailContentResponse = try! decoder.decode(MessageResponse.self, from: body!)
-                            print(emailContentResponse)
                             if(emailContentResponse.payload?.parts != nil){
                                 fileBase64 += emailContentResponse.payload?.body?.data ?? ""
                                 for messagePart in emailContentResponse.payload!.parts! {
                                     fileBase64 += messagePart.body?.data ?? ""
                                     if(messagePart.mimeType == "image/png"){
-                                        print("############ARQUIVO PNG")
                                         var kEmaiMessageAttaachmentEndpoint: String = "https://gmail.googleapis.com/gmail/v1/users/me/messages/\(emailContentResponse.id)/attachments/\(messagePart.body!.attachmentId!)"
                                         let emaiMessageAttaachmentEndpoint = URL(string: kEmaiMessageAttaachmentEndpoint)!
                                         var urlRequest = URLRequest(url: emaiMessageAttaachmentEndpoint)
@@ -372,7 +366,6 @@ public class EmailService {
                                         }.resume()
                                     }
                                     if(messagePart.mimeType == "application/pdf"){
-                                        print("ARQUIVO PDF")
                                         var kEmaiMessageAttaachmentEndpoint: String = "https://gmail.googleapis.com/gmail/v1/users/me/messages/\(emailContentResponse.id)/attachments/\(messagePart.body!.attachmentId!)"
                                         let emaiMessageAttaachmentEndpoint = URL(string: kEmaiMessageAttaachmentEndpoint)!
                                         var urlRequest2 = URLRequest(url: emaiMessageAttaachmentEndpoint)
