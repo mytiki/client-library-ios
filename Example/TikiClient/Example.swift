@@ -123,7 +123,12 @@ struct Main: App {
                     }
 
                 }
-                
+                Button("Login Google"){
+                    TikiClient.loginEmail(clientID: "", completion: {print("login")})
+                }
+                Button("Token Google"){
+                    Text(verbatim: TikiClient.verifyEmail(email: "").auth)
+                }
             }
         }
     }

@@ -190,10 +190,10 @@ This comprehensive resource provides direct insights into utilizing the various 
 
 To see a simple implementation of the TIKI Client library, check the [Example App](https://github.com/tiki/publish-client-ios/tree/main/Example).
 
-# Contributing
+## Contributing
+Please review our [Contributor Guidelines](https://github.com/mytiki/.github/blob/main/CONTRIBUTING.md) before beginning. Utilize GitHub Issues, Discussions, and Security Advisories to provide feedback.
 
-- Use [GitHub Issues](https://github.com/tiki/publish-client-ios/issues) to report bugs or
-
- request enhancements.
-- To contact our team or other active contributors, join our 👾 [Discord](https://discord.gg/tiki).
-- Please adhere to [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) when contributing code to this project.
+- [Ask a Question](https://github.com/orgs/mytiki/discussions)
+- [Report a Bug](https://github.com/mytiki/roadmap/issues/new?assignees=&labels=bug%2Crequest&projects=&template=bug.yml)
+- [Report a Vulnerability](https://github.com/mytiki/client-library-ios/security/advisories/new)
+- [Request a Feature](https://github.com/mytiki/roadmap/issues/new?assignees=&labels=feature%2Crequest&projects=&template=feature.yml)
