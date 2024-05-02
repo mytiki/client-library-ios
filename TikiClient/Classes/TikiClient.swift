@@ -27,6 +27,7 @@ public class TikiClient {
     public static var config: Config? = nil
     public static var userId: String? = nil
     private static var authState: OIDAuthState?
+    private static let emailService = EmailService()
 
 
     /// Initializes the `TikiClient` with the application context and sets its parameters.
@@ -158,4 +159,14 @@ public class TikiClient {
         return terms ?? ""
     }
     
+    public static func loginEmail(clientID: String, completion: @escaping () -> Void){
+        TikiClient.emailService.login (.google, clientID){
+            completion()
+        }
+    }
+    public static func verifyEmail(email: String) -> AuthToken{
+        let authToken = TikiClient.emailService.account(email: email)
+        return authToken
+    }
+
 }

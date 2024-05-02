@@ -20,6 +20,7 @@ public class EmailRepository {
     
     public static func ReadEmailToken(email: String) -> AuthToken {
         let data = KeyService.repository.read(service: ".email", key: email)!
+
         let authToken = String(data: data, encoding: .utf8)!
         let decoder = JSONDecoder()
         let jsonData = authToken.data(using: .utf8)
