@@ -6,8 +6,7 @@
 
 import Foundation
 
-public struct MessageResponse: Codable {
-    
+public struct MessageResponse: Codable, Equatable {
       public var id: String
       public var threadId: String
       public var labelIds: [String]?
@@ -18,4 +17,7 @@ public struct MessageResponse: Codable {
       public var sizeEstimate: Int?
       public var raw: String?
     
+    public static func == (lhs: MessageResponse, rhs: MessageResponse) -> Bool {
+        return lhs.id == rhs.id
+    }
 }
