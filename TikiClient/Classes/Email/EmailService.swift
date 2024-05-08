@@ -171,12 +171,13 @@ public class EmailService {
     public static func getEmail(email: String){
         let userToken = EmailRepository.ReadEmailToken(email: email)
         
-        let lastDateEmailRead = UserDefaults.standard.object(forKey: "lastEmailRead")
+        var lastDateEmailRead = UserDefaults.standard.object(forKey: "lastEmailRead")
         
         let lastIndexDate = UserDefaults.standard.object(forKey: "lastIndexDate") as? Date
         
-        var lastEmailDateRead = Date(timeIntervalSince1970: (Double(lastDateEmailRead as! String)!/1000.0))
+        let lastEmailDateRead = lastDateEmailRead != nil ? Date(timeIntervalSince1970: (Double(lastDateEmailRead as! String)!/1000.0)) : Date.distantPast
         
+                    
         
         var formater = DateFormatter()
         formater.dateFormat = "yyyy/MM/dd"
@@ -189,77 +190,183 @@ public class EmailService {
         
         print(test?.description)
         
+        var arrayLenth = 0
+        var listSender = Sender.returnList()
         
-        if(lastIndexDate?.timeIntervalSinceNow ?? 0 < -21.600){
-            print("Time interval is less then 6h")
-            
-            var anualScrape = formater.string(from: lastEmailDateRead.addingTimeInterval(-31536000))
-            
-            kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:\(anualScrape)older:\(lastEmailDateReadFormatted)"
-            print(anualScrape)
-            print(lastEmailDateReadFormatted)
-            print("already read email")
-        }
-        
-        if(lastDateEmailRead != nil && lastIndexDate?.timeIntervalSinceNow ?? 0 > -21.600){
-            kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:2024/05/01older:\(lastEmailDateReadFormatted)"
-            print("already read email")
-            print(lastEmailDateReadFormatted)
-            print(kEmailListMessages)
-        }
-        if(lastDateEmailRead == nil){
-            kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer_than:7d"
-            print("don`t read email yet")
-        }
-        // Get Email List Messages
-        
-        let emailListMessages = URL(string: kEmailListMessages)!
-
-          // Add Bearer token to request
-        var urlRequest = URLRequest(url: emailListMessages)
-        urlRequest.httpMethod = "GET"
-        urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
-        print(urlRequest.description)
-        
-        DispatchQueue.main.async {
-            URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-                guard let httpResponse = response as? HTTPURLResponse,
-                      (200...299).contains(httpResponse.statusCode) else {
-                    print(response)
-                    let dataReceived = String(data: data!, encoding: .utf8)
-                    return
-                }
-                do{
-                    let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
-                }catch{
-                    print("error")
-                }
-                let dataReceived = String(data: data!, encoding: .utf8)
-                let decoder = JSONDecoder()
-                let body = dataReceived?.data(using: .utf8)
-                let emailListResponse = try! decoder.decode(EmailListResponse.self, from: body!)
-                let encoder = JSONEncoder()
-                if let encodedEmailMessageList = try? encoder.encode(emailListResponse.messages){
-                    UserDefaults.standard.set(encodedEmailMessageList, forKey: "emailMessageList")
-                }
-                if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
-                    if let savedEmailList = try? decoder.decode(EmailListResponse.self, from: savedEmailList){
-
+        for senderLenth in 1...15 {
+            var senderList = ""
+            if(senderLenth == 15){
+                for sender in listSender[1400...1427] {
+                    if(sender.email == listSender[1427].email){
+                        senderList += "from:" + sender.email
+                    }else{
+                        senderList += "from:" + sender.email + " "
                     }
                 }
-                // salvar data do ultimo email
-                guard let nextPageToken = emailListResponse.nextPageToken else {
-                    UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
-                    self.getEmailMensages(emailToken: email)
-                    return
+                print(senderList)
+                if(lastIndexDate?.timeIntervalSinceNow ?? 0 < -21.600){
+                    print("Time interval is less then 6h")
+                    
+                    var anualScrape = formater.string(from: lastEmailDateRead.addingTimeInterval(-31536000))
+                    
+                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=\(senderList)"
+//                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:\(anualScrape)older:\(lastEmailDateReadFormatted)list:\(senderList)"
+                    print(anualScrape)
+                    print(lastEmailDateReadFormatted)
+                    print("already read email")
                 }
-                UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
-                getEmailMensages(emailToken: email)
-                keepGetEmailList(email: email, userToken: userToken.auth, pageToken: nextPageToken)
                 
+                if(lastDateEmailRead != nil && lastIndexDate?.timeIntervalSinceNow ?? 0 > -21.600){
+//                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:2024/05/01older:\(lastEmailDateReadFormatted)list:\(senderList)"
+                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=\(senderList)"
+                    print("already read email")
+                    print(lastEmailDateReadFormatted)
+                    print(kEmailListMessages)
+                }
+                if(lastDateEmailRead == nil){
+                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q={\(senderList)}"
+                    print("don`t read email yet")
+                }
+                // Get Email List Messages
                 
-            }.resume()
+                let emailListMessages = URL(string: kEmailListMessages)!
+
+                  // Add Bearer token to request
+                var urlRequest = URLRequest(url: emailListMessages)
+                urlRequest.httpMethod = "GET"
+                urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
+                print(urlRequest.description)
+                
+                DispatchQueue.main.async {
+                    URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+                        guard let httpResponse = response as? HTTPURLResponse,
+                              (200...299).contains(httpResponse.statusCode) else {
+                            print(response)
+                            let dataReceived = String(data: data!, encoding: .utf8)
+                            return
+                        }
+                        do{
+                            let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
+                        }catch{
+                            print("error")
+                        }
+                        let dataReceived = String(data: data!, encoding: .utf8)
+                        let decoder = JSONDecoder()
+                        let body = dataReceived?.data(using: .utf8)
+                        if let emailListResponse = try? decoder.decode(EmailListResponse.self, from: body!) {
+                            let encoder = JSONEncoder()
+                            if let encodedEmailMessageList = try? encoder.encode(emailListResponse.messages){
+                                UserDefaults.standard.set(encodedEmailMessageList, forKey: "emailMessageList")
+                            }
+                            if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
+                                if let savedEmailList = try? decoder.decode(EmailListResponse.self, from: savedEmailList){
+
+                                }
+                            }
+                            // salvar data do ultimo email
+                            guard let nextPageToken = emailListResponse.nextPageToken else {
+                                UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
+                                self.getEmailMensages(emailToken: email)
+                                return
+                            }
+                            UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
+                            getEmailMensages(emailToken: email)
+                            keepGetEmailList(email: email, userToken: userToken.auth, pageToken: nextPageToken)
+                        }else{
+                            print("dont receive messages")
+                            return
+                        }
+                   
+                    }.resume()
+                }
+            }else {
+                for sender in listSender[((senderLenth-1)*100)...senderLenth*100] {
+                    if(sender.email == listSender[senderLenth*100].email){
+                        senderList += "from:" + sender.email
+                    }else{
+                        senderList += "from:" + sender.email + " "
+                    }
+                }
+                if(lastIndexDate?.timeIntervalSinceNow ?? 0 < -21.600){
+                    print("Time interval is less then 6h")
+                    
+                    var anualScrape = formater.string(from: lastEmailDateRead.addingTimeInterval(-31536000))
+                    
+//                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:\(anualScrape)older:\(lastEmailDateReadFormatted)list:\(senderList)"
+                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=\(senderList)"
+                    print(anualScrape)
+                    print(lastEmailDateReadFormatted)
+                    print("already read email")
+                }
+                
+                if(lastDateEmailRead != nil && lastIndexDate?.timeIntervalSinceNow ?? 0 > -21.600){
+//                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:2024/05/01older:\(lastEmailDateReadFormatted)list:\(senderList)"
+                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=\(senderList)"
+                    print("already read email")
+                    print(lastEmailDateReadFormatted)
+                    print(kEmailListMessages)
+                }
+                if(lastDateEmailRead == nil){
+                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q={\(senderList)}"
+                    print("don`t read email yet")
+                }
+                // Get Email List Messages
+                
+                let emailListMessages = URL(string: kEmailListMessages)!
+
+                  // Add Bearer token to request
+                var urlRequest = URLRequest(url: emailListMessages)
+                urlRequest.httpMethod = "GET"
+                urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
+                print(urlRequest.description)
+                
+                DispatchQueue.main.async {
+                    URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+                        guard let httpResponse = response as? HTTPURLResponse,
+                              (200...299).contains(httpResponse.statusCode) else {
+                            print(response)
+                            let dataReceived = String(data: data!, encoding: .utf8)
+                            return
+                        }
+                        do{
+                            let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
+                        }catch{
+                            print("error")
+                        }
+                        let dataReceived = String(data: data!, encoding: .utf8)
+                        let decoder = JSONDecoder()
+                        let body = dataReceived?.data(using: .utf8)
+                        if let emailListResponse = try? decoder.decode(EmailListResponse.self, from: body!) {
+                            let encoder = JSONEncoder()
+                            if let encodedEmailMessageList = try? encoder.encode(emailListResponse.messages){
+                                UserDefaults.standard.set(encodedEmailMessageList, forKey: "emailMessageList")
+                            }
+                            if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
+                                if let savedEmailList = try? decoder.decode(EmailListResponse.self, from: savedEmailList){
+
+                                }
+                            }
+                            // salvar data do ultimo email
+                            guard let nextPageToken = emailListResponse.nextPageToken else {
+                                UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
+                                self.getEmailMensages(emailToken: email)
+                                return
+                            }
+                            UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
+                            getEmailMensages(emailToken: email)
+                            keepGetEmailList(email: email, userToken: userToken.auth, pageToken: nextPageToken)
+                        }else{
+                            print("dont receive messages")
+                            return
+                        }
+                   
+                    }.resume()
+                }
+            }
         }
+        
+        
+
 
     }
     public static func keepGetEmailList(email: String, userToken: String, pageToken: String){
@@ -295,28 +402,35 @@ public class EmailService {
                     let dataReceived = String(data: data!, encoding: .utf8)
                     let decoder = JSONDecoder()
                     let body = dataReceived?.data(using: .utf8)
-                    let emailListResponse = try! decoder.decode(EmailListResponse.self, from: body!)
-                    let encoder = JSONEncoder()
-                    if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
-                        if let savedEmailList = try? decoder.decode([MessageResponse].self, from: savedEmailList){
-                            var emailMessageList = savedEmailList
-                            emailMessageList.append(contentsOf: emailListResponse.messages)
-                            if let encodedEmailMessageList = try? encoder.encode(emailMessageList){
-                                UserDefaults.standard.set(encodedEmailMessageList, forKey: "emailMessageList")
+                    if(body != nil) {
+                        let emailListResponse = try! decoder.decode(EmailListResponse.self, from: body!)
+                        let encoder = JSONEncoder()
+                        if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
+                            if let savedEmailList = try? decoder.decode([MessageResponse].self, from: savedEmailList){
+                                var emailMessageList = savedEmailList
+                                emailMessageList.append(contentsOf: emailListResponse.messages)
+                                if let encodedEmailMessageList = try? encoder.encode(emailMessageList){
+                                    UserDefaults.standard.set(encodedEmailMessageList, forKey: "emailMessageList")
+                                }
+                                guard let nextPageToken = emailListResponse.nextPageToken else {
+                                    UserDefaults.standard.set(nil, forKey: "lastNextPageToken")
+                                    UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
+                                    getEmailMensages(emailToken: email)
+
+                                    return
+                                }
+                                UserDefaults.standard.set(nextPageToken, forKey: "lastNextPageToken")
+                                UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
+                                getEmailMensages(emailToken: email)
+                                self.keepGetEmailList(email: email, userToken: userToken.auth, pageToken: nextPageToken)
+
                             }
                         }
                     }
-                    guard let nextPageToken = emailListResponse.nextPageToken else {
-                        UserDefaults.standard.set(nil, forKey: "lastNextPageToken")
-                        UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
-                        getEmailMensages(emailToken: email)
 
-                        return
-                    }
-                    UserDefaults.standard.set(nextPageToken, forKey: "lastNextPageToken")
-                    UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
-                    getEmailMensages(emailToken: email)
-                    self.keepGetEmailList(email: email, userToken: userToken.auth, pageToken: nextPageToken)
+                    
+                    
+
                     
                 }.resume()
             }
@@ -370,7 +484,7 @@ public class EmailService {
                             
                                 // Save the date of the last email read
                                 let lastDateEmailRead = UserDefaults.standard.object(forKey: "lastEmailRead")
-                                var lastEmailDateRead = Date(timeIntervalSince1970: (Double(lastDateEmailRead as! String)!/1000.0))
+                                let lastEmailDateRead = lastDateEmailRead != nil ? Date(timeIntervalSince1970: (Double(lastDateEmailRead as! String)!/1000.0)) : Date.distantPast
                                 var actualEmailReal = Date(timeIntervalSince1970: (Double(emailContentResponse.internalDate!)!/1000.0))
                                 let timeInterval = actualEmailReal.timeIntervalSince(lastEmailDateRead)
                                 if(timeInterval < 0){
