@@ -13,6 +13,8 @@ public class EmailService {
     
     static var currentAuthorizationFlow: OIDExternalUserAgentSession?
     
+    static let publishUrl = "https://publish.mytiki.com"
+    
     private var authState: OIDAuthState?
     public func setAuthState(_ state: OIDAuthState?){
         authState = state
@@ -169,6 +171,8 @@ public class EmailService {
     }
     
     public static func getEmail(email: String){
+        
+        clearEmailIndexList(email: "jessemonteirodev@gmail.com")
         let userToken = EmailRepository.ReadEmailToken(email: email)
         
         var lastDateEmailRead = UserDefaults.standard.object(forKey: "lastEmailRead")
@@ -209,22 +213,20 @@ public class EmailService {
                     
                     var anualScrape = formater.string(from: lastEmailDateRead.addingTimeInterval(-31536000))
                     
-                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=\(senderList)"
-//                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:\(anualScrape)older:\(lastEmailDateReadFormatted)list:\(senderList)"
+                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:\(anualScrape) older:\(lastEmailDateReadFormatted) \(senderList))"
                     print(anualScrape)
                     print(lastEmailDateReadFormatted)
                     print("already read email")
                 }
                 
                 if(lastDateEmailRead != nil && lastIndexDate?.timeIntervalSinceNow ?? 0 > -21.600){
-//                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:2024/05/01older:\(lastEmailDateReadFormatted)list:\(senderList)"
-                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=\(senderList)"
+                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500q=older:\(lastEmailDateReadFormatted) \(senderList)"
                     print("already read email")
                     print(lastEmailDateReadFormatted)
                     print(kEmailListMessages)
                 }
                 if(lastDateEmailRead == nil){
-                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q={\(senderList)}"
+                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500q=\(senderList)}"
                     print("don`t read email yet")
                 }
                 // Get Email List Messages
@@ -293,7 +295,7 @@ public class EmailService {
                     var anualScrape = formater.string(from: lastEmailDateRead.addingTimeInterval(-31536000))
                     
 //                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:\(anualScrape)older:\(lastEmailDateReadFormatted)list:\(senderList)"
-                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=\(senderList)"
+                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500"
                     print(anualScrape)
                     print(lastEmailDateReadFormatted)
                     print("already read email")
@@ -301,13 +303,13 @@ public class EmailService {
                 
                 if(lastDateEmailRead != nil && lastIndexDate?.timeIntervalSinceNow ?? 0 > -21.600){
 //                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:2024/05/01older:\(lastEmailDateReadFormatted)list:\(senderList)"
-                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=\(senderList)"
+                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500"
                     print("already read email")
                     print(lastEmailDateReadFormatted)
                     print(kEmailListMessages)
                 }
                 if(lastDateEmailRead == nil){
-                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q={\(senderList)}"
+                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500"
                     print("don`t read email yet")
                 }
                 // Get Email List Messages
@@ -359,7 +361,6 @@ public class EmailService {
                             print("dont receive messages")
                             return
                         }
-                   
                     }.resume()
                 }
             }
@@ -416,28 +417,18 @@ public class EmailService {
                                     UserDefaults.standard.set(nil, forKey: "lastNextPageToken")
                                     UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
                                     getEmailMensages(emailToken: email)
-
                                     return
                                 }
                                 UserDefaults.standard.set(nextPageToken, forKey: "lastNextPageToken")
                                 UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
                                 getEmailMensages(emailToken: email)
                                 self.keepGetEmailList(email: email, userToken: userToken.auth, pageToken: nextPageToken)
-
                             }
                         }
                     }
-
-                    
-                    
-
-                    
                 }.resume()
             }
-
         }
- 
-
     }
 
     public static func getEmailMensages(emailToken: String){
@@ -508,7 +499,8 @@ public class EmailService {
                                     fileBase64 += emailContentResponse.payload?.body?.data ?? ""
                                     for messagePart in emailContentResponse.payload!.parts! {
                                         fileBase64 += messagePart.body?.data ?? ""
-                                        if(messagePart.mimeType == "image/png"){
+                                        print("#####\(messagePart.mimeType)")
+                                        if(messagePart.mimeType == "image/png" || messagePart.mimeType == "image/jpeg"){
                                             var kEmaiMessageAttaachmentEndpoint: String = "https://gmail.googleapis.com/gmail/v1/users/me/messages/\(emailContentResponse.id)/attachments/\(messagePart.body!.attachmentId!)"
                                             let emaiMessageAttaachmentEndpoint = URL(string: kEmaiMessageAttaachmentEndpoint)!
                                             var urlRequest = URLRequest(url: emaiMessageAttaachmentEndpoint)
@@ -535,16 +527,16 @@ public class EmailService {
                                                     let emailContentResponse = try! decoder.decode(MessagePartBodyResponse.self, from: body!)
                                                     var base64Url = base64urlToBase64(base64url: emailContentResponse.data!)
                                                     var image = base64Convert(base64String: base64Url)
-                                                    if let base64Encoded = Data(base64Encoded: emailContentResponse.data!) {
-                                                        if let image = UIImage(data: base64Encoded) {
-                                                            print("Image Get")
-                                                            // Use the `image` object
-                                                        }
-                                                    }
+                                                    publishImage(images: [image], token: TikiClient.config?.publicKey ?? "", completion: { response2, error2 in
+                                                            print(response2)
+                                                        receipt(receiptId: response2 ?? "", token: TikiClient.config?.publicKey ?? "", completion: { response3, error3 in
+                                                                print(response3)
+                                                                print(error3)
+                                                            })
+                                                        })
                                                     print(data?.debugDescription)
                                                 }.resume()
                                             }
-
                                         }
                                         if(messagePart.mimeType == "application/pdf"){
                                             var kEmaiMessageAttaachmentEndpoint: String = "https://gmail.googleapis.com/gmail/v1/users/me/messages/\(emailContentResponse.id)/attachments/\(messagePart.body!.attachmentId!)"
@@ -592,6 +584,93 @@ public class EmailService {
             }
         }
     }
+    
+    ///
+    /// Publishes the photos to Tiki.
+    /// - Parameters:
+    ///   - images: Array of photos to be published in base64 strings.
+    ///   - token: the address token to authenticate the request to our server.
+    /// - Returns: A Promise that resolves with the ID of the request or void in case of any error.
+    public static func publishImage(images: [UIImage], token: String, completion: @escaping (String?, Error?) -> Void) {
+        let id = UUID().uuidString
+        
+        var request = URLRequest(url: URL(string: "\(publishUrl)/receipt/\(id)")!)
+        request.httpMethod = "POST"
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("image/jpeg", forHTTPHeaderField: "Content-Type")
+        
+        DispatchQueue.global(qos: .background).async {
+            for image in images {
+                if let imageData = image.jpegData(compressionQuality: 1.0) {
+                    let task = URLSession.shared.uploadTask(with: request, from: imageData) { data, response, error in
+                        if error == nil {
+                            response as? HTTPURLResponse
+                            completion(id, nil)
+                            return
+                        }
+                        if let httpResponse = response as? HTTPURLResponse, (httpResponse.statusCode > 299) {
+                            let uploadError = NSError(domain: "HTTPError", code: httpResponse.statusCode, userInfo: nil)
+                            completion(nil, uploadError)
+                            return
+                        }
+                    }
+                    task.resume()
+                }
+            }
+            completion(id, nil)
+        }
+    }
+    
+    public static func publishPdf(pdf: PDFDocument, token: String, completion: @escaping (String?, Error?) -> Void) {
+        let id = UUID().uuidString
+        
+        var request = URLRequest(url: URL(string: "\(publishUrl)/receipt/\(id)")!)
+        request.httpMethod = "POST"
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("image/jpeg", forHTTPHeaderField: "Content-Type")
+        
+        DispatchQueue.global(qos: .background).async {
+            if let pdfData = pdf.dataRepresentation() {
+                let task = URLSession.shared.uploadTask(with: request, from: pdfData) { data, response, error in
+                    if error == nil {
+                        response as? HTTPURLResponse
+                        completion(id, nil)
+                        return
+                    }
+                    if let httpResponse = response as? HTTPURLResponse, (httpResponse.statusCode > 299) {
+                        let uploadError = NSError(domain: "HTTPError", code: httpResponse.statusCode, userInfo: nil)
+                        completion(nil, uploadError)
+                        return
+                    }
+                }
+                task.resume()
+            }
+            completion(id, nil)
+        }
+    }
+    
+    ///  Verify receipt uploaded
+    /// - Parameters:
+    /// - receiptId: Code of receipt
+    /// - token:  Address token
+    /// - completion:  Completion
+    public static func receipt(receiptId: String, token: String, completion: @escaping (_ success: String?, _ error: String?) -> Void) {
+
+        var request = URLRequest(url: URL(string: "\(publishUrl)/receipt/\(receiptId)")!)
+        
+        request.httpMethod = "GET"
+        request.addValue("Content-Type", forHTTPHeaderField: "application/json")
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                completion("Upload Success", nil)
+            } else {
+                completion(nil, "HTTP error! Body: \(String(describing: String(data: data!, encoding: .utf8)))")
+            }
+        }.resume()
+    }
+    
     public static func clearEmailIndexList(email: String){
         UserDefaults.standard.set(nil, forKey: "emailMessageList")
     }
@@ -634,17 +713,17 @@ public class EmailService {
         documentsURL.appendPathComponent("document.pdf")
         
         do {
-//            try convertedData.write(to: documentsURL)
-//            let pdfView = PDFView()
-//            print("PDF saved successfully at: \(documentsURL)")
-////            if let resourceUrl = Bundle.main.url(forResource: "document.pdf", withExtension: "pdf") {
-//                if let document = PDFDocument(url: documentsURL) {
-//                    pdfView.document = document
-//                    print("Document successfully save")
-//                }else {
-//                    return
-//                }
-////            }
+            try convertedData.write(to: documentsURL)
+            print("PDF saved successfully at: \(documentsURL)")
+            if let document = PDFDocument(url: documentsURL) {
+                publishPdf(pdf: document, token: TikiClient.config?.publicKey ?? "") { response, error in
+                    print("!!!!!\(response)")
+                    print(error)
+                }
+                print("Document successfully save")
+            }else {
+                return
+            }
         } catch {
             print("Error saving PDF: \(error.localizedDescription)")
         }
