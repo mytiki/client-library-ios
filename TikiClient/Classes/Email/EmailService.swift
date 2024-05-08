@@ -173,13 +173,42 @@ public class EmailService {
         
         let lastDateEmailRead = UserDefaults.standard.object(forKey: "lastEmailRead")
         
+        let lastIndexDate = UserDefaults.standard.object(forKey: "lastIndexDate") as? Date
+        
+        var lastEmailDateRead = Date(timeIntervalSince1970: (Double(lastDateEmailRead as! String)!/1000.0))
+        
+        
+        var formater = DateFormatter()
+        formater.dateFormat = "yyyy/MM/dd"
+                
+        var lastEmailDateReadFormatted = formater.string(from: lastEmailDateRead)
+        
         var kEmailListMessages = ""
         
-        if(lastDateEmailRead != nil){
-            kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500?q=older:\(lastDateEmailRead)"
+        var test = lastIndexDate?.timeIntervalSinceNow
+        
+        print(test?.description)
+        
+        
+        if(lastIndexDate?.timeIntervalSinceNow ?? 0 < -21.600){
+            print("Time interval is less then 6h")
+            
+            var anualScrape = formater.string(from: lastEmailDateRead.addingTimeInterval(-31536000))
+            
+            kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:\(anualScrape)older:\(lastEmailDateReadFormatted)"
+            print(anualScrape)
+            print(lastEmailDateReadFormatted)
             print("already read email")
-        }else{
-            kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500"
+        }
+        
+        if(lastDateEmailRead != nil && lastIndexDate?.timeIntervalSinceNow ?? 0 > -21.600){
+            kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:2024/05/01older:\(lastEmailDateReadFormatted)"
+            print("already read email")
+            print(lastEmailDateReadFormatted)
+            print(kEmailListMessages)
+        }
+        if(lastDateEmailRead == nil){
+            kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer_than:7d"
             print("don`t read email yet")
         }
         // Get Email List Messages
@@ -192,41 +221,46 @@ public class EmailService {
         urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
         print(urlRequest.description)
         
-        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                print(response)
-                let dataReceived = String(data: data!, encoding: .utf8)
-                return
-            }
-            do{
-                let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
-            }catch{
-                print("error")
-            }
-            let dataReceived = String(data: data!, encoding: .utf8)
-            let decoder = JSONDecoder()
-            let body = dataReceived?.data(using: .utf8)
-            let emailListResponse = try! decoder.decode(EmailListResponse.self, from: body!)
-            let encoder = JSONEncoder()
-            if let encodedEmailMessageList = try? encoder.encode(emailListResponse.messages){
-                UserDefaults.standard.set(encodedEmailMessageList, forKey: "emailMessageList")
-            }
-            if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
-                if let savedEmailList = try? decoder.decode(EmailListResponse.self, from: savedEmailList){
-
+        DispatchQueue.main.async {
+            URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+                guard let httpResponse = response as? HTTPURLResponse,
+                      (200...299).contains(httpResponse.statusCode) else {
+                    print(response)
+                    let dataReceived = String(data: data!, encoding: .utf8)
+                    return
                 }
-            }
-            // salvar data do ultimo email
-            guard let nextPageToken = emailListResponse.nextPageToken else {
-                self.getEmailMensages(emailToken: email)
-                return
-            }
+                do{
+                    let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
+                }catch{
+                    print("error")
+                }
+                let dataReceived = String(data: data!, encoding: .utf8)
+                let decoder = JSONDecoder()
+                let body = dataReceived?.data(using: .utf8)
+                let emailListResponse = try! decoder.decode(EmailListResponse.self, from: body!)
+                let encoder = JSONEncoder()
+                if let encodedEmailMessageList = try? encoder.encode(emailListResponse.messages){
+                    UserDefaults.standard.set(encodedEmailMessageList, forKey: "emailMessageList")
+                }
+                if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
+                    if let savedEmailList = try? decoder.decode(EmailListResponse.self, from: savedEmailList){
 
-            keepGetEmailList(email: email, userToken: userToken.auth, pageToken: nextPageToken)
-            
-            
-        }.resume()
+                    }
+                }
+                // salvar data do ultimo email
+                guard let nextPageToken = emailListResponse.nextPageToken else {
+                    UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
+                    self.getEmailMensages(emailToken: email)
+                    return
+                }
+                UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
+                getEmailMensages(emailToken: email)
+                keepGetEmailList(email: email, userToken: userToken.auth, pageToken: nextPageToken)
+                
+                
+            }.resume()
+        }
+
     }
     public static func keepGetEmailList(email: String, userToken: String, pageToken: String){
         UserDefaults.standard.set(Date.now, forKey: "dateStartList")
@@ -245,42 +279,48 @@ public class EmailService {
             urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
             print(urlRequest.description)
             
-            URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-                guard let httpResponse = response as? HTTPURLResponse,
-                      (200...299).contains(httpResponse.statusCode) else {
-                    print(response)
+            DispatchQueue.main.async {
+                URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+                    guard let httpResponse = response as? HTTPURLResponse,
+                          (200...299).contains(httpResponse.statusCode) else {
+                        print(response)
+                        let dataReceived = String(data: data!, encoding: .utf8)
+                        return
+                    }
+                    do{
+                        let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
+                    }catch{
+                        print("error")
+                    }
                     let dataReceived = String(data: data!, encoding: .utf8)
-                    return
-                }
-                do{
-                    let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
-                }catch{
-                    print("error")
-                }
-                let dataReceived = String(data: data!, encoding: .utf8)
-                let decoder = JSONDecoder()
-                let body = dataReceived?.data(using: .utf8)
-                let emailListResponse = try! decoder.decode(EmailListResponse.self, from: body!)
-                let encoder = JSONEncoder()
-                if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
-                    if let savedEmailList = try? decoder.decode([MessageResponse].self, from: savedEmailList){
-                        var emailMessageList = savedEmailList
-                        emailMessageList.append(contentsOf: emailListResponse.messages)
-                        if let encodedEmailMessageList = try? encoder.encode(emailMessageList){
-                            UserDefaults.standard.set(encodedEmailMessageList, forKey: "emailMessageList")
+                    let decoder = JSONDecoder()
+                    let body = dataReceived?.data(using: .utf8)
+                    let emailListResponse = try! decoder.decode(EmailListResponse.self, from: body!)
+                    let encoder = JSONEncoder()
+                    if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
+                        if let savedEmailList = try? decoder.decode([MessageResponse].self, from: savedEmailList){
+                            var emailMessageList = savedEmailList
+                            emailMessageList.append(contentsOf: emailListResponse.messages)
+                            if let encodedEmailMessageList = try? encoder.encode(emailMessageList){
+                                UserDefaults.standard.set(encodedEmailMessageList, forKey: "emailMessageList")
+                            }
                         }
                     }
-                }
-                guard let nextPageToken = emailListResponse.nextPageToken else {
-                    self.getEmailMensages(emailToken: userToken.auth)
-                    UserDefaults.standard.set(nil, forKey: "lastNextPageToken")
-                    return
-                }
-                
-                UserDefaults.standard.set(nextPageToken, forKey: "lastNextPageToken")
-                self.keepGetEmailList(email: email, userToken: userToken.auth, pageToken: nextPageToken)
-                
-            }.resume()
+                    guard let nextPageToken = emailListResponse.nextPageToken else {
+                        UserDefaults.standard.set(nil, forKey: "lastNextPageToken")
+                        UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
+                        getEmailMensages(emailToken: email)
+
+                        return
+                    }
+                    UserDefaults.standard.set(nextPageToken, forKey: "lastNextPageToken")
+                    UserDefaults.standard.set(Date.now, forKey: "lastIndexDate")
+                    getEmailMensages(emailToken: email)
+                    self.keepGetEmailList(email: email, userToken: userToken.auth, pageToken: nextPageToken)
+                    
+                }.resume()
+            }
+
         }
  
 
@@ -292,8 +332,8 @@ public class EmailService {
         if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
             if let savedEmailList = try? decoder.decode([MessageResponse].self, from: savedEmailList){
                 for email in savedEmailList {
-                    // Save the date of the last email read
-                    UserDefaults.standard.set(email.internalDate, forKey: "lastEmailRead")
+                    
+                    print("Get email message \(email.id)")
                     
                     var fileBase64: String = ""
                     let userToken = EmailRepository.ReadEmailToken(email: emailToken)
@@ -310,104 +350,138 @@ public class EmailService {
                     urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
                     print(urlRequest.description)
                     
-                    URLSession.shared.dataTask(with: urlRequest)  { data, response, error in
-                            guard let httpResponse = response as? HTTPURLResponse,
-                                  (200...299).contains(httpResponse.statusCode) else {
-                                print(response)
+                    DispatchQueue.main.async {
+                        URLSession.shared.dataTask(with: urlRequest)  { data, response, error in
+                                guard let httpResponse = response as? HTTPURLResponse,
+                                      (200...299).contains(httpResponse.statusCode) else {
+                                    print(response)
+                                    let dataReceived = String(data: data!, encoding: .utf8)
+                                    return
+                                }
+                                do{
+                                    let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
+                                }catch{
+                                    print("error")
+                                }
                                 let dataReceived = String(data: data!, encoding: .utf8)
-                                return
-                            }
-                            do{
-                                let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
-                            }catch{
-                                print("error")
-                            }
-                            let dataReceived = String(data: data!, encoding: .utf8)
-                            let decoder = JSONDecoder()
-                            let body = dataReceived?.data(using: .utf8)
-                            let emailContentResponse = try! decoder.decode(MessageResponse.self, from: body!)
-                            if(emailContentResponse.payload?.parts != nil){
-                                fileBase64 += emailContentResponse.payload?.body?.data ?? ""
-                                for messagePart in emailContentResponse.payload!.parts! {
-                                    fileBase64 += messagePart.body?.data ?? ""
-                                    if(messagePart.mimeType == "image/png"){
-                                        var kEmaiMessageAttaachmentEndpoint: String = "https://gmail.googleapis.com/gmail/v1/users/me/messages/\(emailContentResponse.id)/attachments/\(messagePart.body!.attachmentId!)"
-                                        let emaiMessageAttaachmentEndpoint = URL(string: kEmaiMessageAttaachmentEndpoint)!
-                                        var urlRequest = URLRequest(url: emaiMessageAttaachmentEndpoint)
-                                        urlRequest.httpMethod = "GET"
-                                        urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
-                                        print(urlRequest.description)
-                                        
-                                        URLSession.shared.dataTask(with: urlRequest)  { data, response, error in
-                                            guard let httpResponse = response as? HTTPURLResponse,
-                                                  (200...299).contains(httpResponse.statusCode) else {
-                                                print(response)
-                                                let dataReceived = String(data: data!, encoding: .utf8)
-                                                return
-                                            }
-                                            do{
-                                                let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
-                                            }catch{
-                                                print("error")
-                                            }
-                                            let dataReceived = String(data: data!, encoding: .utf8)
-                                            let decoder = JSONDecoder()
-                                            let body = dataReceived?.data(using: .utf8)
-                                            let emailContentResponse = try! decoder.decode(MessagePartBodyResponse.self, from: body!)
-                                            var base64Url = base64urlToBase64(base64url: emailContentResponse.data!)
-                                            var image = base64Convert(base64String: base64Url)
-                                            if let base64Encoded = Data(base64Encoded: emailContentResponse.data!) {
-                                                if let image = UIImage(data: base64Encoded) {
-                                                    print("Image Get")
-                                                    // Use the `image` object
-                                                }
-                                            }
-                                            print(data?.debugDescription)
-                                        }.resume()
-                                    }
-                                    if(messagePart.mimeType == "application/pdf"){
-                                        var kEmaiMessageAttaachmentEndpoint: String = "https://gmail.googleapis.com/gmail/v1/users/me/messages/\(emailContentResponse.id)/attachments/\(messagePart.body!.attachmentId!)"
-                                        let emaiMessageAttaachmentEndpoint = URL(string: kEmaiMessageAttaachmentEndpoint)!
-                                        var urlRequest2 = URLRequest(url: emaiMessageAttaachmentEndpoint)
-                                        urlRequest2.httpMethod = "GET"
-                                        urlRequest2.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
-                                        print(urlRequest.description)
-                                        
-                                        URLSession.shared.dataTask(with: urlRequest2)  { data, response, error in
-                                            guard let httpResponse = response as? HTTPURLResponse,
-                                                  (200...299).contains(httpResponse.statusCode) else {
-                                                print(response)
-                                                let dataReceived = String(data: data!, encoding: .utf8)
-                                                return
-                                            }
-                                            do{
-                                                let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
-                                            }catch{
-                                                print("error")
-                                            }
-                                            let dataReceived = String(data: data!, encoding: .utf8)
-                                            let decoder = JSONDecoder()
-                                            let body = dataReceived?.data(using: .utf8)
-                                            let emailContentResponse = try! decoder.decode(MessagePartBodyResponse.self, from: body!)
-                                            var base64 = base64urlToBase64(base64url: emailContentResponse.data!)
-                                            saveBase64StringToPDF(base64)
-                                            print(data?.debugDescription)
-                                        }.resume()
+                                let decoder = JSONDecoder()
+                                let body = dataReceived?.data(using: .utf8)
+                                let emailContentResponse = try! decoder.decode(MessageResponse.self, from: body!)
+                            
+                                // Save the date of the last email read
+                                let lastDateEmailRead = UserDefaults.standard.object(forKey: "lastEmailRead")
+                                var lastEmailDateRead = Date(timeIntervalSince1970: (Double(lastDateEmailRead as! String)!/1000.0))
+                                var actualEmailReal = Date(timeIntervalSince1970: (Double(emailContentResponse.internalDate!)!/1000.0))
+                                let timeInterval = actualEmailReal.timeIntervalSince(lastEmailDateRead)
+                                if(timeInterval < 0){
+                                    UserDefaults.standard.set(emailContentResponse.internalDate, forKey: "lastEmailRead")
+                                }
+                            
+                            
+                            if let savedEmailList2 = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
+                                if var savedEmailList2 = try? decoder.decode([MessageResponse].self, from: savedEmailList2){
+                                    if let idx = savedEmailList2.firstIndex(where: {$0 == email} ) {
+                                        savedEmailList2.remove(at: idx)
+                                        let encoder = JSONEncoder()
+                                        if let encodedsavedEmailList2 = try? encoder.encode(savedEmailList2){
+                                            UserDefaults.standard.set(encodedsavedEmailList2, forKey: "emailMessageList")
+                                        }
                                     }
                                 }
-                                decodeMessageAttachment(attachmentBody: fileBase64)
-                            }
-                            else if(emailContentResponse.payload?.body?.data != nil){
-                                decodeMessageAttachment(attachmentBody: (emailContentResponse.payload?.body?.data)!)
                             }
 
-                            
-                            
-                        }.resume()
+                                if(emailContentResponse.payload?.parts != nil){
+                                    fileBase64 += emailContentResponse.payload?.body?.data ?? ""
+                                    for messagePart in emailContentResponse.payload!.parts! {
+                                        fileBase64 += messagePart.body?.data ?? ""
+                                        if(messagePart.mimeType == "image/png"){
+                                            var kEmaiMessageAttaachmentEndpoint: String = "https://gmail.googleapis.com/gmail/v1/users/me/messages/\(emailContentResponse.id)/attachments/\(messagePart.body!.attachmentId!)"
+                                            let emaiMessageAttaachmentEndpoint = URL(string: kEmaiMessageAttaachmentEndpoint)!
+                                            var urlRequest = URLRequest(url: emaiMessageAttaachmentEndpoint)
+                                            urlRequest.httpMethod = "GET"
+                                            urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
+                                            print(urlRequest.description)
+                                            
+                                            DispatchQueue.main.async {
+                                                URLSession.shared.dataTask(with: urlRequest)  { data, response, error in
+                                                    guard let httpResponse = response as? HTTPURLResponse,
+                                                          (200...299).contains(httpResponse.statusCode) else {
+                                                        print(response)
+                                                        let dataReceived = String(data: data!, encoding: .utf8)
+                                                        return
+                                                    }
+                                                    do{
+                                                        let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
+                                                    }catch{
+                                                        print("error")
+                                                    }
+                                                    let dataReceived = String(data: data!, encoding: .utf8)
+                                                    let decoder = JSONDecoder()
+                                                    let body = dataReceived?.data(using: .utf8)
+                                                    let emailContentResponse = try! decoder.decode(MessagePartBodyResponse.self, from: body!)
+                                                    var base64Url = base64urlToBase64(base64url: emailContentResponse.data!)
+                                                    var image = base64Convert(base64String: base64Url)
+                                                    if let base64Encoded = Data(base64Encoded: emailContentResponse.data!) {
+                                                        if let image = UIImage(data: base64Encoded) {
+                                                            print("Image Get")
+                                                            // Use the `image` object
+                                                        }
+                                                    }
+                                                    print(data?.debugDescription)
+                                                }.resume()
+                                            }
+
+                                        }
+                                        if(messagePart.mimeType == "application/pdf"){
+                                            var kEmaiMessageAttaachmentEndpoint: String = "https://gmail.googleapis.com/gmail/v1/users/me/messages/\(emailContentResponse.id)/attachments/\(messagePart.body!.attachmentId!)"
+                                            let emaiMessageAttaachmentEndpoint = URL(string: kEmaiMessageAttaachmentEndpoint)!
+                                            var urlRequest2 = URLRequest(url: emaiMessageAttaachmentEndpoint)
+                                            urlRequest2.httpMethod = "GET"
+                                            urlRequest2.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
+                                            print(urlRequest.description)
+                                            
+                                            URLSession.shared.dataTask(with: urlRequest2)  { data, response, error in
+                                                guard let httpResponse = response as? HTTPURLResponse,
+                                                      (200...299).contains(httpResponse.statusCode) else {
+                                                    print(response)
+                                                    let dataReceived = String(data: data!, encoding: .utf8)
+                                                    return
+                                                }
+                                                do{
+                                                    let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
+                                                }catch{
+                                                    print("error")
+                                                }
+                                                let dataReceived = String(data: data!, encoding: .utf8)
+                                                let decoder = JSONDecoder()
+                                                let body = dataReceived?.data(using: .utf8)
+                                                let emailContentResponse = try! decoder.decode(MessagePartBodyResponse.self, from: body!)
+                                                var base64 = base64urlToBase64(base64url: emailContentResponse.data!)
+                                                saveBase64StringToPDF(base64)
+                                                print(data?.debugDescription)
+                                            }.resume()
+                                        }
+                                    }
+                                    decodeMessageAttachment(attachmentBody: fileBase64)
+                                }
+                                else if(emailContentResponse.payload?.body?.data != nil){
+                                    decodeMessageAttachment(attachmentBody: (emailContentResponse.payload?.body?.data)!)
+                                }
+
+                                
+                                
+                            }.resume()
+                    }
+                    
+
                 }
             }
         }
     }
+    public static func clearEmailIndexList(email: String){
+        UserDefaults.standard.set(nil, forKey: "emailMessageList")
+    }
+    
     public static func decodeMessageAttachment(attachmentBody: String){
         print(attachmentBody.base64Decoded()?.description)
 
@@ -446,17 +520,17 @@ public class EmailService {
         documentsURL.appendPathComponent("document.pdf")
         
         do {
-            try convertedData.write(to: documentsURL)
-            let pdfView = PDFView()
-            print("PDF saved successfully at: \(documentsURL)")
-//            if let resourceUrl = Bundle.main.url(forResource: "document.pdf", withExtension: "pdf") {
-                if let document = PDFDocument(url: documentsURL) {
-                    pdfView.document = document
-                    print("Document successfully save")
-                }else {
-                    return
-                }
-//            }
+//            try convertedData.write(to: documentsURL)
+//            let pdfView = PDFView()
+//            print("PDF saved successfully at: \(documentsURL)")
+////            if let resourceUrl = Bundle.main.url(forResource: "document.pdf", withExtension: "pdf") {
+//                if let document = PDFDocument(url: documentsURL) {
+//                    pdfView.document = document
+//                    print("Document successfully save")
+//                }else {
+//                    return
+//                }
+////            }
         } catch {
             print("Error saving PDF: \(error.localizedDescription)")
         }
