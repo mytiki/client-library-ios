@@ -66,7 +66,6 @@ public class EmailService {
                 URLSession.shared.dataTask(with: urlRequest) { data, response, error in
                     guard let httpResponse = response as? HTTPURLResponse,
                           (200...299).contains(httpResponse.statusCode) else {
-                        print(response)
                         return
                     }
                     do{
@@ -121,7 +120,6 @@ public class EmailService {
         URLSession.shared.dataTask(with: urlRequest) { data, response, error in
             guard let httpResponse = response as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode) else {
-                print(response)
                 return
             }
             do{
@@ -171,8 +169,6 @@ public class EmailService {
     }
     
     public static func getEmail(email: String){
-        
-        clearEmailIndexList(email: "jessemonteirodev@gmail.com")
         let userToken = EmailRepository.ReadEmailToken(email: email)
         
         var lastDateEmailRead = UserDefaults.standard.object(forKey: "lastEmailRead")
@@ -189,11 +185,7 @@ public class EmailService {
         var lastEmailDateReadFormatted = formater.string(from: lastEmailDateRead)
         
         var kEmailListMessages = ""
-        
-        var test = lastIndexDate?.timeIntervalSinceNow
-        
-        print(test?.description)
-        
+                        
         var arrayLenth = 0
         var listSender = Sender.returnList()
         
@@ -207,23 +199,14 @@ public class EmailService {
                         senderList += "from:" + sender.email + " "
                     }
                 }
-                print(senderList)
                 if(lastIndexDate?.timeIntervalSinceNow ?? 0 < -21.600){
-                    print("Time interval is less then 6h")
-                    
                     var anualScrape = formater.string(from: lastEmailDateRead.addingTimeInterval(-31536000))
                     
                     kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:\(anualScrape) older:\(lastEmailDateReadFormatted) \(senderList))"
-                    print(anualScrape)
-                    print(lastEmailDateReadFormatted)
-                    print("already read email")
                 }
                 
                 if(lastDateEmailRead != nil && lastIndexDate?.timeIntervalSinceNow ?? 0 > -21.600){
                     kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500q=older:\(lastEmailDateReadFormatted) \(senderList)"
-                    print("already read email")
-                    print(lastEmailDateReadFormatted)
-                    print(kEmailListMessages)
                 }
                 if(lastDateEmailRead == nil){
                     kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500q=\(senderList)}"
@@ -237,20 +220,18 @@ public class EmailService {
                 var urlRequest = URLRequest(url: emailListMessages)
                 urlRequest.httpMethod = "GET"
                 urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
-                print(urlRequest.description)
                 
                 DispatchQueue.main.async {
                     URLSession.shared.dataTask(with: urlRequest) { data, response, error in
                         guard let httpResponse = response as? HTTPURLResponse,
                               (200...299).contains(httpResponse.statusCode) else {
-                            print(response)
                             let dataReceived = String(data: data!, encoding: .utf8)
                             return
                         }
                         do{
                             let receivedData = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: String]
                         }catch{
-                            print("error")
+                            print("Error in Json Serialization")
                         }
                         let dataReceived = String(data: data!, encoding: .utf8)
                         let decoder = JSONDecoder()
@@ -290,27 +271,15 @@ public class EmailService {
                     }
                 }
                 if(lastIndexDate?.timeIntervalSinceNow ?? 0 < -21.600){
-                    print("Time interval is less then 6h")
-                    
                     var anualScrape = formater.string(from: lastEmailDateRead.addingTimeInterval(-31536000))
-                    
-//                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:\(anualScrape)older:\(lastEmailDateReadFormatted)list:\(senderList)"
-                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500"
-                    print(anualScrape)
-                    print(lastEmailDateReadFormatted)
-                    print("already read email")
+                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500q=newer:\(anualScrape)older:\(lastEmailDateReadFormatted)list:\(senderList)"
                 }
                 
                 if(lastDateEmailRead != nil && lastIndexDate?.timeIntervalSinceNow ?? 0 > -21.600){
-//                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500&q=newer:2024/05/01older:\(lastEmailDateReadFormatted)list:\(senderList)"
-                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500"
-                    print("already read email")
-                    print(lastEmailDateReadFormatted)
-                    print(kEmailListMessages)
+                    kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500q=older:\(lastEmailDateReadFormatted)list:\(senderList)"
                 }
                 if(lastDateEmailRead == nil){
                     kEmailListMessages = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=500"
-                    print("don`t read email yet")
                 }
                 // Get Email List Messages
                 
@@ -320,13 +289,11 @@ public class EmailService {
                 var urlRequest = URLRequest(url: emailListMessages)
                 urlRequest.httpMethod = "GET"
                 urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
-                print(urlRequest.description)
                 
                 DispatchQueue.main.async {
                     URLSession.shared.dataTask(with: urlRequest) { data, response, error in
                         guard let httpResponse = response as? HTTPURLResponse,
                               (200...299).contains(httpResponse.statusCode) else {
-                            print(response)
                             let dataReceived = String(data: data!, encoding: .utf8)
                             return
                         }
@@ -385,13 +352,11 @@ public class EmailService {
             var urlRequest = URLRequest(url: kEmailListMessageEndpoint)
             urlRequest.httpMethod = "GET"
             urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
-            print(urlRequest.description)
             
             DispatchQueue.main.async {
                 URLSession.shared.dataTask(with: urlRequest) { data, response, error in
                     guard let httpResponse = response as? HTTPURLResponse,
                           (200...299).contains(httpResponse.statusCode) else {
-                        print(response)
                         let dataReceived = String(data: data!, encoding: .utf8)
                         return
                     }
@@ -437,9 +402,6 @@ public class EmailService {
         if let savedEmailList = UserDefaults.standard.object(forKey: "emailMessageList") as? Data{
             if let savedEmailList = try? decoder.decode([MessageResponse].self, from: savedEmailList){
                 for email in savedEmailList {
-                    
-                    print("Get email message \(email.id)")
-                    
                     var fileBase64: String = ""
                     let userToken = EmailRepository.ReadEmailToken(email: emailToken)
                     
@@ -453,13 +415,11 @@ public class EmailService {
                     var urlRequest = URLRequest(url: emailListMessageEndpoint)
                     urlRequest.httpMethod = "GET"
                     urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
-                    print(urlRequest.description)
                     
                     DispatchQueue.main.async {
                         URLSession.shared.dataTask(with: urlRequest)  { data, response, error in
                                 guard let httpResponse = response as? HTTPURLResponse,
                                       (200...299).contains(httpResponse.statusCode) else {
-                                    print(response)
                                     let dataReceived = String(data: data!, encoding: .utf8)
                                     return
                                 }
@@ -499,20 +459,17 @@ public class EmailService {
                                     fileBase64 += emailContentResponse.payload?.body?.data ?? ""
                                     for messagePart in emailContentResponse.payload!.parts! {
                                         fileBase64 += messagePart.body?.data ?? ""
-                                        print("#####\(messagePart.mimeType)")
                                         if(messagePart.mimeType == "image/png" || messagePart.mimeType == "image/jpeg"){
                                             var kEmaiMessageAttaachmentEndpoint: String = "https://gmail.googleapis.com/gmail/v1/users/me/messages/\(emailContentResponse.id)/attachments/\(messagePart.body!.attachmentId!)"
                                             let emaiMessageAttaachmentEndpoint = URL(string: kEmaiMessageAttaachmentEndpoint)!
                                             var urlRequest = URLRequest(url: emaiMessageAttaachmentEndpoint)
                                             urlRequest.httpMethod = "GET"
                                             urlRequest.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
-                                            print(urlRequest.description)
                                             
                                             DispatchQueue.main.async {
                                                 URLSession.shared.dataTask(with: urlRequest)  { data, response, error in
                                                     guard let httpResponse = response as? HTTPURLResponse,
                                                           (200...299).contains(httpResponse.statusCode) else {
-                                                        print(response)
                                                         let dataReceived = String(data: data!, encoding: .utf8)
                                                         return
                                                     }
@@ -528,13 +485,9 @@ public class EmailService {
                                                     var base64Url = base64urlToBase64(base64url: emailContentResponse.data!)
                                                     var image = base64Convert(base64String: base64Url)
                                                     publishImage(images: [image], token: TikiClient.config?.publicKey ?? "", completion: { response2, error2 in
-                                                            print(response2)
                                                         receipt(receiptId: response2 ?? "", token: TikiClient.config?.publicKey ?? "", completion: { response3, error3 in
-                                                                print(response3)
-                                                                print(error3)
                                                             })
                                                         })
-                                                    print(data?.debugDescription)
                                                 }.resume()
                                             }
                                         }
@@ -544,12 +497,10 @@ public class EmailService {
                                             var urlRequest2 = URLRequest(url: emaiMessageAttaachmentEndpoint)
                                             urlRequest2.httpMethod = "GET"
                                             urlRequest2.addValue("Bearer \(userToken.auth)", forHTTPHeaderField: "Authorization")
-                                            print(urlRequest.description)
                                             
                                             URLSession.shared.dataTask(with: urlRequest2)  { data, response, error in
                                                 guard let httpResponse = response as? HTTPURLResponse,
                                                       (200...299).contains(httpResponse.statusCode) else {
-                                                    print(response)
                                                     let dataReceived = String(data: data!, encoding: .utf8)
                                                     return
                                                 }
@@ -564,7 +515,6 @@ public class EmailService {
                                                 let emailContentResponse = try! decoder.decode(MessagePartBodyResponse.self, from: body!)
                                                 var base64 = base64urlToBase64(base64url: emailContentResponse.data!)
                                                 saveBase64StringToPDF(base64)
-                                                print(data?.debugDescription)
                                             }.resume()
                                         }
                                     }
@@ -717,8 +667,7 @@ public class EmailService {
             print("PDF saved successfully at: \(documentsURL)")
             if let document = PDFDocument(url: documentsURL) {
                 publishPdf(pdf: document, token: TikiClient.config?.publicKey ?? "") { response, error in
-                    print("!!!!!\(response)")
-                    print(error)
+
                 }
                 print("Document successfully save")
             }else {
