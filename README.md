@@ -181,7 +181,7 @@ data or referencing it in the [Data Cleanroom](https://mytiki.com/reference/data
 
 The central API interface in the library is the TikiClient object, designed to abstract the complexities of 
 authorization and API requests. While serving as the primary entry point, it's important to note that all 
-APIs within the library are public and accessible. 
+APIs within the library are public and accessible.
 
 For detailed usage instructions, please consult the [TIKI Client API Documentation](https://ios.client.mytiki.com/documentation/tikiclient/). 
 This comprehensive resource provides direct insights into utilizing the various functionalities offered by the TIKI Client Library.
