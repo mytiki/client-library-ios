@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   introducing methods for common operations such as authorization, licensing, capture, card-linked
   offers, and rewards. It is a collection of pre-existing code with minimal dependencies, offering
   a streamlined integration process with TIKI Rest APIs, which reduces the amount of code necessary
-  for integration. 
+  for integration.
   
   TikiClient is the top-level entry point for the TIKI Client Library. It offers simple methods
   that call the underlying libraries to perform common operations. Programmers can use it to
