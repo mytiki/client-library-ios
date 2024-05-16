@@ -26,6 +26,7 @@ public class TikiClient {
     public static let location =  LocationDataManager()
     public static var config: Config? = nil
     public static var userId: String? = nil
+    public static var offer: Offer?
     private static var authState: OIDAuthState?
     private static let emailService = EmailService()
 
@@ -167,6 +168,10 @@ public class TikiClient {
     public static func verifyEmail(email: String) -> AuthToken{
         let authToken = TikiClient.emailService.account(email: email)
         return authToken
+    }
+    
+    public static func createOffer(_id: String?, ptr: String?, description: String?, terms: String?, reward: [Reward], use: Use, tags: [Tag], permissions: [Permission?]){
+        self.offer = Offer(_id: _id, ptr: ptr, description: description, terms: terms, reward: reward, use: use, tags: tags, permissions: permissions)
     }
 
 }

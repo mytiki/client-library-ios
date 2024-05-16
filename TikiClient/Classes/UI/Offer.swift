@@ -32,12 +32,22 @@ public class Offer {
     public var ptr: String?
     public var description: String?
     public var terms: String?
-    public var reward: Image?
-    public var usedBullet = [Bullet]()
-    public var uses = [LicenseUse]()
-    public var tags = [TitleTag]()
-    public var permissions = [Permission]()
-    public var expiry: Date?
+    public var reward = [Reward]()
+    public var use: Use
+    public var tags = [Tag]()
+    public var permissions = [Permission?]()
+    
+    
+    public init(_id: String? = nil, ptr: String? = nil, description: String? = nil, terms: String? = nil, reward: [Reward] = [Reward](), use: Use, tags: [Tag] = [Tag](), permissions: [Permission?] = [Permission?]()) {
+        self._id = _id
+        self.ptr = ptr
+        self.description = description
+        self.terms = terms
+        self.reward = reward
+        self.use = use
+        self.tags = tags
+        self.permissions = permissions
+    }
     
     /// The Offer unique identifier. If none is set, it creates a random UUID.
     public var id: String {
@@ -54,14 +64,8 @@ public class Offer {
     }
     
     /// Sets the [reward]
-    public func reward(_ reward: String) -> Offer {
-        self.reward = Image(reward)
-        return self
-    }
-    
-    /// Adds a [usedBullet]
-    public func bullet(text: String, isUsed: Bool) -> Offer {
-        usedBullet.append(Bullet(text: text, isUsed: isUsed))
+    public func reward(_ reward: [Reward]) -> Offer {
+        self.reward = reward
         return self
     }
     
@@ -86,21 +90,14 @@ public class Offer {
     }
     
     /// Adds an item in the [uses] list.
-    public func use(usecases: [LicenseUsecase], destinations: [String]? = []) -> Offer {
-        uses.append(LicenseUse(usecases: usecases, destinations: destinations))
+    public func use(usecases: [Usecase], destinations: [String]? = []) -> Offer {
+        self.use = Use(usecases: usecases, destinations: destinations)
         return self
     }
     
     /// Adds an item in the [tags
-    public func tag(_ tag: TitleTag) -> Offer {
+    public func tag(_ tag: Tag) -> Offer {
         tags.append(tag)
-        return self
-    }
-    
-    /// Sets the [expiry] based in the *timeInterval*
-    public func duration(_ timeInterval: TimeInterval) -> Offer {
-        let now: Int = Int(Date().timeIntervalSince1970)
-        expiry = Date(timeIntervalSince1970: Double(now)).addingTimeInterval(timeInterval)
         return self
     }
     

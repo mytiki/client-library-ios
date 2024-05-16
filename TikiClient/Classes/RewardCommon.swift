@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class Rewards {
+public class RewardCommon {
     let virtualCurrency: String
     let exclusiveAccess: String
     let upgrades: String
