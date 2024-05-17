@@ -173,5 +173,44 @@ public class TikiClient {
     public static func createOffer(_id: String?, ptr: String?, description: String?, terms: String?, reward: [Reward], use: Use, tags: [Tag], permissions: [Permission?]){
         self.offer = Offer(_id: _id, ptr: ptr, description: description, terms: terms, reward: reward, use: use, tags: tags, permissions: permissions)
     }
+    public static func acceptOffer(completion: @escaping (String?) -> Void, onError: @escaping (String) -> Void){
+        if(offer == nil){
+            onError("Offer is nil")
+            return
+        }
+        if(TikiClient.config == nil){
+            onError("Config is nil")
+        }
+        if(TikiClient.userId == nil){
+            onError("UserId is nil")
+        }
+        var tags: [String] = []
+        for tag in offer!.tags {
+            tags.append(tag.value)
+        }
+        
+        guard let privateKey = KeyService.get(providerId: TikiClient.config!.providerId, userId: TikiClient.userId!, isPrivate: true) else {
+                onError("Private Key not found. Use the TikiClient.initialize method to register the user.")
+                return
+            }
+        
+        guard let publicKeyB64 = KeyService.publicKeyB64(privateKey: privateKey) else{
+            onError("Error extracting public key")
+            return
+        }
+                                                            
+        guard let address = KeyService.address(b64PubKey: publicKeyB64) else{
+            onError("Error decoding address")
+            return
+        }
+
+        
+        guard let signature = KeyService.sign(message: address, privateKey: privateKey) else{
+            onError("Error sign request")
+            return
+        }
+        let licenseRequest = LicenseRequest(ptr: offer!.ptr!, tags: tags, uses: [offer!.use], terms: offer!.terms!, description: offer!.description!, origin: Bundle.main.bundleIdentifier!, signature: signature)
+        TikiClient.license.create(token: TikiClient.config?.publicKey ?? "", postLicenseRequest: licenseRequest, completion: completion)
+    }
 
 }
