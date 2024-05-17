@@ -209,8 +209,64 @@ public class TikiClient {
             onError("Error sign request")
             return
         }
-        let licenseRequest = LicenseRequest(ptr: offer!.ptr!, tags: tags, uses: [offer!.use], terms: offer!.terms!, description: offer!.description!, origin: Bundle.main.bundleIdentifier!, signature: signature)
-        TikiClient.license.create(token: TikiClient.config?.publicKey ?? "", postLicenseRequest: licenseRequest, completion: completion)
+        TikiClient.auth.token(providerId: TikiClient.config!.providerId, secret: signature, scopes: ["trail", "publish"], address: address, completion: { addressToken, error in
+            if(addressToken == nil){
+                onError("It was not possible to get the token, try to inialize!")
+                return
+            }
+            let licenseRequest = LicenseRequest(ptr: offer!.ptr!, tags: tags, uses: [offer!.use], terms: offer!.terms!, description: offer!.description!, origin: Bundle.main.bundleIdentifier!, signature: signature)
+            TikiClient.license.create(token: addressToken!, postLicenseRequest: licenseRequest, completion: completion)
+        })
+    }
+    
+    
+    public static func denyOffer(completion: @escaping (String?) -> Void, onError: @escaping (String) -> Void){
+        if(offer == nil){
+            onError("Offer is nil")
+            return
+        }
+        if(TikiClient.config == nil){
+            onError("Config is nil")
+        }
+        if(TikiClient.userId == nil){
+            onError("UserId is nil")
+        }
+        var tags: [String] = []
+        for tag in offer!.tags {
+            tags.append(tag.value)
+        }
+        
+        guard let privateKey = KeyService.get(providerId: TikiClient.config!.providerId, userId: TikiClient.userId!, isPrivate: true) else {
+                onError("Private Key not found. Use the TikiClient.initialize method to register the user.")
+                return
+            }
+        
+        guard let publicKeyB64 = KeyService.publicKeyB64(privateKey: privateKey) else{
+            onError("Error extracting public key")
+            return
+        }
+                                                            
+        guard let address = KeyService.address(b64PubKey: publicKeyB64) else{
+            onError("Error decoding address")
+            return
+        }
+
+        
+        guard let signature = KeyService.sign(message: address, privateKey: privateKey) else{
+            onError("Error sign request")
+            return
+        }
+        
+        TikiClient.auth.token(providerId: TikiClient.config!.providerId, secret: signature, scopes: ["trail", "publish"], address: address, completion: { addressToken, error in
+            if(addressToken == nil){
+                onError("It was not possible to get the token, try to inialize!")
+                return
+            }
+            let licenseRequest = LicenseRequest(ptr: offer!.ptr!, tags: tags, uses: [], terms: offer!.terms!, description: offer!.description!, origin: Bundle.main.bundleIdentifier!, signature: signature)
+            TikiClient.license.create(token: addressToken!, postLicenseRequest: licenseRequest, completion: completion)
+            
+        })
+
     }
 
 }
