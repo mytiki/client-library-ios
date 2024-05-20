@@ -164,7 +164,6 @@ TikiClient.receipt(receiptId){
   success, error in 
   print("Success: \(success). Error: \(error))
 }
-
 ```
 
 **Note**: The data extraction from receipts is performed asynchronously by Amazon Textract. Processing 
