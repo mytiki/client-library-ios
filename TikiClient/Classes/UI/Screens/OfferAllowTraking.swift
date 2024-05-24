@@ -65,7 +65,21 @@ public struct OfferAllowTrackView: View {
 
                     VStack(){
                         Button() {
-                            print("Continue")
+                            TikiClient.tracking.askToTrack(completion: {status in
+                                switch status {
+                                case .notDetermined:
+                                    print("not determined")
+                                    break
+                                case .restricted:
+                                    print("restricted")
+                                case .denied:
+                                    OfferFlow.step.offerFollowSteps = .allowTrackAsk
+                                case .authorized:
+                                    OfferFlow.step.offerFollowSteps = .linkCard
+                                default:
+                                    OfferFlow.step.offerFollowSteps = .allowTrackAsk
+                                }
+                                })
                         } label: {
                             Text("Continue")
                                 .font(.system(size: 23))
