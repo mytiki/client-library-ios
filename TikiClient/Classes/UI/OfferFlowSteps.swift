@@ -7,12 +7,10 @@
 
 import Foundation
 
-enum OfferFlowStep{
+public enum OfferFlowStep{
     case none,
-         prompt,
-         terms,
-         learnMore,
-         endingAccepted,
-         endingDeclined,
-         endingError
+        allowTrackAsk,
+        deniedTrack,
+        linkCard,
+        deniedLinkCard
 }

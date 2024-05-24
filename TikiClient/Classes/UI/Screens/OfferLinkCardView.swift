@@ -104,7 +104,7 @@ public struct OfferLinkCardView: View {
 
                     VStack(){
                         Button() {
-                            print("Linked card")
+                            TikiClient.acceptOffer(completion: {response in print(response)}, onError: {error in print(error)})
                         } label: {
                             Text("Link Card")
                                 .font(.system(size: 21))
@@ -116,7 +116,7 @@ public struct OfferLinkCardView: View {
                                 .cornerRadius(50)
                         }.buttonStyle(.plain).padding(.bottom, 10)
                         Button() {
-                            print("No Thanks")
+                            TikiClient.denyOffer(completion: {response in print(response)}, onError: {error in print(error)})
                         } label: {
                             Text("No Thanks")
                                 .font(.system(size: 21))
