@@ -42,13 +42,13 @@ milestones:
       starting with the most recent and working progressively in reverse chronological order when time-permitted.
     state: open
 
-  - title: Improve OptIn rates Services
+  - title: 0.3.0
     description: |
       Implements the services for "Improve OptIn rates" feature. The Improve OptIn feature provides a structured approach 
       to create compelling ffers, present them to users, and manage user decisions efficiently.
-    state: open
+    state: closed
 
-  - title: Improve OptIn rates UIs
+  - title: 0.4.0
     description: |
       Implements the UIs for "Improve OptIn rates" feature. Adds pre-built UIs that can be customized to match the app's visual identity.
     state: open
