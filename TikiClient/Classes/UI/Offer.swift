@@ -6,7 +6,7 @@
 import SwiftUI
 
 /// An Offer for creating a License for a Title identified by [ptr].
-public class Offer {
+public class Offer: Identifiable {
     /// An image that represents the reward.
     ///
     /// It should have 300x86 size and include assets for all screen depths.
