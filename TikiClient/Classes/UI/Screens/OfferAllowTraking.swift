@@ -1,9 +1,7 @@
-//
-//  OfferView.swift
-//  TikiClient
-//
-//  Created by Jesse Monteiro Ferreira on 21/05/24.
-//
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in root directory.
+ */
 
 import SwiftUI
 
