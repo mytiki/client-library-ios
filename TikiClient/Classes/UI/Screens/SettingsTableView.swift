@@ -16,14 +16,21 @@ public struct SettingsTableView: View {
     public var body: some View {
     List {
       ForEach(offersList) { offer in
-          SettingsView(offer: offer)      
+          SettingsView(offer: offer).deleteDisabled(offer.mutable)
       }
       .onDelete { indexSet in
-        offersList.remove(atOffsets: indexSet)
+          let offerToDelete = indexSet.map { self.offersList[$0]}
+          print(offerToDelete[0].mutable.description)
+          if(offerToDelete[0].mutable){
+              TikiClient.denyOffer(offer: offerToDelete[0], completion: {completion in print(completion)}, onError: {onError in print(onError)})
+          }
+              
       }
       .onMove { indices, newOffset in
         offersList.move(fromOffsets: indices, toOffset: newOffset)
       }
+
+
     }
     .navigationTitle("Settings")
     .navigationBarItems(trailing: EditButton())

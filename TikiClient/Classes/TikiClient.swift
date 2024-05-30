@@ -220,7 +220,7 @@ public class TikiClient {
     }
     
     
-    public static func denyOffer(completion: @escaping (String?) -> Void, onError: @escaping (String) -> Void){
+    public static func denyOffer(offer: Offer, completion: @escaping (String?) -> Void, onError: @escaping (String) -> Void){
         if(offer == nil){
             onError("Offer is nil")
             return
@@ -232,7 +232,7 @@ public class TikiClient {
             onError("UserId is nil")
         }
         var tags: [String] = []
-        for tag in offer!.tags {
+        for tag in offer.tags {
             tags.append(tag.value)
         }
         
@@ -262,7 +262,7 @@ public class TikiClient {
                 onError("It was not possible to get the token, try to inialize!")
                 return
             }
-            let licenseRequest = LicenseRequest(ptr: offer!.ptr!, tags: tags, uses: [], terms: offer!.terms!, description: offer!.description!, origin: Bundle.main.bundleIdentifier!, signature: signature)
+            let licenseRequest = LicenseRequest(ptr: offer.ptr!, tags: tags, uses: [], terms: offer.terms!, description: offer.description!, origin: Bundle.main.bundleIdentifier!, signature: signature)
             TikiClient.license.create(token: addressToken!, postLicenseRequest: licenseRequest, completion: completion)
             
         })
