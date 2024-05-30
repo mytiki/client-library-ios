@@ -1,21 +1,17 @@
 import SwiftUI
 
 public struct OfferFlow: View{
-    @ObservedObject public static var step = OfferStepFollow(offerFollowSteps: .none)
+    @ObservedObject public static var step = OfferStepFollow(offerFollowSteps: .permissions)
     public init() {}
     
     public var body: some View{
         switch(OfferFlow.step.offerFollowSteps){
-        case .none:
+        case .permissions:
             OfferAllowTrackView()
-        case .allowTrackAsk:
-            OfferAllowTrackView()
-        case .linkCard:
+        case .offers:
             OfferLinkCardView()
-        case .deniedLinkCard:
+        case .settings:
             OfferLinkCardView()
-        case .deniedTrack:
-            OfferAllowTrackView()
         }
     }
 

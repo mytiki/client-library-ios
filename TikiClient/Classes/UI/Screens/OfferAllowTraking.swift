@@ -73,11 +73,11 @@ public struct OfferAllowTrackView: View {
                                 case .restricted:
                                     print("restricted")
                                 case .denied:
-                                    OfferFlow.step.offerFollowSteps = .allowTrackAsk
+                                    OfferFlow.step.offerFollowSteps = .permissions
                                 case .authorized:
-                                    OfferFlow.step.offerFollowSteps = .linkCard
+                                    OfferFlow.step.offerFollowSteps = .offers
                                 default:
-                                    OfferFlow.step.offerFollowSteps = .allowTrackAsk
+                                    OfferFlow.step.offerFollowSteps = .permissions
                                 }
                                 })
                         } label: {

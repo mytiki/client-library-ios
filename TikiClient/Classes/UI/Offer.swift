@@ -36,9 +36,10 @@ public class Offer {
     public var use: Use
     public var tags = [Tag]()
     public var permissions = [Permission?]()
+    public var mutable: Bool
     
     
-    public init(_id: String? = nil, ptr: String? = nil, description: String? = nil, terms: String? = nil, reward: [Reward] = [Reward](), use: Use, tags: [Tag] = [Tag](), permissions: [Permission?] = [Permission?]()) {
+    public init(_id: String? = nil, ptr: String? = nil, description: String? = nil, terms: String? = nil, reward: [Reward] = [Reward](), use: Use, tags: [Tag] = [Tag](), permissions: [Permission?] = [Permission?](), mutable: Bool) {
         self._id = _id
         self.ptr = ptr
         self.description = description
@@ -47,6 +48,7 @@ public class Offer {
         self.use = use
         self.tags = tags
         self.permissions = permissions
+        self.mutable = mutable
     }
     
     /// The Offer unique identifier. If none is set, it creates a random UUID.
