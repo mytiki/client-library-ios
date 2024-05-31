@@ -8,9 +8,7 @@
 import Foundation
 
 public enum OfferFlowStep{
-    case none,
-        allowTrackAsk,
-        deniedTrack,
-        linkCard,
-        deniedLinkCard
+    case offers,
+        permissions,
+        settings
 }

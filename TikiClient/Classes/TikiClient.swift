@@ -171,7 +171,7 @@ public class TikiClient {
     }
     
     public static func createOffer(_id: String?, ptr: String?, description: String?, terms: String?, reward: [Reward], use: Use, tags: [Tag], permissions: [Permission?]){
-        self.offer = Offer(_id: _id, ptr: ptr, description: description, terms: terms, reward: reward, use: use, tags: tags, permissions: permissions)
+        self.offer = Offer(_id: _id, ptr: ptr, description: description, terms: terms, reward: reward, use: use, tags: tags, permissions: permissions, mutable: true)
     }
     public static func acceptOffer(completion: @escaping (String?) -> Void, onError: @escaping (String) -> Void){
         if(offer == nil){
