@@ -1,7 +1,7 @@
 import SwiftUI
 
 public struct OfferFlow: View{
-    @ObservedObject public static var step = OfferStepFollow(offerFollowSteps: .permissions)
+    @ObservedObject public static var step = OfferStepFollow(offerFollowSteps: .settings)
     public init() {}
     
     public var body: some View{
@@ -11,7 +11,9 @@ public struct OfferFlow: View{
         case .offers:
             OfferLinkCardView()
         case .settings:
-            OfferLinkCardView()
+            NavigationView{
+                SettingsTableView()
+            }
         }
     }
 

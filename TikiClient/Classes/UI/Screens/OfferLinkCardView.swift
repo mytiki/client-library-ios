@@ -1,9 +1,7 @@
-//
-//  OfferView.swift
-//  TikiClient
-//
-//  Created by Jesse Monteiro Ferreira on 21/05/24.
-//
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in root directory.
+ */
 
 import SwiftUI
 
@@ -116,7 +114,7 @@ public struct OfferLinkCardView: View {
                                 .cornerRadius(50)
                         }.buttonStyle(.plain).padding(.bottom, 10)
                         Button() {
-                            TikiClient.denyOffer(completion: {response in print(response)}, onError: {error in print(error)})
+                            TikiClient.denyOffer(offer: TikiClient.offer!,completion: {response in print(response)}, onError: {error in print(error)})
                         } label: {
                             Text("No Thanks")
                                 .font(.system(size: 21))
