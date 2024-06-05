@@ -6,7 +6,7 @@ PODS:
   - AppAuth/ExternalUserAgent (1.6.2):
     - AppAuth/Core
   - CryptoSwift (1.8.1)
-  - TikiClient (0.1.0):
+  - TikiClient (0.4.0):
     - AppAuth
     - CryptoSwift
 
@@ -25,8 +25,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
   CryptoSwift: b9c701d6f5011df23794dbf7f2e480a77835d83d
-  TikiClient: 1b3e207b2308574e665a9f5c6d06b37ac4d7e3c0
+  TikiClient: 0a155c4db1cc6081c45768f45c20f11180959336
 
 PODFILE CHECKSUM: 96d93e7c36e6d9cd116be19ddc3938e717dc0264
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.11.2
